@@ -2,6 +2,7 @@ module Core.Env
 
 import Core.TT
 import Data.List
+import Data.List1
 
 %default total
 
@@ -54,7 +55,7 @@ bindEnv loc [] tm = tm
 bindEnv loc (b :: env) tm
     = bindEnv loc env (Bind loc _ b tm)
 
-revOnto : (xs, vs : _) -> reverseOnto xs vs = reverse vs ++ xs
+revOnto : (xs, vs : List a) -> reverseOnto xs vs = reverse vs ++ xs
 revOnto xs [] = Refl
 revOnto xs (v :: vs)
     = rewrite revOnto (v :: xs) vs in
@@ -216,9 +217,9 @@ mkShrinkSub [] els
          else (_ ** DropCons SubRefl)
 mkShrinkSub (x :: xs) els
     = let (_ ** subRest) = mkShrinkSub xs (dropFirst els) in
-					if isUsed 0 els
-				     then (_ ** KeepCons subRest)
-				     else (_ ** DropCons subRest)
+      if isUsed 0 els
+      then (_ ** KeepCons subRest)
+      else (_ ** DropCons subRest)
 
 mkShrink : {vars : _} ->
            List (Var vars) ->
@@ -231,8 +232,16 @@ mkShrink {vars = v :: vs} xs = mkShrinkSub _ xs
 export
 findSubEnv : {vars : _} ->
              Env Term vars -> Term vars ->
-						 (vars' : List Name ** SubVars vars' vars)
+             (vars' : List Name ** SubVars vars' vars)
 findSubEnv env tm = mkShrink (findUsedLocs env tm)
+
+export
+findSubEnvList1 : {vars : _} ->
+                  Env Term vars -> List1 (Term vars) ->
+                  (vars' : List Name ** SubVars vars' vars)
+findSubEnvList1 env tms = mkShrink (concatMap (findUsedLocs env) tms)
+
+
 
 export
 shrinkEnv : Env Term vars -> SubVars newvars vars -> Maybe (Env Term newvars)

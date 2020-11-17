@@ -498,13 +498,16 @@ mutual
            pure (!(getFn lhs), PatClause fc lhs rhs)
     <|> do keyword "with"
            wstart <- location
-           symbol "("
-           wval <- expr fname indents
-           symbol ")"
-           ws <- nonEmptyBlock (clause (S withArgs) fname)
+           wvals <- sepBy1' (symbol "|") $ do
+             symbol "("
+             wval <- expr fname indents
+             symbol ")"
+             pure wval
+           ws <- nonEmptyBlock (clause (length (fst wvals) + withArgs) fname)
            end <- location
            let fc = MkFC fname start end
-           pure (!(getFn lhs), WithClause fc lhs wval [] (forget $ map snd ws))
+           let wvals = toList1 (fst wvals) {ok = snd wvals}
+           pure (!(getFn lhs), WithClause fc lhs wvals [] (forget $ map snd ws))
 
     <|> do keyword "impossible"
            atEnd indents

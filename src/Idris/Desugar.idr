@@ -513,10 +513,10 @@ mutual
                      (case ws of
                            [] => rhs'
                            _ => ILocal fc (concat ws) rhs')
-  desugarClause ps arg (MkWithClause fc lhs wval flags cs)
+  desugarClause ps arg (MkWithClause fc lhs wvals flags cs)
       = do cs' <- traverse (desugarClause ps arg) cs
            (bound, blhs) <- bindNames arg !(desugar LHS ps lhs)
-           wval' <- desugar AnyExpr (bound ++ ps) wval
+           wval' <- traverseList1 (desugar AnyExpr (bound ++ ps)) wvals
            pure $ WithClause fc blhs wval' flags cs'
   desugarClause ps arg (MkImpossible fc lhs)
       = do dlhs <- desugar LHS ps lhs

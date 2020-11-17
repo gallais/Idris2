@@ -83,6 +83,35 @@ snoc : (1 xs : List1 a) -> (1 x : a) -> List1 a
 snoc xs x = append xs (singleton x)
 
 ------------------------------------------------------------------------
+-- Zip/Unzip
+
+export
+zipWith : (a -> b -> c) -> List1 a -> List1 b -> List1 c
+zipWith f (x ::: xs) (y ::: ys) = f x y ::: loop xs ys where
+
+  loop : List a -> List b -> List c
+  loop (x :: xs) (y :: ys) = f x y :: loop xs ys
+  loop _ _ = []
+
+export
+zip : List1 a -> List1 b -> List1 (a, b)
+zip = zipWith (,)
+
+export
+unzipWith : (a -> (b, c)) -> List1 a -> (List1 b, List1 c)
+unzipWith f (x ::: xs) =
+  let cons : a -> (List b, List c) -> (List b, List c)
+      cons x (bs, cs) = let (b, c) = f x in (b :: bs, c :: cs) in
+
+  let (b, c)   = f x in
+  let (bs, cs) = foldr cons ([] ,[]) xs in
+  (b ::: bs, c ::: cs)
+
+export
+unzip : List1 (a, b) -> (List1 a, List1 b)
+unzip = unzipWith id
+
+------------------------------------------------------------------------
 -- Reverse
 
 public export
@@ -117,6 +146,10 @@ Monad List1 where
 export
 Foldable List1 where
   foldr c n (x ::: xs) = c x (foldr c n xs)
+
+export
+Traversable List1 where
+  traverse f (x ::: xs) = [| (:::) (f x) (traverse f xs) |]
 
 export
 Show a => Show (List1 a) where

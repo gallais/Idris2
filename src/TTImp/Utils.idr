@@ -5,6 +5,7 @@ import Core.TT
 import TTImp.TTImp
 
 import Data.List
+import Data.List1
 import Data.Strings
 
 import Utils.String
@@ -197,11 +198,11 @@ mutual
                         ++ bound in
             PatClause fc (substNames' bvar [] [] lhs)
                          (substNames' bvar bound' ps rhs)
-  substNamesClause' bvar bound ps (WithClause fc lhs wval flags cs)
+  substNamesClause' bvar bound ps (WithClause fc lhs wvals flags cs)
       = let bound' = map UN (map snd (findBindableNames True bound [] lhs))
                         ++ bound in
             WithClause fc (substNames' bvar [] [] lhs)
-                          (substNames' bvar bound' ps wval) flags cs
+                          (map (substNames' bvar bound' ps) wvals) flags cs
   substNamesClause' bvar bound ps (ImpossibleClause fc lhs)
       = ImpossibleClause fc (substNames' bvar bound [] lhs)
 
@@ -292,9 +293,9 @@ mutual
   substLocClause fc' (PatClause fc lhs rhs)
       = PatClause fc' (substLoc fc' lhs)
                       (substLoc fc' rhs)
-  substLocClause fc' (WithClause fc lhs wval flags cs)
+  substLocClause fc' (WithClause fc lhs wvals flags cs)
       = WithClause fc' (substLoc fc' lhs)
-                       (substLoc fc' wval)
+                       (map (substLoc fc') wvals)
                        flags
                        (map (substLocClause fc') cs)
   substLocClause fc' (ImpossibleClause fc lhs)

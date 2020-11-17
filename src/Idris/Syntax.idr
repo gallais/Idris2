@@ -13,6 +13,7 @@ import TTImp.TTImp
 
 import Data.ANameMap
 import Data.List
+import Data.List1
 import Data.NameMap
 import Data.StringMap
 import Text.PrettyPrint.Prettyprinter
@@ -209,7 +210,7 @@ mutual
   data PClause : Type where
        MkPatClause : FC -> (lhs : PTerm) -> (rhs : PTerm) ->
                      (whereblock : List PDecl) -> PClause
-       MkWithClause : FC -> (lhs : PTerm) -> (wval : PTerm) ->
+       MkWithClause : FC -> (lhs : PTerm) -> (wvals : List1 PTerm) ->
                       List WithFlag -> List PClause -> PClause
        MkImpossible : FC -> (lhs : PTerm) -> PClause
 
@@ -940,9 +941,9 @@ mapPTermM f = goPTerm where
       MkPatClause fc <$> goPTerm lhs
                      <*> goPTerm rhs
                      <*> goPDecls wh
-    goPClause (MkWithClause fc lhs wVal flags cls) =
+    goPClause (MkWithClause fc lhs wVals flags cls) =
       MkWithClause fc <$> goPTerm lhs
-                      <*> goPTerm wVal
+                      <*> traverseList1 goPTerm wVals
                       <*> pure flags
                       <*> goPClauses cls
     goPClause (MkImpossible fc lhs) = MkImpossible fc <$> goPTerm lhs

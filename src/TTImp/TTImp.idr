@@ -11,6 +11,7 @@ import Core.TTC
 import Core.Value
 
 import Data.List
+import Data.List1
 
 %default covering
 
@@ -313,7 +314,7 @@ mutual
   public export
   data ImpClause : Type where
        PatClause : FC -> (lhs : RawImp) -> (rhs : RawImp) -> ImpClause
-       WithClause : FC -> (lhs : RawImp) -> (wval : RawImp) ->
+       WithClause : FC -> (lhs : RawImp) -> (wvals : List1 RawImp) ->
                     (flags : List WithFlag) ->
                     List ImpClause -> ImpClause
        ImpossibleClause : FC -> (lhs : RawImp) -> ImpClause

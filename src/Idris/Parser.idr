@@ -792,12 +792,14 @@ mutual
             pure (MkPatClause (boundToFC fname (mergeBounds start b)) lhs rhs ws)
      <|> do b <- bounds (do keyword "with"
                             flags <- bounds (withFlags)
-                            symbol "("
-                            wval <- bracketedExpr fname flags indents
-                            ws <- nonEmptyBlock (clause (S withArgs) fname)
-                            pure (flags, wval, forget ws))
-            (flags, wval, ws) <- pure b.val
-            pure (MkWithClause (boundToFC fname (mergeBounds start b)) lhs wval flags.val ws)
+                            wvals <- sepBy1' (symbol "|") $ do
+                               symbol "("
+                               bracketedExpr fname flags indents
+                            ws <- nonEmptyBlock (clause (length (fst wvals) + withArgs) fname)
+                            pure (flags, wvals, forget ws))
+            (flags, wvals, ws) <- pure b.val
+            let wvals = toList1 (fst wvals) {ok = snd wvals}
+            pure (MkWithClause (boundToFC fname (mergeBounds start b)) lhs wvals flags.val ws)
      <|> do end <- bounds (keyword "impossible")
             atEnd indents
             pure (MkImpossible (boundToFC fname (mergeBounds start end)) lhs)

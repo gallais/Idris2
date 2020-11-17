@@ -29,6 +29,7 @@ import TTImp.WithClause
 
 import Data.Either
 import Data.List
+import Data.List1
 import Data.NameMap
 import Data.Strings
 import Data.Maybe
@@ -437,38 +438,99 @@ checkClause {vars} mult vis totreq hashit n opts nest env (PatClause fc lhs_in r
 
          pure (Right (MkClause env' lhstm' rhstm))
 -- TODO: (to decide) With is complicated. Move this into its own module?
-checkClause {vars} mult vis totreq hashit n opts nest env (WithClause fc lhs_in wval_raw flags cs)
+checkClause {vars} mult vis totreq hashit n opts nest env (WithClause fc lhs_in wvals_raw flags cs)
     = do (lhs, (vars'  ** (sub', env', nest', lhspat, reqty))) <-
              checkLHS False mult hashit n opts nest env fc lhs_in
          let wmode
                = if isErased mult then InType else InExpr
 
-         (wval, gwvalTy) <- wrapErrorC opts (InRHS fc !(getFullName (Resolved n))) $
-                elabTermSub n wmode opts nest' env' env sub' wval_raw Nothing
+         -- Elaborate the terms with'd over as if they were RHS (i.e. they live in the
+         -- context refined by the LHS patterns)
+         -- We get back some well-scoped terms wrt to LHS & their respective types
+         withExprs <- wrapErrorC opts (InRHS fc !(getFullName (Resolved n))) $
+                flip traverseList1 wvals_raw $ \ raw => do
+                  (val, gvalTy) <- elabTermSub n wmode opts nest' env' env sub' raw Nothing
+                  valTy <- getTerm gvalTy
+                  pure (val, valTy)
          clearHoleLHS
 
-         logTerm "declare.def.clause" 5 "With value" wval
+         logC "declare.def.clause" 5 $ do
+           strwvals <- traverse (map show . toFullNames . fst) $ forget withExprs
+           pure $ concat ("With values: " :: intersperse ", " strwvals)
          logTerm "declare.def.clause" 3 "Required type" reqty
-         wvalTy <- getTerm gwvalTy
-         defs <- get Ctxt
-         wval <- normaliseHoles defs env' wval
-         wvalTy <- normaliseHoles defs env' wvalTy
 
-         let (wevars ** withSub) = keepOldEnv sub' (snd (findSubEnv env' wval))
-         logTerm "declare.def.clause" 5 "With value type" wvalTy
+         -- Find the smallest environment needed to typecheck the with expressions.
+         -- Normalisation may make some unused variables go away
+         defs <- get Ctxt
+         withExprs <- flip traverseList1 withExprs $ \ (val, valTy) => do
+                        val <- normaliseHoles defs env' val
+                        valTy <- normaliseHoles defs env' valTy
+                        pure (val, valTy)
+         let (wevars ** withSub) = keepOldEnv sub' (snd (findSubEnvList1 env' (map fst withExprs)))
+
+         logC "declare.def.clause" 5 $ do
+           strwvalTys <- traverse (map show . toFullNames . snd) $ forget withExprs
+           pure $ concat ("With value types: " :: intersperse ", " strwvalTys)
          log "declare.def.clause" 5 $ "Using vars " ++ show wevars
 
-         let Just wval = shrinkTerm wval withSub
-             | Nothing => throw (InternalError "Impossible happened: With abstraction failure #1")
-         let Just wvalTy = shrinkTerm wvalTy withSub
-             | Nothing => throw (InternalError "Impossible happened: With abstraction failure #2")
+         -- Attempt to restrict everything to this environment
+         withExprs <- flip traverseList1 withExprs $ \ (val, valTy) => do
+                        let Just val = shrinkTerm val withSub
+                              | Nothing => throw (InternalError "Impossible happened: With abstraction failure #1")
+                        let Just valTy = shrinkTerm valTy withSub
+                              | Nothing => throw (InternalError "Impossible happened: With abstraction failure #2")
+                        pure (val, valTy)
          -- Should the env be normalised too? If the following 'impossible'
          -- error is ever thrown, that might be the cause!
          let Just wvalEnv = shrinkEnv env' withSub
              | Nothing => throw (InternalError "Impossible happened: With abstraction failure #3")
 
-         -- Abstracting over 'wval' in the scope of bNotReq in order
-         -- to get the 'magic with' behaviour
+         -- Abstracting over each of the 'wval' in a telescopic manner in the scope of bNotReq.
+         -- This gives us the 'magic with' behaviour
+
+         (wargNames, envns, wtype) <-
+            bindWithExpr defs env' withSub reqty withExprs wvalEnv
+
+         logTerm "declare.def.clause" 3 "With function type" wtype
+         log "declare.def.clause" 5 $ "Argument names " ++ show wargNames
+
+         wname <- genWithName !(prettyName !(toFullNames (Resolved n)))
+         widx <- addDef wname (record {flags $= (SetTotal totreq ::)}
+                                    (newDef fc wname (if isErased mult then erased else top)
+                                      vars wtype vis None))
+         let rhs_in = apply (IVar fc wname)
+                        (map (IVar fc) envns ++
+                         map (maybe (head wvals_raw) (\pn => IVar fc (snd pn))) wargNames)
+
+         log "declare.def.clause" 3 $ "Applying to with argument " ++ show rhs_in
+         rhs <- wrapErrorC opts (InRHS fc !(getFullName (Resolved n))) $
+             checkTermSub n wmode opts nest' env' env sub' rhs_in
+                          (gnf env' reqty)
+
+         -- Generate new clauses by rewriting the matched arguments
+         cs' <- traverse (mkClauseWith 1 wname wargNames lhs) cs
+         log "declare.def.clause" 3 $ "With clauses: " ++ show cs'
+
+         -- Elaborate the new definition here
+         nestname <- applyEnv env wname
+         let nest'' = record { names $= (nestname ::) } nest
+
+         let wdef = IDef fc wname cs'
+         processDecl [] nest'' env wdef
+
+         pure (Right (MkClause env' lhspat rhs))
+  where
+
+    bindWithExpr
+       : {ctxt, support : List Name} ->
+          Defs -> Env Term ctxt -> SubVars support ctxt -> Term ctxt ->
+          List1 (Term support, Term support) -> Env Term support ->
+          Core ( List (Maybe (PiInfo RawImp, Name))
+               , List Name
+               , ClosedTerm
+               )
+    bindWithExpr defs env' withSub reqty ((wval, wvalTy) ::: _) wvalEnv = do
+
          let wargn = MN "warg" 0
          let scenv = Pi fc top Explicit wvalTy :: wvalEnv
 
@@ -495,35 +557,8 @@ checkClause {vars} mult vis totreq hashit n opts nest env (WithClause fc lhs_in 
                  = map Just reqns ++
                    Nothing :: map Just notreqns
 
-         logTerm "declare.def.clause" 3 "With function type" wtype
-         log "declare.def.clause" 5 $ "Argument names " ++ show wargNames
+         pure (wargNames, envns, wtype)
 
-         wname <- genWithName !(prettyName !(toFullNames (Resolved n)))
-         widx <- addDef wname (record {flags $= (SetTotal totreq ::)}
-                                    (newDef fc wname (if isErased mult then erased else top)
-                                      vars wtype vis None))
-         let rhs_in = apply (IVar fc wname)
-                        (map (IVar fc) envns ++
-                         map (maybe wval_raw (\pn => IVar fc (snd pn))) wargNames)
-
-         log "declare.def.clause" 3 $ "Applying to with argument " ++ show rhs_in
-         rhs <- wrapErrorC opts (InRHS fc !(getFullName (Resolved n))) $
-             checkTermSub n wmode opts nest' env' env sub' rhs_in
-                          (gnf env' reqty)
-
-         -- Generate new clauses by rewriting the matched arguments
-         cs' <- traverse (mkClauseWith 1 wname wargNames lhs) cs
-         log "declare.def.clause" 3 $ "With clauses: " ++ show cs'
-
-         -- Elaborate the new definition here
-         nestname <- applyEnv env wname
-         let nest'' = record { names $= (nestname ::) } nest
-
-         let wdef = IDef fc wname cs'
-         processDecl [] nest'' env wdef
-
-         pure (Right (MkClause env' lhspat rhs))
-  where
     -- If it's 'KeepCons/SubRefl' in 'outprf', that means it was in the outer
     -- environment so we need to keep it in the same place in the 'with'
     -- function. Hence, turn it to KeepCons whatever
@@ -555,11 +590,11 @@ checkClause {vars} mult vis totreq hashit n opts nest env (WithClause fc lhs_in 
         = do newlhs <- getNewLHS ploc drop nest wname wargnames lhs patlhs
              newrhs <- withRHS ploc drop wname wargnames rhs lhs
              pure (PatClause ploc newlhs newrhs)
-    mkClauseWith drop wname wargnames lhs (WithClause ploc patlhs rhs flags ws)
+    mkClauseWith drop wname wargnames lhs (WithClause ploc patlhs wvals flags ws)
         = do newlhs <- getNewLHS ploc drop nest wname wargnames lhs patlhs
-             newrhs <- withRHS ploc drop wname wargnames rhs lhs
+             newwvals <- traverseList1 (\ rhs => withRHS ploc drop wname wargnames rhs lhs) wvals
              ws' <- traverse (mkClauseWith (S drop) wname wargnames lhs) ws
-             pure (WithClause ploc newlhs newrhs flags ws')
+             pure (WithClause ploc newlhs newwvals flags ws')
     mkClauseWith drop wname wargnames lhs (ImpossibleClause ploc patlhs)
         = do newlhs <- getNewLHS ploc drop nest wname wargnames lhs patlhs
              pure (ImpossibleClause ploc newlhs)

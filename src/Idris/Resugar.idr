@@ -338,9 +338,9 @@ mutual
       = pure (MkPatClause fc !(toPTerm startPrec lhs)
                              !(toPTerm startPrec rhs)
                              [])
-  toPClause (WithClause fc lhs rhs flags cs)
+  toPClause (WithClause fc lhs rhss flags cs)
       = pure (MkWithClause fc !(toPTerm startPrec lhs)
-                              !(toPTerm startPrec rhs)
+                              !(traverseList1 (toPTerm startPrec) rhss)
                               flags
                               !(traverse toPClause cs))
   toPClause (ImpossibleClause fc lhs)

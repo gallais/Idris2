@@ -10,6 +10,8 @@ import Core.Unify
 import Core.TT
 import Core.Value
 
+import Data.List1
+
 import TTImp.Elab.Check
 import TTImp.Reflect
 import TTImp.TTImp
@@ -81,7 +83,7 @@ mutual
   getUnquoteClause (PatClause fc l r)
       = pure $ PatClause fc !(getUnquote l) !(getUnquote r)
   getUnquoteClause (WithClause fc l w flags cs)
-      = pure $ WithClause fc !(getUnquote l) !(getUnquote w)
+      = pure $ WithClause fc !(getUnquote l) !(traverseList1 getUnquote w)
                           flags !(traverse getUnquoteClause cs)
   getUnquoteClause (ImpossibleClause fc l)
       = pure $ ImpossibleClause fc !(getUnquote l)

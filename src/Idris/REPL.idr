@@ -51,6 +51,7 @@ import TTImp.TTImp
 import TTImp.ProcessDecls
 
 import Data.List
+import Data.List1
 import Data.Maybe
 import Data.NameMap
 import Data.Stream
@@ -207,12 +208,17 @@ printClause l i (PatClause _ lhsraw rhsraw)
     = do lhs <- pterm lhsraw
          rhs <- pterm rhsraw
          pure (relit l (pack (replicate i ' ') ++ show lhs ++ " = " ++ show rhs))
-printClause l i (WithClause _ lhsraw wvraw flags csraw)
+printClause l i (WithClause _ lhsraw wvraws flags csraw)
     = do lhs <- pterm lhsraw
-         wval <- pterm wvraw
+         wvals <- traverseList1 pterm wvraws
          cs <- traverse (printClause l (i + 2)) csraw
-         pure ((relit l ((pack (replicate i ' ') ++ show lhs ++ " with (" ++ show wval ++ ")\n")) ++
-                 showSep "\n" cs))
+
+         pure $ relit l (pack (replicate i ' ')
+                      ++ show lhs
+                      ++ " with "
+                      ++ concat (intersperse " | " $ forget $ map (\ v => "(" ++ show v ++ ")") wvals)
+                      ++ "\n")
+                ++ showSep "\n" cs
 printClause l i (ImpossibleClause _ lhsraw)
     = do lhs <- pterm lhsraw
          pure (relit l (pack (replicate i ' ') ++ show lhs ++ " impossible"))

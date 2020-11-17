@@ -337,6 +337,11 @@ public export
 data NonEmpty : (xs : List a) -> Type where
     IsNonEmpty : NonEmpty (x :: xs)
 
+||| Convert to a List1
+export
+toList1 : (1 xs : List a) -> {auto 0 ok : NonEmpty xs} -> List1 a
+toList1 (x :: xs) = x ::: xs
+
 export
 Uninhabited (NonEmpty []) where
   uninhabited IsNonEmpty impossible
