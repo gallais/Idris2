@@ -523,8 +523,11 @@ checkClause {vars} mult vis totreq hashit n opts nest env (WithClause fc lhs_in 
 
     bindWithExpr
        : {ctxt, support : List Name} ->
-          Defs -> Env Term ctxt -> SubVars support ctxt -> Term ctxt ->
-          List1 (Term support, Term support) -> Env Term support ->
+          Defs -> Env Term ctxt ->
+          SubVars support ctxt ->               -- the support of the terms with'd over
+          Term ctxt ->                          -- the expected return type of the RHS
+          List1 (Term support, Term support) -> -- the expressions with'd over & their types
+          Env Term support ->
           Core ( List (Maybe (PiInfo RawImp, Name))
                , List Name
                , ClosedTerm
@@ -534,20 +537,21 @@ checkClause {vars} mult vis totreq hashit n opts nest env (WithClause fc lhs_in 
          let wargn = MN "warg" 0
          let scenv = Pi fc top Explicit wvalTy :: wvalEnv
 
-         let bnr = bindNotReq fc 0 env' withSub [] reqty
+         let bnr = bindNotReq fc env' withSub reqty
          let notreqns = fst bnr
          let notreqty = snd bnr
 
          rdefs <- if Syntactic `elem` flags
                      then clearDefs defs
                      else pure defs
+         -- abstract over the value `wval` in the
          wtyScope <- replace rdefs scenv !(nf rdefs scenv (weaken wval))
                             (Local fc (Just False) _ First)
                             !(nf rdefs scenv
                                  (weaken {n=wargn} notreqty))
          let bNotReq = Bind fc wargn (Pi fc top Explicit wvalTy) wtyScope
 
-         let Just (reqns, envns, wtype) = bindReq fc env' withSub [] bNotReq
+         let Just (reqns, envns, wtype) = bindReq fc env' withSub bNotReq
              | Nothing => throw (InternalError "Impossible happened: With abstraction failure #4")
 
          -- list of argument names - 'Just' means we need to match the name

@@ -80,40 +80,45 @@ plicit (PVar _ _ p _) = forgetDef p
 plicit _ = Explicit
 
 -- Bind the variables in (vs \ pre).
--- The Int is a fresh index to use for intermediate machine-generated variables
 export
 bindNotReq : {vs : _} ->
-             FC ->
-             Int ->
-             Env Term vs ->
-             SubVars pre vs ->
-             List (PiInfo RawImp, Name) ->
-             Term vs ->
+             FC -> Env Term vs -> SubVars pre vs -> Term vs ->
              (List (PiInfo RawImp, Name), Term pre) -- return the bound variables
-bindNotReq fc i env SubRefl ns tm = (ns, tm)
-bindNotReq fc i (b :: env) (KeepCons p) ns tm
-   = let tmptm = subst (Ref fc Bound (MN "arg" i)) tm
-         (ns', btm) = bindNotReq fc (1 + i) env p ns tmptm in
-         (ns', refToLocal (MN "arg" i) _ btm)
-bindNotReq {vs = n :: _} fc i (b :: env) (DropCons p) ns tm
-   = bindNotReq fc i env p ((plicit b, n) :: ns)
+bindNotReq fc = loop 0 [] where
+  -- Fresh names ----^  ^--- Accumulator for bound variables
+
+  loop : {vs : _} -> {0 pre : _} -> Int -> List (PiInfo RawImp, Name) ->
+         Env Term vs -> SubVars pre vs -> Term vs ->
+         (List (PiInfo RawImp, Name), Term pre)
+  loop i ns env SubRefl tm = (ns, tm)
+  loop i ns (b :: env) (KeepCons p) tm
+    = let tmptm = subst (Ref fc Bound (MN "arg" i)) tm
+          (ns', btm) = loop (1 + i) ns env p tmptm
+      in (ns', refToLocal (MN "arg" i) _ btm)
+  loop {vs = n :: _} i ns (b :: env) (DropCons p) tm
+   = loop i ((plicit b, n) :: ns) env p
        (Bind fc _ (Pi (binderLoc b) (multiplicity b) Explicit (binderType b)) tm)
 
 export
 bindReq : {vs : _} ->
-          FC -> Env Term vs -> (sub : SubVars pre vs) ->
-          List (PiInfo RawImp, Name) ->
-          Term pre -> Maybe (List (PiInfo RawImp, Name), List Name, ClosedTerm)
-bindReq {vs} fc env SubRefl ns tm
-    = pure (ns, notLets [] _ env, abstractEnvType fc env tm)
-  where
-    notLets : List Name -> (vars : List Name) -> Env Term vars -> List Name
-    notLets acc [] _ = acc
-    notLets acc (v :: vs) (b :: env) = if isLet b then notLets acc vs env
-                                       else notLets (v :: acc) vs env
-bindReq {vs = n :: _} fc (b :: env) (KeepCons p) ns tm
+          FC -> Env Term vs -> SubVars pre vs -> Term pre ->
+          Maybe (List (PiInfo RawImp, Name), List Name, ClosedTerm)
+bindReq fc = loop [] where
+--                ^---- Accumulator for bound variables
+
+  loop : {vs : _} -> {0 pre : _} ->
+         List (PiInfo RawImp, Name) ->
+         Env Term vs -> SubVars pre vs -> Term pre ->
+         Maybe (List (PiInfo RawImp, Name), List Name, ClosedTerm)
+  loop ns env SubRefl tm = pure (ns, notLets [] _ env, abstractEnvType fc env tm)
+    where
+      notLets : (acc, vars : List Name) -> Env Term vars -> List Name
+      notLets acc [] _ = acc
+      notLets acc (v :: vs) (b :: env) = if isLet b then notLets acc vs env
+                                         else notLets (v :: acc) vs env
+  loop {vs = n :: _} ns (b :: env) (KeepCons p) tm
     = do b' <- shrinkBinder b p
-         bindReq fc env p ((plicit b, n) :: ns)
+         loop ((plicit b, n) :: ns) env p
             (Bind fc _ (Pi (binderLoc b) (multiplicity b) Explicit (binderType b')) tm)
-bindReq fc (b :: env) (DropCons p) ns tm
-    = bindReq fc env p ns tm
+  loop ns (b :: env) (DropCons p) tm
+    = loop ns env p tm
