@@ -79,16 +79,18 @@ plicit (Pi _ _ p _) = forgetDef p
 plicit (PVar _ _ p _) = forgetDef p
 plicit _ = Explicit
 
+-- Bind the variables in (vs \ pre).
+-- The Int is a fresh index to use for intermediate machine-generated variables
 export
 bindNotReq : {vs : _} ->
-             FC -> Int -> Env Term vs -> (sub : SubVars pre vs) ->
+             FC ->
+             Int ->
+             Env Term vs ->
+             SubVars pre vs ->
              List (PiInfo RawImp, Name) ->
-             Term vs -> (List (PiInfo RawImp, Name), Term pre)
-bindNotReq fc i [] SubRefl ns tm = (ns, embed tm)
-bindNotReq fc i (b :: env) SubRefl ns tm
-   = let tmptm = subst (Ref fc Bound (MN "arg" i)) tm
-         (ns', btm) = bindNotReq fc (1 + i) env SubRefl ns tmptm in
-         (ns', refToLocal (MN "arg" i) _ btm)
+             Term vs ->
+             (List (PiInfo RawImp, Name), Term pre) -- return the bound variables
+bindNotReq fc i env SubRefl ns tm = (ns, tm)
 bindNotReq fc i (b :: env) (KeepCons p) ns tm
    = let tmptm = subst (Ref fc Bound (MN "arg" i)) tm
          (ns', btm) = bindNotReq fc (1 + i) env p ns tmptm in
