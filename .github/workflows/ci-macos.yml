@@ -1,4 +1,4 @@
-name: macOS Chez
+name: MacOS Combined
 on:
   push:
     branches:
@@ -10,13 +10,15 @@ on:
       - master
 
 env:
-  SCHEME: chez
-  IDRIS2_TESTS_CG: chez
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
 jobs:
-  build:
+
+  self-host-chez:
     runs-on: macos-latest
+    env:
+      SCHEME: chez
+      IDRIS2_TESTS_CG: chez
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -34,3 +36,21 @@ jobs:
       - name: Test self-hosted
         run: make test INTERACTIVE=''
         shell: bash
+
+  build-bootstrap-racket:
+    runs-on: macos-latest
+    env:
+      IDRIS2_CG: racket
+      IDRIS2_TESTS_CG: racket
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install build dependencies
+        run: |
+          brew install racket
+          brew install coreutils
+          echo "::add-path::$HOME/.idris2/bin"
+      - name: Build from bootstrap
+        run: make bootstrap-racket && make install
+      - name: Test bootstrapped
+        run: make test
