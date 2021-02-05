@@ -30,10 +30,13 @@ import System.Info
 
 %default covering
 
-findRacket : IO String
-findRacket =
-  do env <- idrisGetEnv "RACKET"
-     pure $ fromMaybe "/usr/bin/env racket" env
+findRacket : String -> IO String
+findRacket appdir =
+  do Nothing <- idrisGetEnv "RACKET"
+        | Just racket => pure racket
+     -- #840: On MacOS using `/usr/bin/env/` resets environment variables
+     let args = "LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:`dirname \"$DIR\"`/\"" ++ appdir ++ "\"\""
+     pure ("/usr/bin/env " ++ args ++ " racket")
 
 findRacoExe : IO String
 findRacoExe =
@@ -425,7 +428,7 @@ compileExpr mkexec c tmpDir outputDir tm outfile
 
          compileToRKT c appDirGen tm outRktAbs
          raco <- coreLift findRacoExe
-         racket <- coreLift findRacket
+         racket <- coreLift (findRacket appDirRel)
 
          ok <- the (Core Int) $ if mkexec
                   then logTime "Build racket" $
