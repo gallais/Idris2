@@ -35,8 +35,7 @@ findRacket appdir =
   do Nothing <- idrisGetEnv "RACKET"
         | Just racket => pure racket
      -- #840: On MacOS using `/usr/bin/env/` resets environment variables
-     let args = "LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH:`dirname \"$DIR\"`/\"" ++ appdir ++ "\"\""
-     pure ("/usr/bin/env " ++ args ++ " racket")
+     pure ("/usr/bin/env LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH\" racket")
 
 findRacoExe : IO String
 findRacoExe =
