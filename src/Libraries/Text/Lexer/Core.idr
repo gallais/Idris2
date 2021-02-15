@@ -7,6 +7,7 @@ import Data.Maybe
 import Data.Nat
 import Data.Strings
 import public Libraries.Text.Bounded
+import public Libraries.Data.String.Safe
 
 %default total
 
@@ -98,30 +99,30 @@ strTail start (MkStrLen str len)
 -- If the string is recognised, returns the index at which the token
 -- ends
 export
-scan : Recognise c -> List Char -> List Char -> Maybe (List Char, List Char)
-scan Empty tok str = pure (tok, str)
-scan Fail tok str = Nothing
-scan (Lookahead positive r) tok str
-    = if isJust (scan r tok str) == positive
-         then pure (tok, str)
-         else Nothing
-scan (Pred f) tok [] = Nothing
-scan (Pred f) tok (c :: str)
-    = if f c
-         then Just (c :: tok, str)
-         else Nothing
-scan (SeqEat r1 r2) tok str
-    = do (tok', rest) <- scan r1 tok str
+scan : {str : String} -> Recognise c ->
+       Position str ->
+       Maybe (Position str)
+scan Empty str = pure str
+scan Fail str = Nothing
+scan (Lookahead positive r) str
+    = do guard (isJust (scan r str) == positive)
+         pure str
+scan (Pred f) str
+  = do (c, str) <- map uncons str
+       guard (f c)
+       pure str
+scan (SeqEat r1 r2) str
+    = do rest <- scan r1 str
          -- TODO: Can we prove totality instead by showing idx has increased?
-         assert_total (scan r2 tok' rest)
-scan (SeqEmpty r1 r2) tok str
-    = do (tok', rest) <- scan r1 tok str
-         scan r2 tok' rest
-scan (SeqSame r1 r2) tok str
-    = do (tok', rest) <- scan r1 tok str
-         scan r2 tok' rest
-scan (Alt r1 r2) tok str
-    = maybe (scan r2 tok str) Just (scan r1 tok str)
+         assert_total (scan r2 rest)
+scan (SeqEmpty r1 r2) str
+    = do rest <- scan r1 str
+         scan r2 rest
+scan (SeqSame r1 r2) str
+    = do rest <- scan r1 str
+         scan r2 rest
+scan (Alt r1 r2) str
+    = maybe (scan r2 str) Just (scan r1 str)
 
 ||| A mapping from lexers to the tokens they produce.
 ||| This is a list of pairs `(Lexer, String -> tokenType)`
@@ -131,37 +132,39 @@ public export
 TokenMap : (tokenType : Type) -> Type
 TokenMap tokenType = List (Lexer, String -> tokenType)
 
-tokenise : (WithBounds a -> Bool) ->
+tokenise : {str : String} ->
+           (WithBounds a -> Bool) ->
            (line : Int) -> (col : Int) ->
            List (WithBounds a) -> TokenMap a ->
-           List Char -> (List (WithBounds a), (Int, Int, List Char))
+           Position str -> (List (WithBounds a), (Int, Int, Position str))
 tokenise pred line col acc tmap str
     = case getFirstToken tmap str of
            Just (tok, line', col', rest) =>
            -- assert total because getFirstToken must consume something
                if pred tok
-                  then (reverse acc, (line, col, []))
+                  then (reverse acc, (line, col, Nothing))
                   else assert_total (tokenise pred line' col' (tok :: acc) tmap rest)
            Nothing => (reverse acc, (line, col, str))
   where
-    countNLs : List Char -> Nat
-    countNLs str = List.length (filter (== '\n') str)
+    countNLs : {str : _} -> Position str -> Nat
+    countNLs = count (== '\n')
 
-    getCols : List Char -> Int -> Int
-    getCols x c
-         = case span (/= '\n') (reverse x) of
-                (incol, []) => c + cast (length incol)
-                (incol, _) => cast (length incol)
+    getCols : {str : String} -> Position str -> Int -> Int
+    getCols pos c
+         = case span (/= '\n') pos of
+             end@Nothing => c + distance pos end
+             end         => distance pos end
 
-    getFirstToken : TokenMap a -> List Char ->
-                    Maybe (WithBounds a, Int, Int, List Char)
+    getFirstToken : {str : String} -> TokenMap a -> Position str ->
+                    Maybe (WithBounds a, Int, Int, Position str)
     getFirstToken [] str = Nothing
     getFirstToken ((lex, fn) :: ts) str
-        = case scan lex [] str of
-               Just (tok, rest) =>
-                 let line' = line + cast (countNLs tok)
-                     col' = getCols tok col in
-                     Just (MkBounded (fn (fastPack (reverse tok))) False line col line' col',
+        = case scan lex str of
+               Just rest =>
+                 let tok = subString str rest
+                     line' = line + cast (countNLs (zero tok))
+                     col' = getCols (zero tok) col in
+                     Just (MkBounded (fn tok) False line col line' col',
                            line', col', rest)
                Nothing => getFirstToken ts str
 
@@ -172,12 +175,12 @@ tokenise pred line col acc tmap str
 export
 lex : TokenMap a -> String -> (List (WithBounds a), (Int, Int, String))
 lex tmap str
-    = let (ts, (l, c, str')) = tokenise (const False) 0 0 [] tmap (unpack str) in
-          (ts, (l, c, fastPack str'))
+    = let (ts, (l, c, str')) = tokenise (const False) 0 0 [] tmap (zero str) in
+          (ts, (l, c, subString str' Nothing))
 
 export
 lexTo : (WithBounds a -> Bool) ->
         TokenMap a -> String -> (List (WithBounds a), (Int, Int, String))
 lexTo pred tmap str
-    = let (ts, (l, c, str')) = tokenise pred 0 0 [] tmap (unpack str) in
-          (ts, (l, c, fastPack str'))
+    = let (ts, (l, c, str')) = tokenise pred 0 0 [] tmap (zero str) in
+          (ts, (l, c, subString str' Nothing))

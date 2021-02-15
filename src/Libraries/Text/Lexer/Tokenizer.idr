@@ -69,14 +69,16 @@ Pretty StopReason where
   pretty NoRuleApply = pretty "NoRuleApply"
   pretty (ComposeNotClosing start end) = "ComposeNotClosing" <++> pretty start <++> pretty end
 
-tokenise : Lexer ->
+tokenise : {str : String} ->
+           Lexer ->
            Tokenizer a ->
            (line, col : Int) -> List (WithBounds a) ->
-           List Char ->
-           (List (WithBounds a), (StopReason, Int, Int, List Char))
-tokenise reject tokenizer line col acc [] = (reverse acc, EndInput, (line, col, []))
+           Position str ->
+           (List (WithBounds a), (StopReason, Int, Int, Position str))
+tokenise reject tokenizer line col acc Nothing =
+  (reverse acc, EndInput, (line, col, Nothing))
 tokenise reject tokenizer line col acc str
-    = case scan reject [] str of
+    = case scan reject str of
            Just _ => (reverse acc, (EndInput, line, col, str))
            Nothing => case getFirstMatch tokenizer str of
                            Right (toks, line', col', rest) =>
@@ -84,29 +86,32 @@ tokenise reject tokenizer line col acc str
                                assert_total (tokenise reject tokenizer line' col' (toks ++ acc) rest)
                            Left reason => (reverse acc, reason, (line, col, str))
   where
-    countNLs : List Char -> Nat
-    countNLs str = List.length (filter (== '\n') str)
+    countNLs : {str : String} -> Position str -> Nat
+    countNLs = count (== '\n')
 
-    getCols : List Char -> Int -> Int
-    getCols x c
-        = case span (/= '\n') x of
-               (incol, []) => c + cast (length incol)
-               (incol, _) => cast (length incol)
+    getCols : {str : String} -> Position str -> Int -> Int
+    getCols pos c
+         = case span (/= '\n') pos of
+             end@Nothing => c + distance pos end
+             end         => distance pos end
 
     -- get the next lexeme using the `Lexer` in argument, its position and the input
     -- Returns the new position, the lexeme parsed and the rest of the input
     -- If parsing the lexer fails, this returns `Nothing`
-    getNext : (lexer : Lexer) ->  (line, col : Int) -> (input : List Char) -> Maybe (String, Int, Int, List Char)
+    getNext : {str : String} ->
+              (lexer : Lexer) ->  (line, col : Int) ->
+              (input : Position str) -> Maybe (String, Int, Int, Position str)
     getNext lexer line col str =
-      let Just (token, rest) = scan lexer [] str
+      let Just rest = scan lexer str
             | _ => Nothing
-          line' = line + cast (countNLs token)
-          col' = getCols token col
-          tokenStr = fastPack $ reverse token
-       in pure (tokenStr, line', col', rest)
+          token = subString str rest
+          line' = line + cast (countNLs (zero token))
+          col' = getCols (zero token) col
+      in pure (token, line', col', rest)
 
-    getFirstMatch : Tokenizer a -> List Char ->
-                    Either StopReason (List (WithBounds a), Int, Int, List Char)
+    getFirstMatch :
+      {str : String} -> Tokenizer a -> Position str ->
+      Either StopReason (List (WithBounds a), Int, Int, Position str)
     getFirstMatch (Match lex fn) str
         = let Just (tok, line', col', rest) = getNext lex line col str
                 | _ => Left NoRuleApply
@@ -140,13 +145,15 @@ lexTo : Lexer ->
         String ->
         (List (WithBounds a), (StopReason, Int, Int, String))
 lexTo reject tokenizer str
-    = let (ts, reason, (l, c, str')) =
-              tokenise reject tokenizer 0 0 [] (fastUnpack str) in
-          (ts, reason, (l, c, fastPack str'))
+    = let start = zero str
+          (ts, reason, (l, c, str')) =
+              tokenise reject tokenizer 0 0 [] start in
+          (ts, reason, (l, c, subString str' Nothing))
 
 ||| Given a tokenizer and an input string, return a list of recognised tokens,
-||| and the line, column, and remainder of the input at the first point in the string
-||| where there are no recognised tokens.
+||| and the line, column, and remainder of the input at the first point in
+||| the string where there are no recognised tokens.
 export
-lex : Tokenizer a -> String -> (List (WithBounds a), (StopReason, Int, Int, String))
+lex : Tokenizer a -> String ->
+      (List (WithBounds a), (StopReason, Int, Int, String))
 lex tokenizer str = lexTo (pred $ const False) tokenizer str
