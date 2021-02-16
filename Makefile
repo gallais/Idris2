@@ -157,6 +157,9 @@ bootstrap: support
 
 # Bootstrapping using racket
 bootstrap-racket: support
+ifeq ($(OS), darwin)
+	cp support/c/${IDRIS2_SUPPORT} ${HOME}/lib/
+endif
 	cp support/c/${IDRIS2_SUPPORT} bootstrap/idris2_app
 	sed 's|__PREFIX__|${IDRIS2_CURDIR}/bootstrap|g' \
 		bootstrap/idris2_app/idris2.rkt \
