@@ -53,4 +53,4 @@ jobs:
       - name: Build from bootstrap
         run: make bootstrap-racket && make install
       - name: Test bootstrapped
-        run: make test
+        run: make test INTERACTIVE=''
