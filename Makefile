@@ -158,6 +158,7 @@ bootstrap: support
 # Bootstrapping using racket
 bootstrap-racket: support
 ifeq ($(OS), darwin)
+	mkdir -p ${HOME}/lib/
 	cp support/c/${IDRIS2_SUPPORT} ${HOME}/lib/
 endif
 	cp support/c/${IDRIS2_SUPPORT} bootstrap/idris2_app
