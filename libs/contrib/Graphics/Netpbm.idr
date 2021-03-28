@@ -64,8 +64,17 @@ magnify k = magnifyVect . map magnifyVect where
   magnifyVect (a :: as) = replicate k a ++ magnifyVect as
 
 export
-test : IO (Image P1)
-test = map MkImage $ fromVect $ magnify 100
-  [ [ True, False ]
-  , [ False, True ]
-  ]
+checker : Nat -> IO (Image P1)
+checker k = map MkImage $ fromVect $ magnify 25 $
+  let l1 = cycle k True False
+      l2 = map not l1
+  in cycle k l1 l2
+
+  where
+
+    cycle : (n : Nat) -> a -> a -> Vect n a
+    cycle Z     l1 l2 = []
+    cycle (S n) l1 l2 = l1 :: cycle n l2 l1
+
+test : IO ()
+test = ignore $ writeImage !(checker 12) "test.pbm"
