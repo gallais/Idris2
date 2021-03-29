@@ -2,6 +2,7 @@ module Graphics.Netpbm
 
 import Data.IOMatrix
 import Data.String
+import Data.Fin
 import Data.Vect
 import System.File
 
@@ -76,5 +77,18 @@ checker k = map MkImage $ fromVect $ magnify 25 $
     cycle Z     l1 l2 = []
     cycle (S n) l1 l2 = l1 :: cycle n l2 l1
 
+export
+diags : Nat -> IO (Image P1)
+diags k = map MkImage $ fromVect $ magnify 25 $ vals
+  where
+
+    vals : Vect k (Vect k Bool)
+    vals = map (\ i => map (\ j => mod (cast i + cast j) 5 == 0) range) range
+
+
+export
+
 test : IO ()
-test = ignore $ writeImage !(checker 12) "test.pbm"
+test = do
+  ignore $ writeImage !(checker 12) "checker.pbm"
+  ignore $ writeImage !(diags 12) "diags.pbm"
