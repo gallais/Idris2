@@ -106,6 +106,12 @@ bound_mod'' (S fuel) numer predDenom enough  = case @@(Data.Nat.lte numer predDe
                                                   (fuelLemma numer predDenom fuel enough numer_gte_n)
 
 export
+boundDivmodNatNZ : (numer, denom : Nat) -> (denom_nz : Not (denom = 0))
+                  -> (snd (divmodNatNZ numer denom denom_nz)) `LT` denom
+boundDivmodNatNZ n Z nz = absurd (nz Refl)
+boundDivmodNatNZ n (S d) nz = LTESucc (bound_mod'' n n d lteRefl)
+
+export
 boundModNatNZ : (numer, denom : Nat) -> (denom_nz : Not (denom = 0))
               -> (modNatNZ numer denom denom_nz) `LT` denom
 boundModNatNZ numer  0            denom_nz = void $ denom_nz Refl
