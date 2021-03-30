@@ -61,8 +61,8 @@ tabulate n f = do
 
 
 {size : Nat} -> {quot : Nat} -> (quotNZ : NonZero quot) =>
-    Array Identity quot arr             Bool =>
-    Array IO       size (ArrayData arr) Bool where
+    Array Identity quot arr             elt =>
+    Array IO       size (ArrayData arr) elt where
 
   init' dflt = let bits : arr = runIdentity (init quot arr dflt) in
                primIO (prim__newArray (cast (divCeilNZ size quot quotNZ)) bits)
@@ -74,7 +74,7 @@ tabulate n f = do
          let ibit  : Subset Nat (`LT` quot)
                    = Element (snd dm) (boundDivmodNatNZ i quot quotNZ)
          bits <- primIO (prim__arrayGet arr iword)
-         pure $ runIdentity $ read {elt = Bool} bits ibit
+         pure $ runIdentity $ read {elt} bits ibit
 
   write arr (Element i ltSize) elt
     = do let dm : (Nat, Nat)
