@@ -60,26 +60,28 @@ tabulate n f = do
       pure $ act arr (Element i bound)
 
 
-{size : Nat} -> Array IO size (ArrayData Bits32) Bool where
+{size : Nat} -> {quot : Nat} -> (quotNZ : NonZero quot) =>
+    Array Identity quot arr             Bool =>
+    Array IO       size (ArrayData arr) Bool where
 
-  init' dflt = let bits : Bits32 = runIdentity (init 32 Bits32 dflt) in
-               primIO (prim__newArray (cast (divCeilNZ size 32 SIsNotZ)) bits)
+  init' dflt = let bits : arr = runIdentity (init quot arr dflt) in
+               primIO (prim__newArray (cast (divCeilNZ size quot quotNZ)) bits)
 
   read arr (Element i ltSize)
     = do let dm : (Nat, Nat)
-             dm = divmodNatNZ i 32 SIsNotZ
+             dm = divmodNatNZ i quot quotNZ
          let iword : Int = cast (fst dm)
-         let ibit  : Subset Nat (`LT` 32)
-                   = Element (snd dm) (boundDivmodNatNZ i 32 SIsNotZ)
+         let ibit  : Subset Nat (`LT` quot)
+                   = Element (snd dm) (boundDivmodNatNZ i quot quotNZ)
          bits <- primIO (prim__arrayGet arr iword)
          pure $ runIdentity $ read {elt = Bool} bits ibit
 
   write arr (Element i ltSize) elt
     = do let dm : (Nat, Nat)
-             dm = divmodNatNZ i 32 SIsNotZ
+             dm = divmodNatNZ i quot quotNZ
          let iword : Int = cast (fst dm)
-         let ibit  : Subset Nat (`LT` 32)
-                   = Element (snd dm) (boundDivmodNatNZ i 32 SIsNotZ)
+         let ibit  : Subset Nat (`LT` quot)
+                   = Element (snd dm) (boundDivmodNatNZ i quot quotNZ)
          bits <- primIO (prim__arrayGet arr iword)
          let bits = runIdentity $ write bits ibit elt
          primIO (prim__arraySet arr iword bits)
