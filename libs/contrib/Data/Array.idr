@@ -1,5 +1,7 @@
 module Data.Array
 
+import Control.Monad.Identity
+
 import Data.Bits
 import Data.DPair
 import Data.Nat
@@ -9,20 +11,20 @@ import Data.Vect
 %default total
 
 public export
-interface Array size arr elt | arr, elt where
-  init' : HasIO io => Maybe elt -> io arr
-  read  : HasIO io => arr -> Subset Nat (`LT` size) -> io elt
-  write : HasIO io => arr -> Subset Nat (`LT` size) -> elt -> io arr
+interface Monad m => Array m size arr elt | arr, elt where
+  init' :  Maybe elt -> m arr
+  read  :  arr -> Subset Nat (`LT` size) -> m elt
+  write :  arr -> Subset Nat (`LT` size) -> elt -> m arr
 
 export
-init : HasIO io => (n : Nat) -> Array n arr elt => Maybe elt -> io arr
-init n = init'
+init : (size : Nat) -> Array m size arr elt => Maybe elt -> m arr
+init size @{p} = init' @{p}
 
 export
-tabulate : HasIO io => (n : Nat) -> Array n arr elt =>
-           (Subset Nat (`LT` n) -> elt) -> io arr
+tabulate : (n : Nat) -> Array m n arr elt =>
+           (Subset Nat (`LT` n) -> elt) -> m arr
 tabulate n f = do
-  vs <- init n (the (Maybe elt) Nothing)
+  vs <- init {arr} {elt} n Nothing
   loop n (\ i, vs => write vs i (f i)) vs
 
   where
@@ -32,11 +34,11 @@ tabulate n f = do
     succ : Subset Nat (`LT` bd) -> Subset Nat (`LT` S bd)
     succ (Element k prf) = Element (S k) (LTESucc prf)
 
-    loop : (n : Nat) -> (Subset Nat (`LT` n) -> arr -> io arr) -> arr -> io arr
+    loop : (n : Nat) -> (Subset Nat (`LT` n) -> arr -> m arr) -> arr -> m arr
     loop Z     act vs = pure vs
     loop (S n) act vs = act zero vs >>= loop n (act . succ)
 
-(lte32 : LTE size 32) => Array size Bits32 Bool where
+(lte32 : LTE size 32) => Array Identity size Bits32 Bool where
   init' (Just True) = pure oneBits
   init' _ = pure zeroBits
 
