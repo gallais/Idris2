@@ -1,6 +1,7 @@
 module TTImp.Elab.Utils
 
 import Core.Context
+import Core.Context.Log
 import Core.Core
 import Core.Env
 import Core.Normalise
@@ -64,6 +65,10 @@ updateErasable n
          Just gdef <- lookupCtxtExact n (gamma defs)
               | Nothing => pure ()
          (es, dtes) <- findErased (type gdef)
+         log "elab.erase" 50 $ "Safe erasable positions for "
+                            ++ show n
+                            ++ ": "
+                            ++ show dtes
          ignore $ addDef n $ record
                     { eraseArgs = es,
                       safeErase = dtes } gdef

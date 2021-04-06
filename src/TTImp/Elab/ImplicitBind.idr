@@ -490,19 +490,22 @@ checkBindHere rig elabinfo nest env fc bindmode tm exp
                                            bindingVars = True }
                                          elabinfo)
                              nest env tm exp
-         solveConstraints (case elabMode elabinfo of
-                                InLHS c => inLHS
-                                _ => inTerm) Normal
-         solveConstraintsAfter constart
-                          (case elabMode elabinfo of
-                                InLHS c => inLHS
-                                _ => inTerm) Defaults
+         log "elab.implicits" 50 "Done checking, start solving"
+         let mode = case elabMode elabinfo of
+                      InLHS c => inLHS
+                      _ => inTerm
+         log "elab.implicits" 50 "First some normal solving"
+         solveConstraints mode Normal
+         log "elab.implicits" 50 "Then solving the defaults in the subterm"
+         solveConstraintsAfter constart mode Defaults
          ust <- get UST
          catch (retryDelayed (delayedElab ust))
                (\err =>
                   do ust <- get UST
                      put UST (record { delayedElab = [] } ust)
                      throw err)
+
+         log "elab.implicits" 50 "Finally check the dotted expressions"
          checkDots -- Check dot patterns unifying with the claimed thing
                    -- before binding names
 

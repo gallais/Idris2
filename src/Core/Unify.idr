@@ -16,6 +16,7 @@ import Libraries.Data.Bool.Extra
 import Libraries.Data.IntMap
 import Data.List
 import Data.List.Views
+import Data.String
 import Libraries.Data.NameMap
 
 %default covering
@@ -605,19 +606,23 @@ solveIfUndefined : {vars : _} ->
 solveIfUndefined env (Meta fc mname idx args) soln
     = do defs <- get Ctxt
          Just (Hole _ _) <- lookupDefExact (Resolved idx) (gamma defs)
-              | _ => pure False
+              | _ => do log "unify" 25 "Not a hole anymore"
+                        pure False
          case !(patternEnvTm env args) of
-              Nothing => pure False
+              Nothing => do log "unify" 25 "Non local solution to the metavariable"
+                            pure False
               Just (newvars ** (locs, submv)) =>
                   case shrinkTerm soln submv of
-                       Nothing => pure False
+                       Nothing => do log "unify" 25 ("Could not shrink solution " ++ show soln)
+                                     pure False
                        Just stm =>
                           do Just hdef <- lookupCtxtExact (Resolved idx) (gamma defs)
                                   | Nothing => throw (InternalError "Can't happen: no definition")
                              instantiate fc inTerm env mname idx (length args) hdef locs soln stm
                              pure True
 solveIfUndefined env metavar soln
-    = pure False
+    = do log "unify" 25 "Not a metavariable: cannot be solved!"
+         pure False
 
 isDefInvertible : {auto c : Ref Ctxt Defs} ->
                   FC -> Int -> Core Bool
@@ -1152,7 +1157,10 @@ mutual
                NF vars -> NF vars ->
                Core UnifyResult
   unifyNoEta mode loc env (NDCon xfc x tagx ax xs) (NDCon yfc y tagy ay ys)
-      = do gam <- get Ctxt
+      = do x <- toFullNames x
+           y <- toFullNames y
+           log "unify" 20 $ "Comparing data constructors " ++ show x ++ " and " ++ show y
+           gam <- get Ctxt
            if tagx == tagy
              then
                   do ust <- get UST
@@ -1627,8 +1635,15 @@ checkDots
                    -- be solved, so everything in the dotted metavariable
                    -- must be complete.
                    cs <- unify inMatch fc env x y
-                   defs <- get Ctxt
 
+                   let err = throw (InternalError "Dot pattern match fail")
+                   when (not (isNil (constraints cs))) $ do
+                     log "unify.constraint" 10 $
+                       "Failed to solve remaining constraints: " ++
+                       unlines (map show (constraints cs))
+                     err
+
+                   defs <- get Ctxt
                    -- If the name standing for the dot wasn't solved
                    -- earlier, but is now (even with another metavariable)
                    -- this is bad (it most likely means there's a non-linear
@@ -1642,12 +1657,20 @@ checkDots
                                            _ => pure True)
                             oldholen
 
+                   when dotSolved $ do
+                     log "unify.constraint" 10 $
+                       "Constraint only satisfiable by solving more holes"
+                     err
+
                    -- If any of the things we solved have the same definition,
                    -- we've sneaked a non-linear pattern variable in
                    argsSame <- checkArgsSame (namesSolved cs)
-                   when (not (isNil (constraints cs))
-                            || dotSolved || argsSame) $
-                      throw (InternalError "Dot pattern match fail"))
+
+                   when argsSame $ do
+                     log "unify.constraint" 10 $
+                       "Constraint led to the creation of a non-linear pattern variable"
+                     err
+               )
                (\err =>
                     case err of
                          InternalError _ =>

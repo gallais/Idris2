@@ -3,6 +3,7 @@ module TTImp.Elab.Term
 import Libraries.Data.StringMap
 
 import Core.Context
+import Core.Context.Log
 import Core.Core
 import Core.Env
 import Core.Metadata
@@ -153,7 +154,8 @@ checkTerm rig elabinfo nest env (ICaseLocal fc uname iname args scope) exp
 checkTerm rig elabinfo nest env (IUpdate fc upds rec) exp
     = checkUpdate rig elabinfo nest env fc upds rec exp
 checkTerm rig elabinfo nest env (IApp fc fn arg) exp
-    = checkApp rig elabinfo nest env fc fn [arg] [] []  exp
+    = do log "elab.term" 50 "Checking App"
+         checkApp rig elabinfo nest env fc fn [arg] [] []  exp
 checkTerm rig elabinfo nest env (IAutoApp fc fn arg) exp
     = checkApp rig elabinfo nest env fc fn [] [arg] []  exp
 checkTerm rig elabinfo nest env (IWithApp fc fn arg) exp
@@ -180,11 +182,14 @@ checkTerm rig elabinfo nest env (IRewrite fc rule tm) exp
 checkTerm rig elabinfo nest env (ICoerced fc tm) exp
     = checkTerm rig elabinfo nest env tm exp
 checkTerm rig elabinfo nest env (IBindHere fc binder sc) exp
-    = checkBindHere rig elabinfo nest env fc binder sc exp
+    = do log "elab.term" 50 "Checking IBindHere"
+         checkBindHere rig elabinfo nest env fc binder sc exp
 checkTerm rig elabinfo nest env (IBindVar fc n) exp
-    = checkBindVar rig elabinfo nest env fc n exp
+    = do log "elab.term" 50 "Checking IBindVar"
+         checkBindVar rig elabinfo nest env fc n exp
 checkTerm rig elabinfo nest env (IAs fc nameFC side n_in tm) exp
-    = checkAs rig elabinfo nest env fc nameFC side n_in tm exp
+    = do log "elab.term" 50 "Checking IAs"
+         checkAs rig elabinfo nest env fc nameFC side n_in tm exp
 checkTerm rig elabinfo nest env (IMustUnify fc reason tm) exp
     = checkDot rig elabinfo nest env fc reason tm exp
 checkTerm rig elabinfo nest env (IDelayed fc r tm) exp
@@ -288,6 +293,7 @@ TTImp.Elab.Check.check rigc elabinfo nest env tm@(IUpdate _ _ _) exp
 TTImp.Elab.Check.check rigc elabinfo nest env tm_in exp
     = do defs <- get Ctxt
          est <- get EST
+         log "elab.term" 30 "Expanding ambiguous names"
          tm <- expandAmbigName (elabMode elabinfo) nest env tm_in [] tm_in exp
          case elabMode elabinfo of
               InLHS _ => -- Don't expand implicit lambda on lhs

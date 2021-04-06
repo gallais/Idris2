@@ -116,7 +116,10 @@ elabTermSub {vars} defining mode opts nest env env' sub tm ty
          e <- newRef EST (initEStateSub defining env' sub)
          let rigc = getRigNeeded mode
 
+         log "elab" 50 $ "Checking " ++ show tm
          (chktm, chkty) <- check {e} rigc (initElabInfo mode) nest env tm ty
+         log "elab" 50 "Done checking"
+
          -- Final retry of constraints and delayed elaborations
          -- - Solve any constraints, then retry any delayed elaborations
          -- - Finally, last attempts at solving constraints, but this
@@ -124,6 +127,7 @@ elabTermSub {vars} defining mode opts nest env env' sub tm ty
          let solvemode = case mode of
                               InLHS _ => inLHS
                               _ => inTerm
+         log "elab" 15 "Final retry of constraints and delayed elaborations"
          solveConstraints solvemode Normal
          logTerm "elab" 5 "Looking for delayed in " chktm
          ust <- get UST
@@ -238,7 +242,8 @@ checkTermSub defining mode opts nest env env' sub tm ty
                                env env' sub tm (Just ty))
                   (\err => case err of
                               TryWithImplicits loc benv ns
-                                 => do put Ctxt defs
+                                 => do log "elab" 30 "Got an error retrying with implicits"
+                                       put Ctxt defs
                                        put UST ust
                                        put MD mv
                                        tm' <- bindImps loc benv ns tm

@@ -288,6 +288,11 @@ processType {vars} eopts nest env fc rig vis opts (MkImpTy tfc nameFC n_in ty_ra
          empty <- clearDefs defs
          infargs <- findInferrable empty !(nf defs [] fullty)
 
+         log "elab.erase" 50 $ "Safe erasable positions for "
+                            ++ show n
+                            ++ ": "
+                            ++ show dterased
+
          ignore $ addDef (Resolved idx)
                 (record { eraseArgs = erased,
                           safeErase = dterased,

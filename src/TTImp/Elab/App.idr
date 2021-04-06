@@ -328,14 +328,18 @@ mutual
               else pure ()
   checkPatTyValid fc defs env _ _ _ = pure ()
 
-  dotErased : {auto c : Ref Ctxt Defs} -> (argty : NF vars) ->
+  dotErased : {vars : _} ->
+              {auto c : Ref Ctxt Defs} -> Env Term vars ->
+              (argty : NF vars) ->
               Maybe Name -> Nat -> ElabMode -> RigCount -> RawImp -> Core RawImp
-  dotErased argty mn argpos (InLHS lrig ) rig tm
+  dotErased env argty mn argpos (InLHS lrig ) rig tm
       = if not (isErased lrig) && isErased rig
           then do
             -- if the argument type aty has a single constructor, there's no need
             -- to dot it
+            logNF "elab.app.dot" 10 "Checking number of constructors for type" env argty
             mconsCount <- countConstructors argty
+            log "elab.app.dot" 10 $ "Got: " ++ show mconsCount
             if mconsCount == Just 1 || mconsCount == Just 0
               then pure tm
               else
@@ -344,6 +348,10 @@ mutual
                 do defs <- get Ctxt
                    Just gdef <- maybe (pure Nothing) (\n => lookupCtxtExact n (gamma defs)) mn
                         | Nothing => pure (dotTerm tm)
+                   log "elab.erase.app" 10 $
+                     "Checking arg position " ++ show argpos
+                     ++ " against list of safe erasable positions "
+                     ++ show (safeErase gdef)
                    if argpos `elem` safeErase gdef
                       then pure tm
                       else pure $ dotTerm tm
@@ -372,7 +380,7 @@ mutual
                  IAs _ _ _ _ (Implicit _ _) => tm
                  IAs fc nameFC p t arg => IAs fc nameFC p t (IMustUnify fc ErasedArg tm)
                  _ => IMustUnify (getFC tm) ErasedArg tm
-  dotErased _ _ _ _ _ tm = pure tm
+  dotErased _ _ _ _ _ _ tm = pure tm
 
   -- Check the rest of an application given the argument type and the
   -- raw argument. We choose elaboration order depending on whether we know
@@ -400,7 +408,7 @@ mutual
   checkRestApp rig argRig elabinfo nest env fc tm x aty sc
                (n, argpos) arg_in expargs autoargs namedargs knownret expty
      = do defs <- get Ctxt
-          arg <- dotErased aty n argpos (elabMode elabinfo) argRig arg_in
+          arg <- dotErased env aty n argpos (elabMode elabinfo) argRig arg_in
           kr <- if knownret
                    then pure True
                    else do sc' <- sc defs (toClosure defaultOpts env (Erased fc False))
@@ -411,14 +419,14 @@ mutual
              metaty <- quote empty env aty
              (idx, metaval) <- argVar (getFC arg) argRig env nm metaty
              let fntm = App fc tm metaval
-             logNF "elab" 10 ("Delaying " ++ show nm ++ " " ++ show arg) env aty
-             logTerm "elab" 10 "...as" metaval
+             logNF "elab.app.rest" 10 ("Delaying " ++ show nm ++ " " ++ show arg) env aty
+             logTerm "elab.app.rest" 10 "...as" metaval
              fnty <- sc defs (toClosure defaultOpts env metaval)
              (tm, gty) <- checkAppWith rig elabinfo nest env fc
                                        fntm fnty (n, 1 + argpos) expargs autoargs namedargs kr expty
              defs <- get Ctxt
              aty' <- nf defs env metaty
-             logNF "elab" 10 ("Now trying " ++ show nm ++ " " ++ show arg) env aty'
+             logNF "elab.app.rest" 10 ("Now trying " ++ show nm ++ " " ++ show arg) env aty'
              (argv, argt) <- check argRig elabinfo
                                    nest env arg (Just (glueBack defs env aty'))
              when (onLHS (elabMode elabinfo)) $
@@ -428,37 +436,41 @@ mutual
              -- *may* have as patterns in it and we need to retain them.
              -- (As patterns are a bit of a hack but I don't yet see a
              -- better way that leads to good code...)
-             logTerm "elab" 5 ("Solving " ++ show metaval ++ " with") argv
+             logTerm "elab.app.rest" 5 ("Solving " ++ show metaval ++ " with") argv
              ok <- solveIfUndefined env metaval argv
              -- If there's a constraint, make a constant, but otherwise
              -- just return the term as expected
              tm <- if not ok
-                      then do res <- convert fc elabinfo env (gnf env metaval)
+                      then do log "elab.app.rest" 20 "Solving failed"
+                              res <- convert fc elabinfo env (gnf env metaval)
                                                  (gnf env argv)
                               let [] = constraints res
                                   | cs => do tmty <- getTerm gty
                                              newConstant fc rig env tm tmty cs
                               pure tm
                       else pure tm
-             case elabMode elabinfo of
-                  InLHS _ => -- reset hole and redo it with the unexpanded definition
-                     do updateDef (Resolved idx) (const (Just (Hole 0 (holeInit False))))
-                        ignore $ solveIfUndefined env metaval argv
-                  _ => pure ()
+             when (isJust (isLHS (elabMode elabinfo))) $
+               -- reset hole and redo it with the unexpanded definition
+               do log "elab.app.rest" 30 "In LHS: redo hole with unexpanded definition"
+                  updateDef (Resolved idx) (const (Just (Hole 0 (holeInit False))))
+                  ok <- solveIfUndefined env metaval argv
+                  log "elab.app.rest" 20 $
+                    if ok then "Solving worked" else "Solving failed"
+
              removeHole idx
              pure (tm, gty)
            else do
-             logNF "elab" 10 ("Argument type " ++ show x) env aty
-             logNF "elab" 10 ("Full function type") env
+             logNF "elab.app.rest" 10 ("Argument type " ++ show x) env aty
+             logNF "elab.app.rest" 10 ("Full function type") env
                       (NBind fc x (Pi fc argRig Explicit aty) sc)
-             logC "elab" 10
+             logC "elab.app.rest" 10
                      (do ety <- maybe (pure Nothing)
                                      (\t => pure (Just !(toFullNames!(getTerm t))))
                                      expty
                          pure ("Overall expected type: " ++ show ety))
              (argv, argt) <- check argRig elabinfo
                                    nest env arg (Just (glueBack defs env aty))
-             logGlueNF "elab" 10 "Got arg type" env argt
+             logGlueNF "elab.app.rest" 10 "Got arg type" env argt
              defs <- get Ctxt
              let fntm = App fc tm argv
              fnty <- sc defs (toClosure defaultOpts env argv)
@@ -613,7 +625,7 @@ mutual
                                           x arg aty sc argdata expargs autoargs namedargs kr expty
                Just ((_, arg), namedargs') =>
                      checkRestApp rig argRig elabinfo nest env fc
-                                  tm x aty sc argdata arg expargs autoargs namedargs' kr expty
+                                 tm x aty sc argdata arg expargs autoargs namedargs' kr expty
   -- Invent a function type if we have extra explicit arguments but type is further unknown
   checkAppWith' {vars} rig elabinfo nest env fc tm ty (n, argpos) (arg :: expargs) autoargs namedargs kr expty
       = -- Invent a function type,  and hope that we'll know enough to solve it
@@ -673,17 +685,20 @@ mutual
                  Core (Term vars, Glued vars)
   checkAppWith rig info nest env fc tm ty
     argdata expargs autoargs namedargs knownret expected
-    = do res <- checkAppWith' rig info nest env fc tm ty
+    = do log "elab.app" 50 $ "Entering checkAppWith for " ++ show !(toFullNames tm)
+         res <- checkAppWith' rig info nest env fc tm ty
                    argdata expargs autoargs namedargs knownret expected
+         log "elab.app" 50 $ "checkAppWith successfull for " ++ show !(toFullNames tm)
          let Just _ = isLHS (elabMode info)
                | Nothing => pure res
-         let (Ref _ t _, args) = getFnArgs (fst res)
+         let (Ref _ t nm, args) = getFnArgs (fst res)
                | _ => pure res
          let Just (_, a) = isCon t
                | _ => pure res
          if a == length args
            then pure res
-           else registerDot rig env fc UnderAppliedCon (fst res) (snd res)
+           else do log "elab.app" 20 $ "Found an under-applied constructor!" ++ show nm
+                   registerDot rig env fc UnderAppliedCon (fst res) (snd res)
 
 export
 checkApp : {vars : _} ->
@@ -711,7 +726,7 @@ checkApp rig elabinfo nest env fc (IVar fc' n) expargs autoargs namedargs exp
         prims <- getPrimitiveNames
         elabinfo <- updateElabInfo prims (elabMode elabinfo) n expargs elabinfo
 
-        logC "elab" 10
+        logC "elab.app" 10
                 (do defs <- get Ctxt
                     fnty <- quote defs env nty
                     exptyt <- maybe (pure Nothing)
@@ -727,8 +742,11 @@ checkApp rig elabinfo nest env fc (IVar fc' n) expargs autoargs namedargs exp
         let fn = case lookup n (names nest) of
                       Just (Just n', _) => n'
                       _ => n
-        normalisePrims prims env
-           !(checkAppWith rig elabinfo nest env fc ntm nty (Just fn, arglen) expargs autoargs namedargs False exp)
+        res <- checkAppWith rig elabinfo nest env fc ntm nty (Just fn, arglen) expargs autoargs namedargs False exp
+        log "elab.app" 50 $ "Normalising primitives for " ++ show (fst res)
+        res <- normalisePrims prims env res
+        log "elab.app" 50 $ "Done normalising"
+        pure res
   where
 
     -- If the term is an application of a primitive conversion (fromInteger etc)
