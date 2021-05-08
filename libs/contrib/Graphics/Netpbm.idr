@@ -106,9 +106,9 @@ toASCII (MkImage cnt)
 
     image : IO (List String)
     image =
-      for [0..(w-1)] $ \ i =>
+      for [0..(h-1)] $ \ j =>
         map unwords $
-        for [0..(h-1)] $ \ j =>
+        for [0..(w-1)] $ \ i =>
           do val <- read cnt i j
              pure $ Pixel.toString (fromMaybe defaultPixel val)
 
@@ -155,7 +155,7 @@ diags k = fromVect $ magnify 50 50 $ vals
 
 export
 lines : Nat -> IO (Image P2)
-lines n = fromVect $ magnify 70 500 $ map init range where
+lines n = fromVect $ magnify 700 50 $ [map init range] where
 
   maxVal : Pixel P2
   maxVal = oneBits
@@ -163,22 +163,21 @@ lines n = fromVect $ magnify 70 500 $ map init range where
   step : Nat
   step = div (integerToNat (cast maxVal)) (pred n)
 
-  init : Subset Nat (`LT` n) -> Vect 1 Bits16
-  init i = [cast (natToInteger (fst i * step))]
+  init : Subset Nat (`LT` n) -> Bits16
+  init i = cast (natToInteger (fst i * step))
 
 export
 lgbt : IO (Image P3)
-lgbt = fromVect $ magnify 115 500 $ map (\ p => [p])
-  [ MkRGB 255 0   24
+lgbt = fromVect $ magnify 500 70
+  [[ MkRGB 255 0   24
    , MkRGB 255 165 44
    , MkRGB 255 255 65
    , MkRGB 0   128 24
    , MkRGB 0   0   249
    , MkRGB 134 0   125
-  ]
+  ]]
 
 export
-
 test : IO ()
 test = do
   ignore $ writeImage !(checker 12) "checker"
