@@ -14,35 +14,54 @@ import System.File
 
 public export
 data Format
-  = P1 -- | P4
-  | P2 -- | P5
+--  ASCII | Binary
+  = P1 -- | P4 -- Black and white
+  | P2 -- | P5 -- Grayscale
+  | P3 -- | P6 -- RGB
 
 export
 extension : Format -> String
 extension P1 = "pbm"
 extension P2 = "pgm"
+extension P3 = "ppm"
 
 export
 Show Format where
   show P1 = "P1"
   show P2 = "P2"
+  show P3 = "P3"
+
+Cast Bits16 Nat where
+  cast = believe_me . the Integer . cast
 
 namespace Pixel
 
   public export
+  record RGB where
+    constructor MkRGB
+    red   : Bits8
+    green : Bits8
+    blue  : Bits8
+
+  public export
   Pixel : Format -> Type
   Pixel P1 = Bool
-  -- Pixel P4 = Bool
   Pixel P2 = Bits16
+  Pixel P3 = RGB
 
   export
-  toNat : (fmt : Format) -> Maybe (Pixel fmt) -> Nat
+  toString : {fmt : Format} -> Pixel fmt -> String
+  toString p = case fmt of
+    P1 => if p then show 1 else show 0
+    P2 => show p
+    P3 => unwords $ map show [ p.red, p.green, p.blue ]
 
-  toNat P1 (Just True) = 1
-  toNat P1 _           = 0
-
-  toNat P2 (Just n)    = integerToNat (cast n)
-  toNat P2 _           = 0
+  export
+  defaultPixel : {fmt : Format} -> Pixel fmt
+  defaultPixel = case fmt of
+    P1 => False
+    P2 => 0
+    P3 => MkRGB 0 0 0
 
 namespace Image
 
@@ -63,8 +82,8 @@ export
 height : Image fmt -> Nat
 height = integerToNat . cast . height . content
 
-toASCII : {fmt : Format} -> (Maybe (Pixel fmt) -> Nat) -> Image fmt -> IO String
-toASCII toNat (MkImage cnt)
+toASCII : {fmt : Format} -> Image fmt -> IO String
+toASCII (MkImage cnt)
   = do img <- image
        pure $ unlines $ header ++ maxVal ++ img
 
@@ -82,19 +101,21 @@ toASCII toNat (MkImage cnt)
     maxVal : List String
     maxVal = case fmt of
       P1 => []
-      P2 => [show (the (Pixel P2) oneBits)]
+      P2 => [show (the Bits16 oneBits)]
+      P3 => [show (the Bits8  oneBits)]
 
     image : IO (List String)
     image =
       for [0..(w-1)] $ \ i =>
-        map unwords $ for [0..(h-1)] $ \ j =>
+        map unwords $
+        for [0..(h-1)] $ \ j =>
           do val <- read cnt i j
-             pure $ show (toNat val)
+             pure $ Pixel.toString (fromMaybe defaultPixel val)
 
 export
 writeImage : {fmt : _} -> Image fmt -> String -> IO (Either FileError ())
 writeImage img fp = do
-  str <- toASCII (toNat _) img
+  str <- toASCII img
   writeFile (fp ++ "." ++ extension fmt) str
 
 export
@@ -134,7 +155,7 @@ diags k = fromVect $ magnify 50 50 $ vals
 
 export
 lines : Nat -> IO (Image P2)
-lines n = fromVect $ magnify 50 700 $ map init range where
+lines n = fromVect $ magnify 70 500 $ map init range where
 
   maxVal : Pixel P2
   maxVal = oneBits
@@ -146,9 +167,21 @@ lines n = fromVect $ magnify 50 700 $ map init range where
   init i = [cast (natToInteger (fst i * step))]
 
 export
+lgbt : IO (Image P3)
+lgbt = fromVect $ magnify 115 500 $ map (\ p => [p])
+  [ MkRGB 255 0   24
+   , MkRGB 255 165 44
+   , MkRGB 255 255 65
+   , MkRGB 0   128 24
+   , MkRGB 0   0   249
+   , MkRGB 134 0   125
+  ]
+
+export
 
 test : IO ()
 test = do
   ignore $ writeImage !(checker 12) "checker"
-  ignore $ writeImage !(diags 12) "diags"
-  ignore $ writeImage !(lines 10) "lines"
+  ignore $ writeImage !(diags 12)   "diags"
+  ignore $ writeImage !(lines 10)   "lines"
+  ignore $ writeImage !lgbt         "lgbt"
