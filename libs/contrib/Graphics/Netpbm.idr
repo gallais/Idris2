@@ -3,8 +3,6 @@ module Graphics.Netpbm
 import Data.Bits
 import Data.DPair
 import Data.IOMatrix
-import Data.Fin
-import Data.Nat
 import Data.String
 import Data.Vect
 
