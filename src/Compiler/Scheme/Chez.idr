@@ -30,19 +30,12 @@ import System.Info
 
 %default covering
 
-pathLookup : IO String
-pathLookup
-    = do path <- idrisGetEnv "PATH"
-         let pathList = forget $ split (== pathSeparator) $ fromMaybe "/usr/bin:/usr/local/bin" path
-         let candidates = [p ++ "/" ++ x | p <- pathList,
-                                           x <- ["chez", "chezscheme9.5", "scheme", "scheme.exe"]]
-         e <- firstExists candidates
-         pure $ fromMaybe "/usr/bin/env scheme" e
-
 findChez : IO String
 findChez
-    = do Just chez <- idrisGetEnv "CHEZ" | Nothing => pathLookup
-         pure chez
+    = do Nothing <- idrisGetEnv "CHEZ"
+            | Just chez => pure chez
+         path <- pathLookup ["chez", "chezscheme9.5", "scheme"]
+         pure $ fromMaybe "/usr/bin/env scheme" path
 
 -- Given the chez compiler directives, return a list of pairs of:
 --   - the library file name
@@ -85,8 +78,12 @@ schHeader chez libs
     showSep "\n" (map (\x => "(load-shared-object \"" ++ escapeString x ++ "\")") libs) ++ "\n\n" ++
     "(let ()\n"
 
-schFooter : String
-schFooter = "(collect 4)\n(blodwen-run-finalisers))\n"
+schFooter : Bool -> String
+schFooter prof
+    = "(collect 4)\n(blodwen-run-finalisers)\n" ++
+      if prof
+         then "(profile-dump-html))\n"
+         else ")\n"
 
 showChezChar : Char -> String -> String
 showChezChar '\\' = ("\\\\" ++)
@@ -342,18 +339,26 @@ startChez : String -> String -> String
 startChez appdir target = unlines
     [ "#!/bin/sh"
     , ""
-    , "case `uname -s` in            "
-    , "    OpenBSD|FreeBSD|NetBSD)   "
-    , "        DIR=\"`grealpath $0`\""
-    , "        ;;                    "
-    , "                              "
-    , "    *)                        "
-    , "        DIR=\"`realpath $0`\" "
-    , "        ;;                    "
-    , "esac                          "
+    , "set -e # exit on any error"
     , ""
-    , "export LD_LIBRARY_PATH=\"`dirname \"$DIR\"`/\"" ++ appdir ++ "\":$LD_LIBRARY_PATH\""
-    , "\"`dirname \"$DIR\"`\"/\"" ++ target ++ "\" \"$@\""
+    , "case $(uname -s) in            "
+    , "    OpenBSD | FreeBSD | NetBSD)"
+    , "        REALPATH=\"grealpath\" "
+    , "        ;;                     "
+    , "                               "
+    , "    *)                         "
+    , "        REALPATH=\"realpath\"  "
+    , "        ;;                     "
+    , "esac                           "
+    , ""
+    , "if ! command -v \"$REALPATH\" >/dev/null; then             "
+    , "    echo \"$REALPATH is required for Chez code generator.\""
+    , "    exit 1                                                 "
+    , "fi                                                         "
+    , ""
+    , "DIR=$(dirname \"$($REALPATH \"$0\")\")"
+    , "export LD_LIBRARY_PATH=\"$DIR/" ++ appdir ++ "\":$LD_LIBRARY_PATH"
+    , "\"$DIR/" ++ target ++ "\" \"$@\""
     ]
 
 startChezCmd : String -> String -> String -> String
@@ -367,16 +372,19 @@ startChezCmd chez appdir target = unlines
 startChezWinSh : String -> String -> String -> String
 startChezWinSh chez appdir target = unlines
     [ "#!/bin/sh"
-    , "DIR=\"`realpath \"$0\"`\""
+    , ""
+    , "set -e # exit on any error"
+    , ""
+    , "DIR=$(dirname \"$(realpath \"$0\")\")"
     , "CHEZ=$(cygpath \"" ++ chez ++"\")"
-    , "export PATH=\"`dirname \"$DIR\"`/\"" ++ appdir ++ "\":$PATH\""
-    , "\"$CHEZ\" --script \"$(dirname \"$DIR\")/" ++ target ++ "\" \"$@\""
+    , "export PATH=\"$DIR/" ++ appdir ++ "\":$PATH"
+    , "\"$CHEZ\" --script \"$DIR/" ++ target ++ "\" \"$@\""
     ]
 
 ||| Compile a TT expression to Chez Scheme
 compileToSS : Ref Ctxt Defs ->
-              String -> ClosedTerm -> (outfile : String) -> Core ()
-compileToSS c appdir tm outfile
+              Bool -> String -> ClosedTerm -> (outfile : String) -> Core ()
+compileToSS c prof appdir tm outfile
     = do ds <- getDirectives Chez
          libs <- findLibs ds
          traverse_ copyLib libs
@@ -398,7 +406,7 @@ compileToSS c appdir tm outfile
                    support ++ extraRuntime ++ code ++
                    concat (map fst fgndefs) ++
                    "(collect-request-handler (lambda () (collect) (blodwen-run-finalisers)))\n" ++
-                   main ++ schFooter
+                   main ++ schFooter prof
          Right () <- coreLift $ writeFile outfile scm
             | Left err => throw (FileErr outfile err)
          coreLift_ $ chmodRaw outfile 0o755
@@ -406,10 +414,13 @@ compileToSS c appdir tm outfile
 
 ||| Compile a Chez Scheme source file to an executable, daringly with runtime checks off.
 compileToSO : {auto c : Ref Ctxt Defs} ->
-              String -> (appDirRel : String) -> (outSsAbs : String) -> Core ()
-compileToSO chez appDirRel outSsAbs
+              Bool -> String -> (appDirRel : String) -> (outSsAbs : String) -> Core ()
+compileToSO prof chez appDirRel outSsAbs
     = do let tmpFileAbs = appDirRel </> "compileChez"
-         let build = "(parameterize ([optimize-level 3] [compile-file-message #f]) (compile-program " ++
+         let build = "(parameterize ([optimize-level 3] "
+                     ++ (if prof then "[compile-profile #t] "
+                                else "") ++
+                     "[compile-file-message #f]) (compile-program " ++
                     show outSsAbs ++ "))"
          Right () <- coreLift $ writeFile tmpFileAbs build
             | Left err => throw (FileErr tmpFileAbs err)
@@ -447,8 +458,9 @@ compileExpr makeitso c tmpDir outputDir tm outfile
          let outSsAbs = cwd </> outputDir </> outSsFile
          let outSoAbs = cwd </> outputDir </> outSoFile
          chez <- coreLift $ findChez
-         compileToSS c appDirGen tm outSsAbs
-         logTime "Make SO" $ when makeitso $ compileToSO chez appDirGen outSsAbs
+         let prof = profile !getSession
+         compileToSS c (makeitso && prof) appDirGen tm outSsAbs
+         logTime "++ Make SO" $ when makeitso $ compileToSO prof chez appDirGen outSsAbs
          let outShRel = outputDir </> outfile
          if isWindows
             then makeShWindows chez outShRel appDirRel (if makeitso then outSoFile else outSsFile)

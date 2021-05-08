@@ -44,7 +44,7 @@ read mat i j = case toPosition mat i j of
 export
 fromVect : HasIO io => {m, n : Nat} -> Vect m (Vect n a) -> io (IOMatrix a)
 fromVect ass = do
-  mat <- new (cast n) (cast m)
+  mat <- new (cast m) (cast n)
   populate mat
   pure mat
 
@@ -56,8 +56,11 @@ fromVect ass = do
 
       writeRow : Int -> Int -> Vect w a -> io ()
       writeRow i j [] = pure ()
-      writeRow i j (a :: as) = do ignore (write mat i j a)
-                                  writeRow i (j+1) as
+      writeRow i j (a :: as)
+        = do b <- write mat i j a
+             when (not b) $ assert_total $
+               idris_crash $ "INTERNAL ERROR: Invalid position " ++ show (i,j)
+             writeRow i (j+1) as
 
       writeAll : Int -> Vect h (Vect w a) -> io ()
       writeAll i [] = pure ()

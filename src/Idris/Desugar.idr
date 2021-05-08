@@ -9,6 +9,8 @@ import Core.Options
 import Core.TT
 import Core.Unify
 
+import Data.Maybe
+
 import Libraries.Data.List.Extra
 import Libraries.Data.StringMap
 import Libraries.Data.String.Extra
@@ -578,11 +580,33 @@ mutual
       = do l' <- desugarTree side ps l
            r' <- desugarTree side ps r
            pure (IApp loc (IApp loc (IVar loc op) l') r')
+
   -- negation is a special case, since we can't have an operator with
   -- two meanings otherwise
+  --
+  -- Note: In case of negated signed integer literals, we apply the
+  -- negation directly. Otherwise, the literal might be
+  -- truncated to 0 before being passed on to `negate`.
+  desugarTree side ps (Pre loc (UN "-") $ Leaf $ PPrimVal fc c)
+    = let newFC    = fromMaybe EmptyFC (mergeFC loc fc)
+          continue = desugarTree side ps . Leaf . PPrimVal newFC
+       in case c of
+            I   x => continue $ I (-x)
+            I8  x => continue $ I8 (-x)
+            I16 x => continue $ I16 (-x)
+            I32 x => continue $ I32 (-x)
+            I64 x => continue $ I64 (-x)
+            BI  x => continue $ BI (-x)
+
+            -- not a signed integer literal. proceed by desugaring
+            -- and applying to `negate`.
+            _     => do arg' <- desugarTree side ps (Leaf $ PPrimVal fc c)
+                        pure (IApp loc (IVar loc (UN "negate")) arg')
+
   desugarTree side ps (Pre loc (UN "-") arg)
-      = do arg' <- desugarTree side ps arg
-           pure (IApp loc (IVar loc (UN "negate")) arg')
+    = do arg' <- desugarTree side ps arg
+         pure (IApp loc (IVar loc (UN "negate")) arg')
+
   desugarTree side ps (Pre loc op arg)
       = do arg' <- desugarTree side ps arg
            pure (IApp loc (IVar loc op) arg')
@@ -783,16 +807,17 @@ mutual
       = pure [IData fc vis !(desugarData ps doc ddecl)]
   desugarDecl ps (PParameters fc params pds)
       = do pds' <- traverse (desugarDecl (ps ++ map fst params)) pds
-           params' <- traverse (\ ntm => do tm' <- desugar AnyExpr ps (snd ntm)
-                                            pure (fst ntm, tm')) params
+           params' <- traverse (\(n, rig, i, ntm) => do tm' <- desugar AnyExpr ps ntm
+                                                        i' <- traverse (desugar AnyExpr ps) i
+                                                        pure (n, rig, i', tm')) params
            -- Look for implicitly bindable names in the parameters
            let pnames = ifThenElse !isUnboundImplicits
                           (concatMap (findBindableNames True
                                          (ps ++ map Builtin.fst params) [])
-                                       (map Builtin.snd params'))
+                                       (map (Builtin.snd . Builtin.snd . Builtin.snd) params'))
                           []
-           let paramsb = map (\ ntm => (Builtin.fst ntm,
-                                        doBind pnames (Builtin.snd ntm))) params'
+           let paramsb = map (\(n, rig, info, tm) =>
+                                 (n, rig, info, doBind pnames tm)) params'
            pure [IParameters fc paramsb (concat pds')]
   desugarDecl ps (PUsing fc uimpls uds)
       = do syn <- get Syn
@@ -935,12 +960,7 @@ mutual
       mkConName n = DN (show n) (MN ("__mk" ++ show n) 0)
 
       mapDesugarPiInfo : List Name -> PiInfo PTerm -> Core (PiInfo RawImp)
-      mapDesugarPiInfo ps Implicit         = pure   Implicit
-      mapDesugarPiInfo ps Explicit         = pure   Explicit
-      mapDesugarPiInfo ps AutoImplicit     = pure   AutoImplicit
-      mapDesugarPiInfo ps (DefImplicit tm) = pure $ DefImplicit
-                                                  !(desugar AnyExpr ps tm)
-
+      mapDesugarPiInfo ps = traverse (desugar AnyExpr ps)
 
   desugarDecl ps (PFixity fc Prefix prec (UN n))
       = do syn <- get Syn
@@ -957,7 +977,8 @@ mutual
            mds' <- traverse (desugarDecl ps) mds
            pure (concat mds')
   desugarDecl ps (PNamespace fc ns decls)
-      = do ds <- traverse (desugarDecl ps) decls
+      = withExtendedNS ns $ do
+           ds <- traverse (desugarDecl ps) decls
            pure [INamespace fc ns (concat ds)]
   desugarDecl ps (PTransform fc n lhs rhs)
       = do (bound, blhs) <- bindNames False !(desugar LHS ps lhs)
@@ -978,6 +999,7 @@ mutual
                pure [IPragma [] (\nest, env => setPrefixRecordProjections b)]
              AmbigDepth n => pure [IPragma [] (\nest, env => setAmbigLimit n)]
              AutoImplicitDepth n => pure [IPragma [] (\nest, env => setAutoImplicitLimit n)]
+             NFMetavarThreshold n => pure [IPragma [] (\nest, env => setNFThreshold n)]
              PairNames ty f s => pure [IPragma [] (\nest, env => setPair fc ty f s)]
              RewriteName eq rw => pure [IPragma [] (\nest, env => setRewrite fc eq rw)]
              PrimInteger n => pure [IPragma [] (\nest, env => setFromInteger n)]
@@ -990,6 +1012,7 @@ mutual
              Overloadable n => pure [IPragma [] (\nest, env => setNameFlag fc n Overloadable)]
              Extension e => pure [IPragma [] (\nest, env => setExtension e)]
              DefaultTotality tot => pure [IPragma [] (\_, _ => setDefaultTotalityOption tot)]
+  desugarDecl ps (PBuiltin fc type name) = pure [IBuiltin fc type name]
 
   export
   desugar : {auto s : Ref Syn SyntaxInfo} ->

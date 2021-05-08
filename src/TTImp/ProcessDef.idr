@@ -823,7 +823,7 @@ processDef opts nest env fc n_in cs_in
     = do n <- inCurrentNS n_in
          defs <- get Ctxt
          Just gdef <- lookupCtxtExact n (gamma defs)
-              | Nothing => throw (NoDeclaration fc n)
+              | Nothing => noDeclaration fc n
          let None = definition gdef
               | _ => throw (AlreadyDefined fc n)
          let ty = type gdef
@@ -880,7 +880,7 @@ processDef opts nest env fc n_in cs_in
 
          md <- get MD -- don't need the metadata collected on the coverage check
 
-         cov <- checkCoverage nidx ty mult cs
+         cov <- logTime ("+++ Checking Coverage " ++ show n) $ checkCoverage nidx ty mult cs
          setCovering fc n cov
          put MD md
 

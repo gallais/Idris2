@@ -104,6 +104,18 @@ Bifunctor Pair where
 
 %inline
 public export
+Bifoldable Pair where
+  bifoldr f g acc (x, y) = f x (g y acc)
+  bifoldl f g acc (x, y) = g (f acc x) y
+  binull _ = False
+
+%inline
+public export
+Bitraversable Pair where
+  bitraverse f g (a,b) = [| (,) (f a) (g b) |]
+
+%inline
+public export
 Functor (Pair a) where
   map = mapSnd
 
@@ -274,6 +286,23 @@ Bifunctor Either where
 
 %inline
 public export
+Bifoldable Either where
+  bifoldr f _ acc (Left a)  = f a acc
+  bifoldr _ g acc (Right b) = g b acc
+
+  bifoldl f _ acc (Left a)  = f acc a
+  bifoldl _ g acc (Right b) = g acc b
+
+  binull _ = False
+
+%inline
+public export
+Bitraversable Either where
+  bitraverse f _ (Left a)  = Left <$> f a
+  bitraverse _ g (Right b) = Right <$> g b
+
+%inline
+public export
 Applicative (Either e) where
   pure = Right
 
@@ -383,11 +412,31 @@ Traversable List where
   traverse f [] = pure []
   traverse f (x::xs) = pure (::) <*> (f x) <*> (traverse f xs)
 
+-- This works quickly because when string-concat builds the result, it allocates
+-- enough room in advance so there's only one allocation, rather than lots!
+--
+-- Like fastUnpack, this function won't reduce at compile time.
+-- If you need to concatenate strings at compile time, use Prelude.concat.
+%foreign
+  "scheme:string-concat"
+  "javascript:lambda:(xs)=>''.concat(...__prim_idris2js_array(xs))"
+export
+fastConcat : List String -> String
+
+%transform "fastConcat" concat {t = List} {a = String} = fastConcat
+
 ||| Check if something is a member of a list using the default Boolean equality.
 public export
 elem : Eq a => a -> List a -> Bool
 x `elem` [] = False
 x `elem` (y :: ys) = x == y ||  elem x ys
+
+||| Lookup a value at a given position
+export
+getAt : Nat -> List a -> Maybe a
+getAt Z     (x :: xs) = Just x
+getAt (S k) (x :: xs) = getAt k xs
+getAt _     []        = Nothing
 
 -------------
 -- STREAMS --
@@ -501,6 +550,9 @@ pack (x :: xs) = strCons x (pack xs)
 export
 fastPack : List Char -> String
 
+-- always use 'fastPack' at run time
+%transform "fastPack" pack = fastPack
+
 ||| Turns a string into a list of characters.
 |||
 ||| ```idris example
@@ -515,6 +567,17 @@ unpack str = unpack' (prim__cast_IntegerInt (natToInteger (length str)) - 1) str
         = if pos < 0
              then acc
              else assert_total $ unpack' (pos - 1) str (assert_total (prim__strIndex str pos)::acc)
+
+-- This function runs fast when compiled but won't compute at compile time.
+-- If you need to unpack strings at compile time, use Prelude.unpack.
+%foreign
+  "scheme:string-unpack"
+  "javascript:lambda:(str)=>__prim_js2idris_array(Array.from(str))"
+export
+fastUnpack : String -> List Char
+
+-- always use 'fastPack' at run time
+%transform "fastUnpack" unpack = fastUnpack
 
 public export
 Semigroup String where

@@ -48,6 +48,12 @@ This will compile the expression ``Main.main``, generating an executable
 ``hello`` (with an extension depending on the code generator) in the
 ``build/exec`` directory.
 
+If the backend supports it, you can generate profiling data by setting
+the ``profile`` flag, either by starting Idris with ``--profile``, or
+running ``:set profile`` at the REPL. The profile data generated will depend
+on the back end you are using. Currently, the Chez and Racket back ends
+support generating profile data.
+
 There are five code generators provided in Idris 2, and (later) there will be
 a system for plugging in new code generators for a variety of targets. The
 default is to compile via Chez Scheme, with an alternative via Racket or Gambit.
@@ -63,6 +69,7 @@ or via the `IDRIS2_CG` environment variable.
    javascript
    refc
    custom
+   backend-cookbook
 
 There are also external code generators that aren't part of the main Idris 2
 repository and can be found on Idris 2 wiki:

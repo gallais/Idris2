@@ -25,12 +25,12 @@ mutual
   chk env (Ref fc nt n)
       = do defs <- get Ctxt
            Just ty <- lookupTyExact n (gamma defs)
-               | Nothing => throw (UndefinedName fc n)
+               | Nothing => undefinedName fc n
            pure $ gnf env (embed ty)
   chk env (Meta fc n i args)
       = do defs <- get Ctxt
            Just mty <- lookupTyExact (Resolved i) (gamma defs)
-               | Nothing => throw (UndefinedName fc n)
+               | Nothing => undefinedName fc n
            chkMeta fc env !(nf defs env (embed mty)) args
   chk env (Bind fc nm b sc)
       = do bt <- chkBinder env b
@@ -102,6 +102,10 @@ mutual
 
   chkConstant : FC -> Constant -> Term vars
   chkConstant fc (I x) = PrimVal fc IntType
+  chkConstant fc (I8 x) = PrimVal fc Int8Type
+  chkConstant fc (I16 x) = PrimVal fc Int16Type
+  chkConstant fc (I32 x) = PrimVal fc Int32Type
+  chkConstant fc (I64 x) = PrimVal fc Int64Type
   chkConstant fc (BI x) = PrimVal fc IntegerType
   chkConstant fc (B8 x) = PrimVal fc Bits8Type
   chkConstant fc (B16 x) = PrimVal fc Bits16Type

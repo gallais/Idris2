@@ -109,7 +109,6 @@ boundDivmodNatNZ : (numer, denom : Nat) -> (0 denom_nz : NonZero denom)
                   -> (snd (divmodNatNZ numer denom denom_nz)) `LT` denom
 boundDivmodNatNZ n (S d) nz = LTESucc (bound_mod'' n n d lteRefl)
 
-export
 boundModNatNZ : (numer, denom : Nat) -> (0 denom_nz : NonZero denom)
               -> (modNatNZ numer denom denom_nz) `LT` denom
 boundModNatNZ numer (S predDenom) denom_nz = LTESucc $

@@ -1,5 +1,6 @@
 module Compiler.ES.ES
 
+import Compiler.Common
 import Compiler.ES.Imperative
 import Libraries.Utils.Hex
 import Data.List1
@@ -137,15 +138,18 @@ toBigInt e = "BigInt(" ++ e ++ ")"
 fromBigInt : String -> String
 fromBigInt e = "Number(" ++ e ++ ")"
 
+jsIntegerOfChar : String -> String
+jsIntegerOfChar s = toBigInt (s++ ".codePointAt(0)")
+
+jsIntegerOfDouble : String -> String
+jsIntegerOfDouble s = toBigInt $ "Math.trunc(" ++ s ++ ")"
+
+jsAnyToString : String -> String
+jsAnyToString s = "(''+" ++ s ++ ")"
+
 
 makeIntBound : {auto c : Ref ESs ESSt} -> Int -> Core String
 makeIntBound bits = addConstToPreamble ("int_bound_" ++ show bits) ("BigInt(2) ** BigInt("++ show bits ++") ")
-
-boundedInt : {auto c : Ref ESs ESSt} -> Int -> String -> Core String
-boundedInt bits e =
-  do
-    n <- makeIntBound bits
-    pure $ "(" ++ e ++ " % " ++ n ++ ")"
 
 truncateInt : {auto c : Ref ESs ESSt} -> Int -> String -> Core String
 truncateInt bits e =
@@ -162,10 +166,24 @@ truncateInt bits e =
                        , ")"
                        ]
 
+-- Valid unicode code poing range is [0,1114111], therefore,
+-- we calculate the remainder modulo 1114112 (= 17 * 2^16).
+truncChar : {auto c : Ref ESs ESSt} -> String -> Core String
+truncChar e =
+  do fn <- addConstToPreamble ("truncToChar") ("x=>(x >= 0 && x <= 55295) || (x >= 57344 && x <= 1114111) ? x : 0")
+     pure $ "String.fromCodePoint(" ++ fn ++ "(" ++ fromBigInt e ++ "))"
+
+boundedInt : {auto c : Ref ESs ESSt} -> Int -> String -> Core String
+boundedInt bits e =
+  do
+    n  <- makeIntBound bits
+    fn <- addConstToPreamble ("truncToInt"++show bits) ("x=>(x<(-" ++ n ++ ")||(x>=" ++ n ++ "))?x%" ++ n ++ ":x")
+    pure $ fn ++ "(" ++ e ++ ")"
+
 boundedUInt : {auto c : Ref ESs ESSt} -> Int -> String -> Core String
 boundedUInt bits e =
   do
-    n <- makeIntBound bits
+    n  <- makeIntBound bits
     fn <- addConstToPreamble ("truncToUInt"++show bits) ("x=>{const m = x%" ++ n ++ ";return m>=0?m:m+" ++ n ++ "}")
     pure $ fn ++ "(" ++ e ++ ")"
 
@@ -183,6 +201,10 @@ boolOp o lhs rhs = "(" ++ binOp o lhs rhs ++ " ? BigInt(1) : BigInt(0))"
 
 jsConstant : {auto c : Ref ESs ESSt} -> Constant -> Core String
 jsConstant (I i) = pure $ show i ++ "n"
+jsConstant (I8 i) = pure $ show i ++ "n"
+jsConstant (I16 i) = pure $ show i ++ "n"
+jsConstant (I32 i) = pure $ show i ++ "n"
+jsConstant (I64 i) = pure $ show i ++ "n"
 jsConstant (BI i) = pure $ show i ++ "n"
 jsConstant (Str s) = pure $ jsString s
 jsConstant (Ch c) = pure $ jsString $ Data.Strings.singleton c
@@ -194,50 +216,65 @@ jsConstant (B32 i) = pure $ show i ++ "n"
 jsConstant (B64 i) = pure $ show i ++ "n"
 jsConstant ty = throw (InternalError $ "Unsuported constant " ++ show ty)
 
+-- Creates the definition of a binary arithmetic operation.
+-- Rounding / truncation behavior is determined from the
+-- `IntKind`.
+arithOp :  {auto c : Ref ESs ESSt}
+        -> Maybe IntKind
+        -> (op : String)
+        -> (x : String)
+        -> (y : String)
+        -> Core String
+arithOp (Just $ Signed $ P n) op x y = boundedIntOp (n-1) op x y
+arithOp (Just $ Unsigned n)   op x y = boundedUIntOp n op x y
+arithOp _                     op x y = pure $ binOp op x y
+
+-- Same as `arithOp` but for bitwise operations that might
+-- go out of the valid range.
+bitOp :  {auto c : Ref ESs ESSt}
+      -> Maybe IntKind
+      -> (op : String)
+      -> (x : String)
+      -> (y : String)
+      -> Core String
+bitOp (Just $ Signed $ P n) op x y = boundedIntBitOp (n-1) op x y
+bitOp (Just $ Unsigned n)   op x y = boundedUIntOp n op x y
+bitOp _                     op x y = pure $ binOp op x y
+
+constPrimitives : {auto c : Ref ESs ESSt} -> ConstantPrimitives
+constPrimitives = MkConstantPrimitives {
+    charToInt    = \k => truncInt k . jsIntegerOfChar
+  , intToChar    = \_ => truncChar
+  , stringToInt  = \k,s => jsIntegerOfString s >>= truncInt k
+  , intToString  = \_   => pure . jsAnyToString
+  , doubleToInt  = \k => truncInt k . jsIntegerOfDouble
+  , intToDouble  = \_ => pure . fromBigInt
+  , intToInt     = intImpl
+  }
+  where truncInt : IntKind -> String -> Core String
+        truncInt (Signed Unlimited) = pure
+        truncInt (Signed $ P n)     = boundedInt (n-1)
+        truncInt (Unsigned n)       = boundedUInt n
+
+        intImpl : IntKind -> IntKind -> String -> Core String
+        intImpl _ (Signed Unlimited) = pure
+        intImpl (Signed m) k@(Signed n) = if n >= m then pure else truncInt k
+        intImpl (Signed _)  k@(Unsigned n) = truncInt k
+        intImpl (Unsigned m) k@(Unsigned n) = if n >= m then pure else truncInt k
+
+        -- Only if the precision of the target is greater
+        -- than the one of the source, there is no need to cast.
+        intImpl (Unsigned m) k@(Signed n) = if n > P m then pure else truncInt k
+
 jsOp : {auto c : Ref ESs ESSt} -> PrimFn arity -> Vect arity String -> Core String
-jsOp (Add IntType) [x, y] = pure $ !(boundedIntOp 63 "+" x y)
-jsOp (Sub IntType) [x, y] = pure $ !(boundedIntOp 63 "-" x y)
-jsOp (Mul IntType) [x, y] = pure $ !(boundedIntOp 63 "*" x y)
-jsOp (Div IntType) [x, y] = pure $ !(boundedIntOp 63 "/" x y)
-jsOp (Mod IntType) [x, y] = pure $ !(boundedIntOp 63 "%" x y)
-jsOp (Add Bits8Type) [x, y] = pure $ !(boundedUIntOp 8 "+" x y)
-jsOp (Sub Bits8Type) [x, y] = pure $ !(boundedUIntOp 8 "-" x y)
-jsOp (Mul Bits8Type) [x, y] = pure $ !(boundedUIntOp 8 "*" x y)
-jsOp (Div Bits8Type) [x, y] = pure $ !(boundedUIntOp 8 "/" x y)
-jsOp (Mod Bits8Type) [x, y] = pure $ !(boundedUIntOp 8 "%" x y)
-jsOp (Add Bits16Type) [x, y] = pure $ !(boundedUIntOp 16 "+" x y)
-jsOp (Sub Bits16Type) [x, y] = pure $ !(boundedUIntOp 16 "-" x y)
-jsOp (Mul Bits16Type) [x, y] = pure $ !(boundedUIntOp 16 "*" x y)
-jsOp (Div Bits16Type) [x, y] = pure $ !(boundedUIntOp 16 "/" x y)
-jsOp (Mod Bits16Type) [x, y] = pure $ !(boundedUIntOp 16 "%" x y)
-jsOp (Add Bits32Type) [x, y] = pure $ !(boundedUIntOp 32 "+" x y)
-jsOp (Sub Bits32Type) [x, y] = pure $ !(boundedUIntOp 32 "-" x y)
-jsOp (Mul Bits32Type) [x, y] = pure $ !(boundedUIntOp 32 "*" x y)
-jsOp (Div Bits32Type) [x, y] = pure $ !(boundedUIntOp 32 "/" x y)
-jsOp (Mod Bits32Type) [x, y] = pure $ !(boundedUIntOp 32 "%" x y)
-jsOp (Add Bits64Type) [x, y] = pure $ !(boundedUIntOp 64 "+" x y)
-jsOp (Sub Bits64Type) [x, y] = pure $ !(boundedUIntOp 64 "-" x y)
-jsOp (Mul Bits64Type) [x, y] = pure $ !(boundedUIntOp 64 "*" x y)
-jsOp (Div Bits64Type) [x, y] = pure $ !(boundedUIntOp 64 "/" x y)
-jsOp (Mod Bits64Type) [x, y] = pure $ !(boundedUIntOp 64 "%" x y)
-jsOp (Add ty) [x, y] = pure $ binOp "+" x y
-jsOp (Sub ty) [x, y] = pure $ binOp "-" x y
-jsOp (Mul ty) [x, y] = pure $ binOp "*" x y
-jsOp (Div ty) [x, y] = pure $ binOp "/" x y
-jsOp (Mod ty) [x, y] = pure $ binOp "%" x y
+jsOp (Add ty) [x, y] = arithOp (intKind ty) "+" x y
+jsOp (Sub ty) [x, y] = arithOp (intKind ty) "-" x y
+jsOp (Mul ty) [x, y] = arithOp (intKind ty) "*" x y
+jsOp (Div ty) [x, y] = arithOp (intKind ty) "/" x y
+jsOp (Mod ty) [x, y] = arithOp (intKind ty) "%" x y
 jsOp (Neg ty) [x] = pure $ "(-(" ++ x ++ "))"
-jsOp (ShiftL IntType) [x, y] = pure $ !(boundedIntBitOp 63 "<<" x y)
-jsOp (ShiftL Bits8Type) [x, y] = pure $ !(boundedUIntOp 8 "<<" x y)
-jsOp (ShiftL Bits16Type) [x, y] = pure $ !(boundedUIntOp 16 "<<" x y)
-jsOp (ShiftL Bits32Type) [x, y] = pure $ !(boundedUIntOp 32 "<<" x y)
-jsOp (ShiftL Bits64Type) [x, y] = pure $ !(boundedUIntOp 64 "<<" x y)
-jsOp (ShiftL ty) [x, y] = pure $ binOp "<<" x y
-jsOp (ShiftR IntType) [x, y] = pure $ !(boundedIntBitOp 63 ">>" x y)
-jsOp (ShiftR Bits8Type) [x, y] = pure $ !(boundedUIntOp 8 ">>" x y)
-jsOp (ShiftR Bits16Type) [x, y] = pure $ !(boundedUIntOp 16 ">>" x y)
-jsOp (ShiftR Bits32Type) [x, y] = pure $ !(boundedUIntOp 32 ">>" x y)
-jsOp (ShiftR Bits64Type) [x, y] = pure $ !(boundedUIntOp 64 ">>" x y)
-jsOp (ShiftR ty) [x, y] = pure $ binOp ">>" x y
+jsOp (ShiftL ty) [x, y] = bitOp (intKind ty) "<<" x y
+jsOp (ShiftR ty) [x, y] = bitOp (intKind ty) ">>" x y
 jsOp (BAnd ty) [x, y] = pure $ binOp "&" x y
 jsOp (BOr ty) [x, y] = pure $ binOp "|" x y
 jsOp (BXOr ty) [x, y] = pure $ binOp "^" x y
@@ -270,58 +307,9 @@ jsOp DoubleSqrt [x] = pure $ "Math.sqrt(" ++ x ++ ")"
 jsOp DoubleFloor [x] = pure $ "Math.floor(" ++ x ++ ")"
 jsOp DoubleCeiling [x] = pure $ "Math.ceil(" ++ x ++ ")"
 
-jsOp (Cast IntType CharType) [x] = pure $ "String.fromCodePoint(" ++ fromBigInt x ++ ")"
-jsOp (Cast IntegerType CharType) [x] = pure $ "String.fromCodePoint(" ++ fromBigInt x ++ ")"
-jsOp (Cast CharType IntType) [x] = pure $ toBigInt $ x ++ ".codePointAt(0)"
-jsOp (Cast CharType IntegerType) [x] = pure $ toBigInt $ x ++ ".codePointAt(0)"
-jsOp (Cast DoubleType IntType) [x] = boundedInt 63 $ "BigInt(Math.floor(" ++ x ++ "))"
-jsOp (Cast DoubleType IntegerType) [x] = pure $ "BigInt(Math.floor(" ++ x ++ "))"
-jsOp (Cast IntType DoubleType) [x] = pure $ "Number(" ++ x ++ ")"
-jsOp (Cast IntegerType DoubleType) [x] = pure $ "Number(" ++ x ++ ")"
-jsOp (Cast StringType IntType) [x] = boundedInt 63 $ !(jsIntegerOfString x)
-jsOp (Cast StringType IntegerType) [x] = jsIntegerOfString x
-jsOp (Cast IntegerType IntType) [x] = boundedInt 63 x
-jsOp (Cast IntType IntegerType) [x] = pure x
 jsOp (Cast StringType DoubleType) [x] = pure $ "parseFloat(" ++ x ++ ")"
-
-jsOp (Cast Bits8Type IntType) [x] = pure x
-jsOp (Cast Bits16Type IntType) [x] = pure x
-jsOp (Cast Bits32Type IntType) [x] = pure x
-jsOp (Cast Bits64Type IntType) [x] = pure x
-
-jsOp (Cast Bits8Type IntegerType) [x] = pure x
-jsOp (Cast Bits16Type IntegerType) [x] = pure x
-jsOp (Cast Bits32Type IntegerType) [x] = pure x
-jsOp (Cast Bits64Type IntegerType) [x] = pure x
-
-jsOp (Cast IntType Bits8Type) [x] = boundedUInt 8 x
-jsOp (Cast IntType Bits16Type) [x] = boundedUInt 16 x
-jsOp (Cast IntType Bits32Type) [x] = boundedUInt 32 x
-jsOp (Cast IntType Bits64Type) [x] = boundedUInt 64 x
-
-jsOp (Cast IntegerType Bits8Type) [x] = boundedUInt 8 x
-jsOp (Cast IntegerType Bits16Type) [x] = boundedUInt 16 x
-jsOp (Cast IntegerType Bits32Type) [x] = boundedUInt 32 x
-jsOp (Cast IntegerType Bits64Type) [x] = boundedUInt 64 x
-
-jsOp (Cast Bits8Type Bits16Type) [x] = pure x
-jsOp (Cast Bits8Type Bits32Type) [x] = pure x
-jsOp (Cast Bits8Type Bits64Type) [x] = pure x
-
-jsOp (Cast Bits16Type Bits8Type) [x] = boundedUInt 8 x
-jsOp (Cast Bits16Type Bits32Type) [x] = pure x
-jsOp (Cast Bits16Type Bits64Type) [x] = pure x
-
-jsOp (Cast Bits32Type Bits8Type) [x] = boundedUInt 8 x
-jsOp (Cast Bits32Type Bits16Type) [x] = boundedUInt 16 x
-jsOp (Cast Bits32Type Bits64Type) [x] = pure x
-
-jsOp (Cast Bits64Type Bits8Type) [x] = boundedUInt 8 x
-jsOp (Cast Bits64Type Bits16Type) [x] = boundedUInt 16 x
-jsOp (Cast Bits64Type Bits32Type) [x] = boundedUInt 32 x
-
-jsOp (Cast ty StringType) [x] = pure $ "(''+" ++ x ++ ")"
-jsOp (Cast ty ty2) [x] = jsCrashExp $ jsString $ "invalid cast: + " ++ show ty ++ " + ' -> ' + " ++ show ty2
+jsOp (Cast ty StringType) [x] = pure $ jsAnyToString x
+jsOp (Cast ty ty2) [x]        = castInt constPrimitives ty ty2 x
 jsOp BelieveMe [_,_,x] = pure x
 jsOp (Crash) [_, msg] = jsCrashExp msg
 

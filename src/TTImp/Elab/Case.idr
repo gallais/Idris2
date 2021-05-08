@@ -13,6 +13,7 @@ import Core.Value
 import TTImp.Elab.Check
 import TTImp.Elab.Delayed
 import TTImp.Elab.ImplicitBind
+import TTImp.Elab.Utils
 import TTImp.TTImp
 import TTImp.Utils
 
@@ -32,7 +33,7 @@ changeVar old new (Meta fc nm i args)
     = Meta fc nm i (map (changeVar old new) args)
 changeVar (MkVar old) (MkVar new) (Bind fc x b sc)
     = Bind fc x (assert_total (map (changeVar (MkVar old) (MkVar new)) b))
-		            (changeVar (MkVar (Later old)) (MkVar (Later new)) sc)
+           (changeVar (MkVar (Later old)) (MkVar (Later new)) sc)
 changeVar old new (App fc fn arg)
     = App fc (changeVar old new fn) (changeVar old new arg)
 changeVar old new (As fc s nm p)
@@ -205,6 +206,7 @@ caseBlock {vars} rigc elabinfo fc nest env scr scrtm scrty caseRig alts expected
                             (maybe (Bind fc scrn (Pi fc caseRig Explicit scrty)
                                        (weaken caseretty))
                                    (const caseretty) splitOn)
+         (erasedargs, _) <- findErased casefnty
 
          logEnv "elab.case" 10 "Case env" env
          logTermNF "elab.case" 2 ("Case function type: " ++ show casen) [] casefnty
@@ -215,8 +217,10 @@ caseBlock {vars} rigc elabinfo fc nest env scr scrtm scrty caseRig alts expected
          -- actually bound! This is rather hacky, but a lot less fiddly than
          -- the alternative of fixing up the environment
          when (not (isNil fullImps)) $ findImpsIn fc [] [] casefnty
-         cidx <- addDef casen (newDef fc casen (if isErased rigc then erased else top)
-                                      [] casefnty vis None)
+         cidx <- addDef casen (record { eraseArgs = erasedargs }
+                                (newDef fc casen (if isErased rigc then erased else top)
+                                      [] casefnty vis None))
+
          -- don't worry about totality of the case block; it'll be handled
          -- by the totality of the parent function
          setFlag fc (Resolved cidx) (SetTotal PartialOK)

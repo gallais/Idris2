@@ -10,6 +10,29 @@
     ((0) '())
     ((1) (cons (vector-ref desc 2)
                (blodwen-read-args (vector-ref desc 3)))))))
+
+(define blodwen-toSignedInt
+  (lambda (x bits)
+    (let ((ma (arithmetic-shift 1 bits)))
+      (if (or (< x (- 0 ma))
+              (>= x ma))
+          (remainder x ma)
+          x))))
+
+(define blodwen-toUnsignedInt
+  (lambda (x bits)
+    (modulo x (arithmetic-shift 1 bits))))
+
+(define bu+ (lambda (x y bits) (blodwen-toUnsignedInt (+ x y) bits)))
+(define bu- (lambda (x y bits) (blodwen-toUnsignedInt (- x y) bits)))
+(define bu* (lambda (x y bits) (blodwen-toUnsignedInt (* x y) bits)))
+(define bu/ (lambda (x y bits) (blodwen-toUnsignedInt (quotient x y) bits)))
+
+(define bs+ (lambda (x y bits) (blodwen-toSignedInt (+ x y) bits)))
+(define bs- (lambda (x y bits) (blodwen-toSignedInt (- x y) bits)))
+(define bs* (lambda (x y bits) (blodwen-toSignedInt (* x y) bits)))
+(define bs/ (lambda (x y bits) (blodwen-toSignedInt (quotient x y) bits)))
+
 (define b+ (lambda (x y bits) (remainder (+ x y) (arithmetic-shift 1 bits))))
 (define b- (lambda (x y bits) (remainder (- x y) (arithmetic-shift 1 bits))))
 (define b* (lambda (x y bits) (remainder (* x y) (arithmetic-shift 1 bits))))
@@ -34,6 +57,10 @@
 (define blodwen-or (lambda (x y) (bitwise-ior x y)))
 (define blodwen-xor (lambda (x y) (bitwise-xor x y)))
 
+(define exact-floor
+  (lambda (x)
+    (inexact->exact (floor x))))
+
 (define truncate-bits
   (lambda (x bits)
     (if (bitwise-bit-set? x bits)
@@ -42,6 +69,38 @@
 
 (define blodwen-bits-shl-signed
   (lambda (x y bits) (truncate-bits (arithmetic-shift x y) bits)))
+
+(define exact-truncate
+  (lambda (x)
+    (inexact->exact (truncate x))))
+
+(define exact-truncate-boundedInt
+  (lambda (x y)
+    (blodwen-toSignedInt (exact-truncate x) y)))
+
+(define exact-truncate-boundedUInt
+  (lambda (x y)
+    (blodwen-toUnsignedInt (exact-truncate x) y)))
+
+(define cast-char-boundedInt
+  (lambda (x y)
+    (blodwen-toSignedInt (char->integer x) y)))
+
+(define cast-char-boundedUInt
+  (lambda (x y)
+    (blodwen-toUnsignedInt (char->integer x) y)))
+
+(define cast-string-int
+  (lambda (x)
+    (exact-truncate (cast-num (string->number (destroy-prefix x))))))
+
+(define cast-string-boundedInt
+  (lambda (x y)
+    (blodwen-toSignedInt (cast-string-int x) y)))
+
+(define cast-string-boundedUInt
+  (lambda (x y)
+    (blodwen-toUnsignedInt (cast-string-int x) y)))
 
 (define cast-num
   (lambda (x)
@@ -52,15 +111,15 @@
       ((equal? x "") "")
       ((equal? (string-ref x 0) #\#) "")
       (else x))))
-(define cast-string-int
-  (lambda (x)
-    (exact-floor (cast-num (string->number (destroy-prefix x))))))
+
 (define cast-int-char
   (lambda (x)
-    (if (and (>= x 0)
-             (<= x #x10ffff))
+    (if (or
+          (and (>= x 0) (<= x #xd7ff))
+          (and (>= x #xe000) (<= x #x10ffff)))
         (integer->char x)
-        0)))
+        (integer->char 0))))
+
 (define cast-string-double
   (lambda (x)
     (cast-num (string->number (destroy-prefix x)))))
@@ -409,14 +468,15 @@
 (define (blodwen-clock-second time) (time-second time))
 (define (blodwen-clock-nanosecond time) (time-nanosecond time))
 
-(define (blodwen-args)
-  (define (blodwen-build-args args)
-    (if (null? args)
-        (vector 0) ; Prelude.List
-        (vector 1 (car args) (blodwen-build-args (cdr args)))))
-    (blodwen-build-args
-      (cons (path->string (find-system-path 'run-file))
-            (vector->list (current-command-line-arguments)))))
+(define (blodwen-arg-count)
+  (+ (vector-length (current-command-line-arguments)) 1))
+
+(define (blodwen-arg n)
+  (cond
+    ((= n 0) (path->string (find-system-path 'run-file)))
+    ((< n (+ (vector-length (current-command-line-arguments)) 1))
+        (vector-ref (current-command-line-arguments) (- n 1)))
+     (else "")))
 
 (define (blodwen-system cmd)
   (if (system cmd)
