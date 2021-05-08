@@ -141,7 +141,8 @@ checker k = fromVect $ magnify 50 50 $
 
 export
 diags : Nat -> IO (Image P1)
-diags k = fromVect $ magnify 50 50 $ vals
+diags k = fromVect $ magnify 50 50 vals
+
   where
 
     rng : Vect k (Subset Nat (`LT` k))
@@ -167,6 +168,24 @@ lines n = fromVect $ magnify 700 50 $ [map init range] where
   init i = cast (natToInteger (fst i * step))
 
 export
+circle : Nat -> IO (Image P1)
+circle r = let
+  Size : Nat := 3 * r
+  r2 : Nat := r * r
+  tolerance : Nat := div r 2 * div r 2
+  center : Nat := r + div r 2
+  dist : Nat -> Nat -> Nat := \ m, n => max (minus m n) (minus n m)
+
+  pixel : Nat -> Nat -> Bool := \i, j =>
+      let x = dist i center in
+      let y = dist j center in
+      dist r2 (x*x + y*y) <= tolerance
+
+  rng : Vect Size (Subset Nat (`LT` Size)) := range
+
+  in fromVect $ map (\ i => map ((pixel `on` fst) i) rng) rng
+
+export
 lgbt : IO (Image P3)
 lgbt = fromVect $ magnify 500 70
   [[ MkRGB 255 0   24
@@ -184,3 +203,4 @@ test = do
   ignore $ writeImage !(diags 12)   "diags"
   ignore $ writeImage !(lines 10)   "lines"
   ignore $ writeImage !lgbt         "lgbt"
+  ignore $ writeImage !(circle 200) "circle"
