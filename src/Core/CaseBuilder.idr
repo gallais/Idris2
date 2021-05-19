@@ -8,6 +8,7 @@ import Core.Env
 import Core.Normalise
 import Core.TT
 import Core.Value
+import Core.Coverage
 
 import Libraries.Data.LengthMatch
 import Data.List
@@ -912,6 +913,29 @@ mutual
           = pure $ MkPatClause pvars
                         !(substInPats fc a (mkTerm vars pat) pats) pid rhs
 
+  splitCons : {vars : _} ->
+              {auto c : Ref Ctxt Defs} ->
+              {auto i : Ref PName Int} ->
+              PatClause vars (a :: todo) ->
+              Core (Maybe (List (PatClause vars (a :: todo))))
+  splitCons (MkPatClause ns (MkInfo (PLoc nmfc n) loc kty@(Known _ ty) :: pats) pid rhs)
+    = do defs <- get Ctxt
+         nty@(NTCon _ _ _ _ _) <- nf defs (mkEnv nmfc _) ty
+           | _ => pure Nothing
+         conses <- getCons defs nty
+         split <- for conses $ \ (_, nm, i, ar) =>
+                    do args <- case ar of
+                                  Z => pure []
+                                  _ => traverse (const $ nextName "split") [1..ar]
+                       -- infinite loop during compilation with
+                       -- args <- sequence (replicate ar (nextName "split"))
+                       -- for some reason?!
+                       nm <- toResolvedNames nm
+                       pure $ PCon nmfc nm i ar $ map (PLoc nmfc) args
+         let mkPat = \ p => MkInfo (PAs nmfc n p) loc kty
+         pure $ Just $ map (\ p => MkPatClause ns (mkPat p :: pats) pid rhs) split
+  splitCons p = pure Nothing
+
   mixture : {a, vars, todo : _} ->
             {auto i : Ref PName Int} ->
             {auto c : Ref Ctxt Defs} ->
@@ -920,6 +944,22 @@ mutual
             Partitions ps ->
             Maybe (CaseTree vars) ->
             Core (Maybe (CaseTree vars))
+  mixture fc fn phase (ConClauses cs (VarClauses ds rest)) err
+    = do mds <- map concat . sequence <$> traverse splitCons ds
+         case mds of
+           Nothing =>
+             do fallthrough <- mixture fc fn phase (VarClauses ds rest) err
+                pure (Just !(conRule fc fn phase cs fallthrough))
+           Just ds' =>
+             do log "compile.casetree.split" 15 $
+                  unlines $
+                       "Splitting " :: map (("  " ++) . show) ds
+                    ++ "Into " :: map (("  " ++) . show) ds'
+                mixture fc fn phase (ConClauses (cs ++ ds') rest) err
+
+  mixture fc fn phase (ConClauses cs (ConClauses ds rest)) err
+      =   mixture fc fn phase (ConClauses (cs ++ ds) rest) err
+
   mixture fc fn phase (ConClauses cs rest) err
       = do fallthrough <- mixture fc fn phase rest err
            pure (Just !(conRule fc fn phase cs fallthrough))

@@ -157,6 +157,7 @@ freeEnv fc (n :: ns) = PVar fc top Explicit (Erased fc False) :: freeEnv fc ns
 
 -- Given a normalised type, get all the possible constructors for that
 -- type family, with their type, name, tag, and arity
+export
 getCons : {auto c : Ref Ctxt Defs} ->
           {vars : _} ->
           Defs -> NF vars -> Core (List (NF [], Name, Int, Nat))
