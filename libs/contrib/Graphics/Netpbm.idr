@@ -83,7 +83,7 @@ height = integerToNat . cast . height . content
 toASCII : {fmt : Format} -> Image fmt -> IO String
 toASCII (MkImage cnt)
   = do img <- image
-       pure $ unlines $ header ++ maxVal ++ img
+       pure $ unlines $ header ++ maxVal ++ img ++ [""]
 
   where
 
