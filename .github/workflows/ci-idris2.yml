@@ -340,7 +340,7 @@ jobs:
   ######################################################################
 
   ubuntu-build-frex:
-    needs: ubuntu-bootstrap-chez
+    needs: ubuntu-self-host-previous-version
     runs-on: ubuntu-latest
     env:
       IDRIS2_CG: chez
@@ -350,7 +350,7 @@ jobs:
       - name: Download Idris2 Artifact
         uses: actions/download-artifact@v2
         with:
-          name: ubuntu-installed-bootstrapped-idris2-chez
+          name: idris2-nightly-chez
           path: ~/.idris2/
       - name: Install build dependencies
         run: |
