@@ -140,7 +140,7 @@ jobs:
       - name: Make bootstrap folder readonly
         run: chmod -R a-w bootstrap
       - name: Build from bootstrap
-        run: make bootstrap && make install
+        run: rm -R ~/.idris2 && make bootstrap && make install
       - name: Artifact Bootstrapped Idris2
         uses: actions/upload-artifact@v2
         with:
