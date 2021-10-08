@@ -1,6 +1,6 @@
-*.ibc
-*.ttc
-*.ttm
+#*.ibc
+#*.ttc
+#*.ttm
 *.o
 *.d
 *.a
@@ -14,7 +14,7 @@
 idris2docs_venv
 /docs/build
 
-/libs/**/build
+/support/**/build
 
 /tests/**/build
 /tests/**/output*
@@ -25,8 +25,6 @@ idris2docs_venv
 
 /benchmark/**/build
 /benchmark/*.csv
-
-/bootstrap-build
 
 /src/IdrisPaths.idr
 
