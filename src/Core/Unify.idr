@@ -636,10 +636,16 @@ solveIfUndefined : {vars : _} ->
 solveIfUndefined env metavar@(Meta fc mname idx args) soln
     = do defs <- get Ctxt
          Just (Hole _ _) <- lookupDefExact (Resolved idx) (gamma defs)
-              | _ => pure False
+           | d => do log "unify.solve" 20 $ case d of
+                       Nothing => "\{show mname} not declared!"
+                       Just def => "\{show mname} already defined: \{show def}"
+                     pure False
+         log "unify.solve" 20 "\{show mname} is a hole. Solving it"
          updateSolution env metavar soln
 solveIfUndefined env metavar soln
-    = pure False
+    = do log "unify.solve" 20
+           "Skipped solving because not a meta: \{show metavar}"
+         pure False
 
 isDefInvertible : {auto c : Ref Ctxt Defs} ->
                   FC -> Int -> Core Bool

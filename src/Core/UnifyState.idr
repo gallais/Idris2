@@ -1,4 +1,3 @@
-
 module Core.UnifyState
 
 import Core.Case.CaseTree

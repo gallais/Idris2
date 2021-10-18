@@ -456,7 +456,7 @@ mutual
                                        fntm fnty (n, 1 + argpos) expargs autoargs namedargs kr expty
              defs <- get Ctxt
              aty' <- nf defs env metaty
-             logNF "elab" 10 ("Now trying " ++ show nm ++ " " ++ show arg) env aty'
+             logNF "elab.solve" 10 ("Now trying " ++ show nm ++ " " ++ show arg) env aty'
 
              -- On the LHS, checking an argument can't resolve its own type,
              -- it must be resolved from elsewhere. Otherwise we might match

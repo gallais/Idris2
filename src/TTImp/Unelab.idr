@@ -174,7 +174,7 @@ mutual
                       _ => aliasName fn
            log "unelab.var" 50 $
              unwords [ "Found name:", show n
-                     , " (aka " ++ show fn ++ ")"
+                     , "(aka " ++ show fn ++ ")"
                      , "sugared to", show n'
                      ]
 
@@ -182,10 +182,16 @@ mutual
   unelabTy' umode nest env (Meta fc n i args)
       = do defs <- get Ctxt
            let mkn = nameRoot n
-           Just ty <- lookupTyExact (Resolved i) (gamma defs)
+           mty <- lookupTyExact (Resolved i) (gamma defs)
+           log "unelab.meta" 50 $
+             unwords [ "Found meta (" ++ show n ++ ")"
+                     , "lookup returned"
+                     , show mty
+                     ]
+           let Just ty = mty
                | Nothing => case umode of
-                                 ImplicitHoles => pure (Implicit fc True, gErased fc)
-                                 _ => pure (IHole fc mkn, gErased fc)
+                   ImplicitHoles => pure (Implicit fc True, gErased fc)
+                   _ => pure (IHole fc mkn, gErased fc)
            pure (IHole fc mkn, gnf env (embed ty))
   unelabTy' umode nest env (Bind fc x b sc)
       = do (sc', scty) <- unelabTy umode nest (b :: env) sc
