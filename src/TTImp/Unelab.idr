@@ -182,7 +182,8 @@ mutual
   unelabTy' umode nest env (Meta fc n i args)
       = do defs <- get Ctxt
            let mkn = nameRoot n
-           mty <- lookupTyExact (Resolved i) (gamma defs)
+           log "unelab.meta" 50 $ "Looking up \{show n} (Resolved \{show i})"
+           mty <- lookupTyExact n (gamma defs)
            log "unelab.meta" 50 $
              unwords [ "Found meta (" ++ show n ++ ")"
                      , "lookup returned"
