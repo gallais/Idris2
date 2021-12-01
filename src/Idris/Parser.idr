@@ -567,9 +567,11 @@ mutual
 
   multiplicity : OriginDesc -> EmptyRule RigCount
   multiplicity fname
-      = case !(optional $ decorate fname Keyword intLit) of
-          (Just 0) => pure erased
-          (Just 1) => pure linear
+      = case !(optional $ decorate fname Keyword
+                        $ intLit <||> symbol "!") of
+          Just (Left 0) => pure erased
+          Just (Left 1) => pure linear
+          Just (Right _) => pure top
           Nothing => pure top
           _ => fail "Invalid multiplicity (must be 0 or 1)"
 
