@@ -43,6 +43,7 @@ mutual
        SPrimVal : FC -> Constant -> SNF vars
        SErased  : FC -> (imp : Bool) -> SNF vars
        SType    : FC -> Name -> SNF vars
+       SProp    : FC -> SNF vars
 
 getAllNames : {auto c : Ref Ctxt Defs} ->
               NameMap () -> List Name -> Core (NameMap ())
@@ -206,6 +207,11 @@ mutual
                         Just u => u
                         _ => MN "top" 0
            pure (TType fc u)
+  quoteVector svs (-16) [_, fc_in] -- Prop
+      = do let fc = case fromScheme (decodeObj fc_in) of
+                           Nothing => emptyFC
+                           Just n' => n'
+           pure (TProp fc)
   quoteVector svs (-8) [_, proc_in, rig_in, pi_in, ty_in, name_in] -- Lambda
       = do let name = case fromScheme (decodeObj name_in) of
                            Nothing => UN (Basic "x")
@@ -502,6 +508,11 @@ mutual
                         Just u => u
                         _ => MN "top" 0
            pure (SType fc u)
+  snfVector svs (-16) [_, fc_in] -- Prop
+      = do let fc = case fromScheme (decodeObj fc_in) of
+                         Just fc => fc
+                         _ => emptyFC
+           pure (SProp fc)
   snfVector svs (-8) [_, proc_in, rig_in, pi_in, ty_in, name_in] -- Lambda
       = do let name = case fromScheme (decodeObj name_in) of
                            Nothing => UN (Basic "x")

@@ -369,6 +369,7 @@ mutual
         annotate decor $ pretty c
       go d (PHole _ _ n) = hole (pretty (strCons '?' n))
       go d (PType _) = annotate (TCon Nothing) "Type"
+      go d (PProp _) = annotate (TCon Nothing) "Prop"
       go d (PAs _ _ n p) = pretty n <+> "@" <+> go d p
       go d (PDotted _ p) = dot <+> go d p
       go d (PImplicit _) = "_"

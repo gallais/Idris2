@@ -709,7 +709,7 @@ mapTermM f = goTerm where
     goTerm tm@(PrimVal _ _) = f tm
     goTerm tm@(Erased _ _) = f tm
     goTerm tm@(TType _ _) = f tm
-
+    goTerm tm@(TProp _) = f tm
 
 export
 anyM : (a -> Core Bool) -> List a -> Core Bool

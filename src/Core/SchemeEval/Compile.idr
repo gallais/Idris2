@@ -117,6 +117,7 @@ vector (-12) ... = PVar binding
 vector (-13) ... = PVTy binding
 vector (-14) ... = PLet binding
 vector (-15) ... = Delayed
+vector (-16) ... = Prop
 
 vector (-100 onwards) ... = constants
 -}
@@ -272,6 +273,7 @@ compileStk svs stk (TForce fc x tm)
 compileStk svs stk (PrimVal fc c) = pure $ compileConstant fc c
 compileStk svs stk (Erased fc imp) = pure $ Vector (-6) [toScheme fc, toScheme imp]
 compileStk svs stk (TType fc u) = pure $ Vector (-7) [toScheme fc, toScheme u]
+compileStk svs stk (TProp fc) = pure $ Vector (-16) [toScheme fc]
 
 export
 compile : Ref Sym Integer =>

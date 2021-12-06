@@ -231,6 +231,7 @@ mutual
   quoteGenNF q opts defs bound env (NPrimVal fc c) = pure $ PrimVal fc c
   quoteGenNF q opts defs bound env (NErased fc i) = pure $ Erased fc i
   quoteGenNF q opts defs bound env (NType fc u) = pure $ TType fc u
+  quoteGenNF q opts defs bound env (NProp fc) = pure $ TProp fc
 
 export
 Quote NF where

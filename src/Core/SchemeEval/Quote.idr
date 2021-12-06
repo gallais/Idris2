@@ -129,6 +129,7 @@ mutual
   quoteGen q bound env (SPrimVal fc c) = pure $ PrimVal fc c
   quoteGen q bound env (SErased fc i) = pure $ Erased fc i
   quoteGen q bound env (SType fc u) = pure $ TType fc u
+  quoteGen q bound env (SProp fc) = pure $ TProp fc
 
 export
 quote : {auto c : Ref Ctxt Defs} ->

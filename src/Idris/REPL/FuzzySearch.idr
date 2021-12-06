@@ -69,6 +69,7 @@ fuzzySearch expr = do
                    | ADouble
                    | AWorld
                    | AType
+                   | AProp
 
   eqConst : (x, y : NameOrConst) -> Bool
   eqConst AInt     AInt     = True
@@ -82,6 +83,7 @@ fuzzySearch expr = do
   eqConst ADouble  ADouble  = True
   eqConst AWorld   AWorld   = True
   eqConst AType    AType    = True
+  eqConst AProp    AProp    = True
   eqConst _        _        = False
 
   parseNameOrConst : PTerm -> Maybe NameOrConst
@@ -97,6 +99,7 @@ fuzzySearch expr = do
   parseNameOrConst (PPrimVal _ DoubleType)  = Just ADouble
   parseNameOrConst (PPrimVal _ WorldType)   = Just AWorld
   parseNameOrConst (PType _)                = Just AType
+  parseNameOrConst (PProp _)                = Just AProp
   parseNameOrConst _                        = Nothing
 
   parseExpr' : PTerm -> Maybe (List NameOrConst)
@@ -159,6 +162,7 @@ fuzzySearch expr = do
     fromMaybe [] ((:: []) <$> parseNameOrConst (PPrimVal fc c)) ++ ns
   doFind ns (Erased fc i) = ns
   doFind ns (TType fc _) = AType :: ns
+  doFind ns (TProp fc) = AProp :: ns
 
   toFullNames' : NameOrConst -> Core NameOrConst
   toFullNames' (AName x) = AName <$> toFullNames x

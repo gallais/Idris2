@@ -204,6 +204,7 @@ swapVars (TForce fc r tm) = TForce fc r (swapVars tm)
 swapVars (PrimVal fc c) = PrimVal fc c
 swapVars (Erased fc i) = Erased fc i
 swapVars (TType fc u) = TType fc u
+swapVars (TProp fc) = TProp fc
 
 -- Push an explicit pi binder as far into a term as it'll go. That is,
 -- move it under implicit binders that don't depend on it, and stop

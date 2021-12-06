@@ -103,6 +103,7 @@ scEq (TForce _ _ t) (TForce _ _ t') = scEq t t'
 scEq (PrimVal _ c) (PrimVal _ c') = c == c'
 scEq (Erased _ _) (Erased _ _) = True
 scEq (TType _ _) (TType _ _) = True
+scEq (TProp _) (TProp _) = True
 scEq _ _ = False
 
 data Guardedness = Toplevel | Unguarded | Guarded | InDelay
@@ -336,6 +337,7 @@ mutual
           urhs (PrimVal fc c) = PrimVal fc c
           urhs (Erased fc i) = Erased fc i
           urhs (TType fc u) = TType fc u
+          urhs (TProp fc) = TProp fc
 
           lookupTm : Term vs -> List (Term vs, Term vs') -> Maybe (Term vs')
           lookupTm tm [] = Nothing

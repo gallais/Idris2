@@ -326,6 +326,7 @@ mutual
                  put Syn (record { bracketholes $= ((UN (Basic holename)) ::) } syn)
            pure $ IHole fc holename
   desugarB side ps (PType fc) = pure $ IType fc
+  desugarB side ps (PProp fc) = pure $ IProp fc
   desugarB side ps (PAs fc nameFC vname pattern)
       = pure $ IAs fc nameFC UseRight vname !(desugarB side ps pattern)
   desugarB side ps (PDotted fc x)

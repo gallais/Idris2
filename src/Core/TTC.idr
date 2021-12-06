@@ -290,8 +290,8 @@ mutual
   export
   {vars : _} -> TTC (Term vars) where
     toBuf b (Local {name} fc c idx y)
-        = if idx < 243
-             then do tag (13 + cast idx)
+        = if idx < 242
+             then do tag (14 + cast idx)
                      toBuf b c
              else do tag 0
                      toBuf b c
@@ -334,6 +334,8 @@ mutual
         = tag 10
     toBuf b (TType fc u)
         = do tag 11; toBuf b u
+    toBuf b (TProp fc)
+        = do tag 13
 
     fromBuf {vars} b
         = case !getTag of
@@ -369,8 +371,9 @@ mutual
                12 => do fn <- fromBuf b
                         args <- fromBuf b
                         pure (apply emptyFC fn args)
+               13 => pure (TProp emptyFC)
                idxp => do c <- fromBuf b
-                          let idx : Nat = fromInteger (cast (idxp - 13))
+                          let idx : Nat = fromInteger (cast (idxp - 14))
                           let Just name = getName idx vars
                               | Nothing => corrupt "Term"
                           pure (Local {name} emptyFC c idx (mkPrf idx))

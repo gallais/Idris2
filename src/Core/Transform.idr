@@ -81,6 +81,7 @@ tryReplace ms (TForce fc r tm)
 tryReplace ms (PrimVal fc c) = pure (PrimVal fc c)
 tryReplace ms (Erased fc i) = pure (Erased fc i)
 tryReplace ms (TType fc u) = pure (TType fc u)
+tryReplace ms (TProp fc) = pure (TProp fc)
 
 covering
 tryApply : Transform -> Term vs -> Maybe (Term vs)

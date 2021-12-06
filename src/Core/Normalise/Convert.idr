@@ -81,6 +81,7 @@ tryUpdate ms (TForce fc r tm) = pure $ TForce fc r !(tryUpdate ms tm)
 tryUpdate ms (PrimVal fc c) = pure $ PrimVal fc c
 tryUpdate ms (Erased fc i) = pure $ Erased fc i
 tryUpdate ms (TType fc u) = pure $ TType fc u
+tryUpdate ms (TProp fc) = pure $ TProp fc
 
 mutual
   allConvNF : {auto c : Ref Ctxt Defs} ->
@@ -118,7 +119,7 @@ mutual
       quickConvArg (NDelay _ _ _ _) (NDelay _ _ _ _) = True
       quickConvArg (NForce _ _ t _) (NForce _ _ t' _) = quickConvArg t t'
       quickConvArg (NPrimVal _ c) (NPrimVal _ c') = c == c'
-      quickConvArg (NType _ _) (NType _ _) = True
+      quickConvArg (NProp _) (NProp _) = True
       quickConvArg (NErased _ _) _ = True
       quickConvArg _ (NErased _ _) = True
       quickConvArg _ _ = False
@@ -431,6 +432,8 @@ mutual
     convGen q i defs env (NType _ ul) (NType _ ur)
         = -- TODO Cumulativity: Add constraint here
           pure True
+    convGen q i defs env (NProp _) (NProp _)
+        = pure True
     convGen q i defs env x y = pure False
 
   export

@@ -37,6 +37,7 @@ onPRefs f = go neutral where
   go acc (PrimVal fc c) = acc
   go acc (Erased fc imp) = acc
   go acc (TType fc u) = acc
+  go acc (TProp fc) = acc
 
   gos acc [] = acc
   gos acc (x :: xs) = gos (go acc x) xs
@@ -66,6 +67,7 @@ onConstants f = go neutral where
   go acc (PrimVal fc c) = acc <+> f c
   go acc (Erased fc imp) = acc
   go acc (TType fc u) = acc
+  go acc (TProp fc) = acc
 
   gos acc [] = acc
   gos acc (x :: xs) = gos (go acc x) xs
@@ -97,3 +99,4 @@ mapTermM f t = act t where
   go t@(PrimVal fc c) = pure t
   go t@(Erased fc imp) = pure t
   go t@(TType fc u) = pure t
+  go t@(TProp fc) = pure t

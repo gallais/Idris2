@@ -351,6 +351,7 @@ mutual
                else pure $ CCon fc (UN $ Basic $ show c) TYCON Nothing []
   toCExpTm m n (Erased fc _) = pure $ CErased fc
   toCExpTm m n (TType fc _) = pure $ CCon fc (UN (Basic "Type")) TYCON Nothing []
+  toCExpTm m n (TProp fc) = pure $ CCon fc (UN (Basic "Prop")) TYCON Nothing []
 
   toCExp : {vars : _} ->
            {auto c : Ref Ctxt Defs} ->

@@ -245,6 +245,7 @@ mutual
   unelabTy' umode nest env (PrimVal fc c) = pure (IPrimVal fc c, gErased fc)
   unelabTy' umode nest env (Erased fc _) = pure (Implicit fc True, gErased fc)
   unelabTy' umode nest env (TType fc _) = pure (IType fc, gType fc (MN "top" 0))
+  unelabTy' umode nest env (TProp fc) = pure (IProp fc, gType fc (MN "top" 0))
 
   unelabPi : {vars : _} ->
              {auto c : Ref Ctxt Defs} ->

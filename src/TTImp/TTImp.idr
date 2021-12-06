@@ -113,6 +113,7 @@ mutual
 
        IPrimVal : FC -> (c : Constant) -> RawImp' nm
        IType : FC -> RawImp' nm
+       IProp : FC -> RawImp' nm
        IHole : FC -> String -> RawImp' nm
 
        IUnifyLog : FC -> LogLevel -> RawImp' nm -> RawImp' nm
@@ -198,6 +199,7 @@ mutual
       show (IHole _ x) = "?" ++ x
       show (IUnifyLog _ lvl x) = "(%logging " ++ show lvl ++ " " ++ show x ++ ")"
       show (IType fc) = "%type"
+      show (IProp fc) = "%prop"
       show (Implicit fc True) = "_"
       show (Implicit fc False) = "?"
       show (IWithUnambigNames fc ns rhs) = "(%with " ++ show ns ++ " " ++ show rhs ++ ")"
@@ -819,6 +821,7 @@ getFC (IPrimVal x _) = x
 getFC (IHole x _) = x
 getFC (IUnifyLog x _ _) = x
 getFC (IType x) = x
+getFC (IProp x) = x
 getFC (IBindVar x _) = x
 getFC (IBindHere x _ _) = x
 getFC (IMustUnify x _ _) = x
@@ -1017,6 +1020,8 @@ mutual
         = do tag 30; toBuf b ns; toBuf b rhs
     toBuf b (IAutoApp fc fn arg)
         = do tag 31; toBuf b fc; toBuf b fn; toBuf b arg
+    toBuf b (IProp fc)
+        = do tag 32; toBuf b fc
 
     fromBuf b
         = case !getTag of
@@ -1111,6 +1116,8 @@ mutual
                31 => do fc <- fromBuf b; fn <- fromBuf b
                         arg <- fromBuf b
                         pure (IAutoApp fc fn arg)
+               32 => do fc <- fromBuf b
+                        pure (IProp fc)
                _ => corrupt "RawImp"
 
   export

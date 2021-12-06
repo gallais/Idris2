@@ -68,6 +68,8 @@ mutual
       = IPrimVal fc c
     map f (IType fc)
       = IType fc
+    map f (IProp fc)
+      = IProp fc
     map f (IHole fc str)
       = IHole fc str
     map f (IUnifyLog fc lvl t)

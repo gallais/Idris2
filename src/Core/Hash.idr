@@ -175,6 +175,8 @@ mutual
         = hashWithSalt h 10
     hashWithSalt h (TType fc u)
         = hashWithSalt h 11 `hashWithSalt` u
+    hashWithSalt h (TProp fc)
+        = hashWithSalt h 12
 
   export
   Hashable Pat where

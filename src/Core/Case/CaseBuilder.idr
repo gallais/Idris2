@@ -1118,6 +1118,7 @@ mkPat args orig (PrimVal fc c)
          then PConst fc c
          else PTyCon fc (UN (Basic $ show c)) 0 []
 mkPat args orig (TType fc _) = pure $ PTyCon fc (UN $ Basic "Type") 0 []
+mkPat args orig (TProp fc) = pure $ PTyCon fc (UN $ Basic "Prop") 0 []
 mkPat args orig tm
    = do log "compile.casetree" 10 $
           "Catchall: marking " ++ show tm ++ " as unmatchable"

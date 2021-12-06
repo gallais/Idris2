@@ -94,6 +94,7 @@ mutual
        PRunElab : FC -> PTerm' nm -> PTerm' nm
        PHole : FC -> (bracket : Bool) -> (holename : String) -> PTerm' nm
        PType : FC -> PTerm' nm
+       PProp : FC -> PTerm' nm
        PAs : FC -> (nameFC : FC) -> Name -> (pattern : PTerm' nm) -> PTerm' nm
        PDotted : FC -> PTerm' nm -> PTerm' nm
        PImplicit : FC -> PTerm' nm
@@ -163,6 +164,7 @@ mutual
   getPTermLoc (PRunElab fc _) = fc
   getPTermLoc (PHole fc _ _) = fc
   getPTermLoc (PType fc) = fc
+  getPTermLoc (PProp fc) = fc
   getPTermLoc (PAs fc _  _ _) = fc
   getPTermLoc (PDotted fc _) = fc
   getPTermLoc (PImplicit fc) = fc
@@ -758,6 +760,7 @@ parameters {0 nm : Type} (toName : nm -> Name)
   showPTermPrec d (PPrimVal _ c) = showPrec d c
   showPTermPrec _ (PHole _ _ n) = "?" ++ n
   showPTermPrec _ (PType _) = "Type"
+  showPTermPrec _ (PProp _) = "Prop"
   showPTermPrec d (PAs _ _ n p) = showPrec d n ++ "@" ++ showPTermPrec d p
   showPTermPrec d (PDotted _ p) = "." ++ showPTermPrec d p
   showPTermPrec _ (PImplicit _) = "_"
@@ -1121,6 +1124,7 @@ mapPTermM f = goPTerm where
       >>= f
     goPTerm t@(PHole _ _ _) = f t
     goPTerm t@(PType _) = f t
+    goPTerm t@(PProp _) = f t
     goPTerm (PAs fc nameFC x pat) =
       PAs fc nameFC x <$> goPTerm pat
       >>= f

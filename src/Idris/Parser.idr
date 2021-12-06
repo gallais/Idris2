@@ -116,6 +116,8 @@ atom : OriginDesc -> Rule PTerm
 atom fname
     = do x <- bounds $ decorate fname Typ $ exactIdent "Type"
          pure (PType (boundToFC fname x))
+  <|> do x <- bounds $ decorate fname Typ $ exactIdent "Prop"
+         pure (PProp (boundToFC fname x))
   <|> do x <- bounds $ name
          pure (PRef (boundToFC fname x) x.val)
   <|> do x <- bounds $ dependentDecorate fname constant $ \c =>

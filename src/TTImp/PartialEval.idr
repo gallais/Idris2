@@ -636,6 +636,7 @@ mutual
   quoteGenNF q defs bound env (NPrimVal fc c) = pure $ PrimVal fc c
   quoteGenNF q defs bound env (NErased fc i) = pure $ Erased fc i
   quoteGenNF q defs bound env (NType fc u) = pure $ TType fc u
+  quoteGenNF q defs bound env (NProp fc) = pure $ TProp fc
 
 evalRHS : {vars : _} ->
           {auto c : Ref Ctxt Defs} ->

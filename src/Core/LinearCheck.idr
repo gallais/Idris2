@@ -380,6 +380,8 @@ mutual
   lcheck rig erase env (TType fc u)
       -- Not universe checking here, just use the top of the hierarchy
       = pure (TType fc u, gType fc (MN "top" 0), [])
+  lcheck rig erase env (TProp fc)
+      = pure (TProp fc, gType fc (MN "top" 0), [])
 
   lcheckBinder : {vars : _} ->
                  {auto c : Ref Ctxt Defs} ->

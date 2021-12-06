@@ -513,6 +513,7 @@ tryInstantiate {newvars} loc mode env mname mref num mdef locs otm tm
     noMeta (Ref _ _ _) _ = True
     noMeta (PrimVal _ _) _ = True
     noMeta (TType _ _) _ = True
+    noMeta (TProp _) _ = True
     noMeta _ _ = False
 
     isSimple : Term vs -> Bool
@@ -585,6 +586,7 @@ tryInstantiate {newvars} loc mode env mname mref num mdef locs otm tm
     updateIVars ivs (PrimVal fc c) = Just (PrimVal fc c)
     updateIVars ivs (Erased fc i) = Just (Erased fc i)
     updateIVars ivs (TType fc u) = Just (TType fc u)
+    updateIVars ivs (TProp fc) = Just (TProp fc)
 
     mkDef : {vs, newvars : _} ->
             List (Var newvars) ->

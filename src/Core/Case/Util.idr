@@ -58,4 +58,3 @@ tagIs t (ConCase _ t' _ _) = t == t'
 tagIs t (ConstCase _ _) = False
 tagIs t (DelayCase _ _ _) = False
 tagIs t (DefaultCase _) = True
-
