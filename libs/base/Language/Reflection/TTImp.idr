@@ -71,6 +71,7 @@ mutual
 
        IPrimVal : FC -> (c : Constant) -> TTImp
        IType : FC -> TTImp
+       IProp : FC -> TTImp
        IHole : FC -> String -> TTImp
 
        -- An implicit value, solved by unification, but which will also be
@@ -206,6 +207,7 @@ getFC (IQuoteDecl fc _)          = fc
 getFC (IUnquote fc _)            = fc
 getFC (IPrimVal fc _)            = fc
 getFC (IType fc)                 = fc
+getFC (IProp fc)                 = fc
 getFC (IHole fc _)               = fc
 getFC (Implicit fc _)            = fc
 getFC (IWithUnambigNames fc _ _) = fc
