@@ -652,6 +652,8 @@ nfToCFType _ s (NTCon fc n_in _ _ args)
                    pure (CFIORes carg)
 nfToCFType _ s (NType _ _)
     = pure (CFUser (UN (Basic "Type")) [])
+nfToCFType _ s (NProp _)
+    = pure (CFUser (UN (Basic "Prop")) [])
 nfToCFType _ s (NErased _ _)
     = pure (CFUser (UN (Basic "__")) [])
 nfToCFType fc s t

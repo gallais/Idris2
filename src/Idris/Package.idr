@@ -825,7 +825,7 @@ findIpkg fname
                                      pure desc)
             | Left err => throw err
         pkg <- addFields fs (initPkgDesc pname)
-        maybe (pure ()) setBuildDir (builddir pkg)
+        whenJust (builddir pkg) setBuildDir
         setOutputDir (outputdir pkg)
         processOptions (options pkg)
         loadDependencies (depends pkg)

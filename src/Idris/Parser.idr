@@ -1551,7 +1551,7 @@ fieldDecl fname indents
       = do doc <- optDocumentation fname
            decoratedSymbol fname "{"
            commit
-           impl <- option Implicit (AutoImplicit <$ decoratedKeyword fname "auto")
+           impl <- option Implicit (autoImplicitField <|> defImplicitField)
            fs <- fieldBody doc impl
            decoratedSymbol fname "}"
            atEnd indents
@@ -1561,6 +1561,16 @@ fieldDecl fname indents
            atEnd indents
            pure fs
   where
+    autoImplicitField : Rule (PiInfo t)
+    autoImplicitField = AutoImplicit <$ decoratedKeyword fname "auto"
+
+    defImplicitField : Rule (PiInfo PTerm)
+    defImplicitField = do
+      decoratedKeyword fname "default"
+      commit
+      t <- simpleExpr fname indents
+      pure (DefImplicit t)
+
     fieldBody : String -> PiInfo PTerm -> Rule (List PField)
     fieldBody doc p
         = do b <- bounds (do rig <- multiplicity fname
