@@ -41,7 +41,13 @@ conflictMatch ((x, tm) :: ms) = conflictArgs x tm ms || conflictMatch ms
     clash (Ref _ t _) (TType _ _) = isJust (isCon t)
     clash (TType _ _) (Ref _ t _) = isJust (isCon t)
     clash (TType _ _) (PrimVal _ _) = True
+    clash (TType _ _) (TProp _) = True
+    clash (TProp _)  (TType _ _) = True
     clash (PrimVal _ _) (TType _ _) = True
+    clash (Ref _ t _) (TProp _) = isJust (isCon t)
+    clash (TProp _) (Ref _ t _) = isJust (isCon t)
+    clash (TProp _) (PrimVal _ _) = True
+    clash (PrimVal _ _) (TProp _) = True
     clash _ _ = False
 
     findN : Nat -> Term vars -> Bool
@@ -182,6 +188,13 @@ getMissingAlts fc defs (NType _ _) alts
            then do log "coverage.missing" 20 "Found default"
                    pure []
            else pure [DefaultCase (Unmatched "Coverage check")]
+-- Or props
+getMissingAlts fc defs (NProp _) alts
+    = do log "coverage.missing" 50 "Looking for missing alts at type Prop"
+         if any isDefault alts
+           then do log "coverage.missing" 20 "Found default"
+                   pure []
+           else pure [DefaultCase (Unmatched "Coverage check")]
 getMissingAlts fc defs nfty alts
     = do log "coverage.missing" 50 $ "Getting constructors for: " ++ show nfty
          logNF "coverage.missing" 20 "Getting constructors for" (mkEnv fc _) nfty
@@ -248,6 +261,7 @@ replaceDefaults : {auto c : Ref Ctxt Defs} ->
 -- all case there
 replaceDefaults fc defs (NPrimVal _ _) cs = pure cs
 replaceDefaults fc defs (NType _ _) cs = pure cs
+replaceDefaults fc defs (NProp _) cs = pure cs
 replaceDefaults fc defs nfty cs
     = do cs' <- traverse rep cs
          pure (dropRep (concat cs'))
