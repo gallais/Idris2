@@ -436,6 +436,7 @@ tryRecursive fc rig opts hints env ty topty rdata
       argDiff (Erased _ _) _ = False
       argDiff _ (Erased _ _) = False
       argDiff (TType _ _) (TType _ _) = False
+      argDiff (TProp _) (TProp _) = False
       argDiff (As _ _ _ x) y = argDiff x y
       argDiff x (As _ _ _ y) = argDiff x y
       argDiff _ _ = True

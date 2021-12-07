@@ -500,6 +500,7 @@ believeMe [_, _, val@(NDCon _ _ _ _ _)] = Just val
 believeMe [_, _, val@(NTCon _ _ _ _ _)] = Just val
 believeMe [_, _, val@(NPrimVal _ _)] = Just val
 believeMe [_, _, NType fc u] = Just (NType fc u)
+believeMe [_, _, NProp fc] = Just (NProp fc)
 believeMe [_, _, val] = Nothing
 
 constTy : Constant -> Constant -> Constant -> ClosedTerm
