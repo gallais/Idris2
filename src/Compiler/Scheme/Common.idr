@@ -13,7 +13,8 @@ import Data.Vect
 
 import Idris.Env
 import Libraries.Utils.Path
-import System
+
+import Libraries.System as Lib -- should be able to use System after next release
 
 %default covering
 
@@ -27,7 +28,7 @@ findExecutable : (var : String) -> {auto known : IsJust (find (var ==) Env.envNa
                  (dft : String) ->
                  IO String
 findExecutable var cmds dft
-    = do Nothing <- (idrisGetEnv var >>= maybe (pure Nothing) which)
+    = do Nothing <- (idrisGetEnv var >>= maybe (pure Nothing) Lib.which)
             | Just exe => pure exe
          path <- pathLookup cmds
          pure $ fromMaybe dft path
