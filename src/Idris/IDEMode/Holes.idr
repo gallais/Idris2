@@ -1,7 +1,8 @@
 module Idris.IDEMode.Holes
 
-import Core.Env
 import Core.Context.Log
+import Core.Env
+import Core.TT
 
 import Data.String
 
@@ -90,13 +91,28 @@ extractHoleData : {vars : _} ->
           Defs -> Env Term vars -> Name -> Nat -> Term vars ->
           Core Holes.Data
 extractHoleData defs env fn (S args) (Bind fc x (Let _ c val ty) sc)
-  = extractHoleData defs env fn args (subst val sc)
+  = do -- GA: I don't think this ever happens based on the way
+       -- checkLet/checkHole are implemented
+       logC "idemode.hole" 20 $ do
+         ty <- resugar env ty
+         val <- resugar env val
+         pure $ unwords [ "Found let binder ", show x, ":", show ty, "=", show val ]
+       extractHoleData defs env fn args (subst val sc)
 extractHoleData defs env fn (S args) (Bind fc x b sc)
-  = do rest <- extractHoleData defs (b :: env) fn args sc
-       let True = showName x
-         | False => do log "idemode.hole" 10 $ "Not showing name: " ++ show x
-                       pure rest
-       log "idemode.hole" 10 $ "Showing name: " ++ show x
+  = do logC "idemode.hole" 20 $ do
+         b <- traverse (resugar env) b
+         pure $ unwords [ "Found binder", show x, "=", show b ]
+       -- print our decision before the recursive call
+       let showTest = showName x
+       log "idemode.hole" 10 $
+         unwords [ ifThenElse showTest "Showing" "Not showing"
+                 , "name:"
+                 , show x ]
+       -- recursive call
+       rest <- extractHoleData defs (b :: env) fn args sc
+       -- only add the name if we have decided to show it
+       let True = showTest
+         | False => pure rest
        ity <- resugar env !(normalise defs env (binderType b))
        let premise = MkHolePremise x ity (multiplicity b) (isImplicit b)
        pure $ { context $= (premise ::)  } rest

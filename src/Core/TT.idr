@@ -550,6 +550,7 @@ setMultiplicity (PVar fc _ p ty) c = PVar fc c p ty
 setMultiplicity (PLet fc _ val ty) c = PLet fc c val ty
 setMultiplicity (PVTy fc _ ty) c = PVTy fc c ty
 
+export
 Show ty => Show (Binder ty) where
   show (Lam _ c _ t) = "\\" ++ showCount c ++ show t
   show (Pi _ c _ t) = "Pi " ++ showCount c ++ show t
