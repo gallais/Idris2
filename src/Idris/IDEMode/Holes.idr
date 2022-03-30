@@ -177,6 +177,13 @@ prettyRigHole = keyword
                          (const $ space <+> space)
 
 export
+prettyPremise : Premise -> Doc IdrisSyntax
+prettyPremise (MkHolePremise n ty rig imp)
+  = prettyRigHole rig
+  <+> prettyImpBracket imp (prettyName n)
+  <++> colon <++> prettyTerm ty
+
+export
 prettyHole : {vars : _} ->
              {auto c : Ref Ctxt Defs} ->
              {auto s : Ref Syn SyntaxInfo} ->
@@ -186,10 +193,8 @@ prettyHole defs env fn args ty
   = do hdata <- holeData defs env fn args ty
        case hdata.context of
             [] => pure $ pretty hdata.name <++> colon <++> prettyTerm hdata.type
-            _  => pure $ (indent 1 $ vsep $
-                            map (\premise => prettyRigHole premise.multiplicity
-                                    <+> prettyImpBracket premise.isImplicit (prettyName premise.name <++> colon <++> prettyTerm premise.type))
-                                    hdata.context) <+> hardline
+            _  => pure $ (indent 1 $ vsep $ map prettyPremise hdata.context)
+                    <+> hardline
                     <+> (pretty $ replicate 30 '-') <+> hardline
                     <+> pretty (nameRoot $ hdata.name) <++> colon <++> prettyTerm hdata.type
 
