@@ -629,16 +629,15 @@ jobs:
           make
           mkdir -p ${HOME}/.local/bin/
           ln -s build/exec/katla/ ${HOME}/.local/bin/katla
-          ls -alh ${HOME}/.local/bin/
-          echo ${GITHUB_PATH}
+          ./build/exec/katla
+          ${HOME}/.local/bin/katla
+          echo "${HOME}/.local/bin" >> $GITHUB_PATH
       - name: Checkout idris2
         uses: actions/checkout@v2
       - name: Build html doc
         run: |
-          echo "${HOME}/.local/bin" >> $GITHUB_PATH
-          echo ${GITHUB_PATH}
-          katla
           ${HOME}/.local/bin/katla
+          katla
           cd .github/scripts
           ./katla.sh
       - name: Deploy HTML
