@@ -624,9 +624,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: 'idris-community/katla'
-      - name: Build and install idrall
+      - name: Build and install katla
         run: |
-          make install
+          make
           ln -s build/exec/katla/ ~/.local/bin/katla
       - name: Checkout idris2
         uses: actions/checkout@v2
