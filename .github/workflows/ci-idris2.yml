@@ -627,13 +627,16 @@ jobs:
       - name: Build and install katla
         run: |
           make
-          mkdir -p ~/.local/bin/
-          ln -s build/exec/katla/ $HOME/.local/bin/katla
+          mkdir -p ${HOME}/.local/bin/
+          ln -s build/exec/katla/ ${HOME}/.local/bin/katla
+          ls -alh ${HOME}/.local/bin/
       - name: Checkout idris2
         uses: actions/checkout@v2
       - name: Build html doc
         run: |
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
+          katla
+          ${HOME}/.local/bin/katla
           cd .github/scripts
           ./katla.sh
       - name: Deploy HTML
