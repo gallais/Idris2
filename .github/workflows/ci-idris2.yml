@@ -579,7 +579,7 @@ jobs:
   # Ubuntu using katla to build html doc of the libs
   ######################################################################
 
-  ubuntu-test-collie:
+  ubuntu-katla:
     needs: ubuntu-test-collie
     runs-on: ubuntu-latest
     if: |
