@@ -627,6 +627,7 @@ jobs:
       - name: Build and install katla
         run: |
           make
+          mkdir -p ~/.local/bin/
           ln -s build/exec/katla/ ~/.local/bin/katla
       - name: Checkout idris2
         uses: actions/checkout@v2
