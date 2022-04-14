@@ -628,7 +628,7 @@ jobs:
         run: |
           make
           mkdir -p ~/.local/bin/
-          ln -s build/exec/katla/ ~/.local/bin/katla
+          ln -s build/exec/katla/ $HOME/.local/bin/katla
       - name: Checkout idris2
         uses: actions/checkout@v2
       - name: Build html doc
