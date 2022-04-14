@@ -632,8 +632,9 @@ jobs:
       - name: Checkout idris2
         uses: actions/checkout@v2
       - name: Build html doc
-        run: cd .github/scripts
-             ./katla.sh
+        run: |
+          cd .github/scripts
+          ./katla.sh
       - name: Deploy HTML
         uses: JamesIves/github-pages-deploy-action@4.1.3
 
