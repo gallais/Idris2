@@ -633,6 +633,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Build html doc
         run: |
+          echo "${HOME}/.local/bin" >> $GITHUB_PATH
           cd .github/scripts
           ./katla.sh
       - name: Deploy HTML
