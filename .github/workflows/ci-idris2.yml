@@ -625,7 +625,13 @@ jobs:
         uses: actions/checkout@v2
       - name: Build html doc
         run: |
-          make libs
+          make -C libs/prelude/ IDRIS2=idris2
+          make -C libs/base/ IDRIS2=idris2
+          make -C libs/contrib/ IDRIS2=idris2
+          make -C libs/linear/ IDRIS2=idris2
+          make -C libs/test/ IDRIS2=idris2
+          make -C libs/papers/ IDRIS2=idris2
+
           ${HOME}/.local/bin/katla --help || true
           katla --help || true
           cd .github/scripts
