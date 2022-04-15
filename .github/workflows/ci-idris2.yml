@@ -628,7 +628,7 @@ jobs:
         run: |
           make
           mkdir -p ${HOME}/.local/bin/
-          ln -s build/exec/katla/ ${HOME}/.local/bin/katla
+          ln -s build/exec/katla ${HOME}/.local/bin/katla
           ./build/exec/katla --help || true
           ${HOME}/.local/bin/katla --help || true
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
