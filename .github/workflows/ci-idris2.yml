@@ -625,6 +625,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Build html doc
         run: |
+          make libs
           ${HOME}/.local/bin/katla --help || true
           katla --help || true
           cd .github/scripts
