@@ -615,7 +615,7 @@ jobs:
         run: |
           make
           mkdir -p ${HOME}/.local/bin/
-          ln -s build/exec/katla ${HOME}/.local/bin/katla
+          ln -s $(pwd)/build/exec/katla ${HOME}/.local/bin/katla
           ls -la ${HOME}/.local/bin
           ./build/exec/katla --help || true
           ${HOME}/.local/bin/katla --help || true
