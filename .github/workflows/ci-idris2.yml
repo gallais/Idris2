@@ -616,11 +616,7 @@ jobs:
           make
           mkdir -p ${HOME}/.local/bin/
           cp -r build/exec/* ${HOME}/.local/bin/
-          ls -la ${HOME}/.local/bin
-          ./build/exec/katla --help || true
-          ${HOME}/.local/bin/katla --help || true
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
-          katla --help || true
       - name: Checkout idris2
         uses: actions/checkout@v2
       - name: Build html doc
@@ -632,10 +628,7 @@ jobs:
           make -C libs/test/ install IDRIS2=idris2
           make -C libs/papers/ install IDRIS2=idris2
 
-          ${HOME}/.local/bin/katla --help || true
-          katla --help || true
           cd .github/scripts
-          which find
           ./katla.sh
       - name: Deploy HTML
         uses: JamesIves/github-pages-deploy-action@4.1.3
