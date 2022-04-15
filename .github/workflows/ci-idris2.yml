@@ -1,22 +1,6 @@
 name: Idris2
 
 on:
-  push:
-    branches:
-      - '*'
-    tags:
-      - '*'
-    paths-ignore:
-      - 'docs/**'
-      - 'icons/**'
-      - 'Release/**'
-      - '**.md'
-      - 'CONTRIBUTORS'
-      - 'LICENSE'
-      - '.github/workflows/ci-bootstrap.yml'
-      - '.github/workflows/ci-lint.yml'
-      - '.github/workflows/ci-sphinx.yml'
-      - '.github/workflows/ci-super-linter.yml'
   pull_request:
     branches:
       - main
@@ -126,9 +110,10 @@ jobs:
     needs: quick-check
     runs-on: ubuntu-latest
     if: |
-      !contains(needs.initialise.outputs.commit_message, '[ci:')
+      false &&
+      (!contains(needs.initialise.outputs.commit_message, '[ci:')
       || contains(needs.initialise.outputs.commit_message, '[ci: ubuntu]')
-      || contains(needs.initialise.outputs.commit_message, '[ci: chez]')
+      || contains(needs.initialise.outputs.commit_message, '[ci: chez]'))
     env:
       IDRIS2_CG: chez
       SCHEME: scheme
@@ -155,9 +140,9 @@ jobs:
     needs: quick-check
     runs-on: macos-latest
     if: |
-      !contains(needs.initialise.outputs.commit_message, '[ci:')
+      false && (!contains(needs.initialise.outputs.commit_message, '[ci:')
       || contains(needs.initialise.outputs.commit_message, '[ci: macos]')
-      || contains(needs.initialise.outputs.commit_message, '[ci: chez]')
+      || contains(needs.initialise.outputs.commit_message, '[ci: chez]'))
     env:
       SCHEME: chez
     steps:
@@ -183,10 +168,11 @@ jobs:
     needs: quick-check
     runs-on: windows-latest
     if: |
-      !contains(needs.initialise.outputs.commit_message, '[ci:')
+      false &&
+      (!contains(needs.initialise.outputs.commit_message, '[ci:')
       || contains(needs.initialise.outputs.commit_message, '[ci: windows]')
       || contains(needs.initialise.outputs.commit_message, '[ci: chez]')
-      || contains(needs.initialise.outputs.commit_message, '[ci: racket]')
+      || contains(needs.initialise.outputs.commit_message, '[ci: racket]'))
     env:
       MSYSTEM: MINGW64
       MSYS2_PATH_TYPE: inherit
@@ -233,9 +219,10 @@ jobs:
     needs: quick-check
     runs-on: ubuntu-latest
     if: |
-      !contains(needs.initialise.outputs.commit_message, '[ci:')
+      false &&
+      (!contains(needs.initialise.outputs.commit_message, '[ci:')
       || contains(needs.initialise.outputs.commit_message, '[ci: nix]')
-      || contains(needs.initialise.outputs.commit_message, '[ci: chez]')
+      || contains(needs.initialise.outputs.commit_message, '[ci: chez]'))
     steps:
     - uses: actions/checkout@v2
       with:
