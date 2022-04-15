@@ -629,6 +629,7 @@ jobs:
           make
           mkdir -p ${HOME}/.local/bin/
           ln -s build/exec/katla ${HOME}/.local/bin/katla
+          ls -la ${HOME}/.local/bin
           ./build/exec/katla --help || true
           ${HOME}/.local/bin/katla --help || true
           echo "${HOME}/.local/bin" >> $GITHUB_PATH
@@ -640,11 +641,12 @@ jobs:
           ${HOME}/.local/bin/katla --help || true
           katla --help || true
           cd .github/scripts
-          PATH=$GITHUB_PATH ./katla.sh
+          which find
+          ./katla.sh
       - name: Deploy HTML
         uses: JamesIves/github-pages-deploy-action@4.1.3
 
         with:
           branch: gh-pages
-          folder: html
+          folder: .github/scripts/html/
           git-config-name: Github Actions
