@@ -1,2 +1,310 @@
-INTERNAL ERROR: ../../libs/base/build/ttc/System/Signal.ttm: File Not Found
-Couldn't open metadata file: ../../libs/base/build/ttc/System/Signal.ttm
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+      .IdrisData {
+      
+      color: darkred
+    }
+    .IdrisType {
+      
+      color: blue
+    }
+    .IdrisBound {
+      
+      color: black
+    }
+    .IdrisFunction {
+      
+      color: darkgreen
+    }
+    .IdrisKeyword {
+      text-decoration: underline;
+      color: 
+    }
+    .IdrisImplicit {
+      
+      color: black
+    }
+    .IdrisComment {
+      
+      color: #b22222
+    }
+    .IdrisNamespace {
+      font-style: italic;
+      color: black
+    }
+    .IdrisPostulate {
+      font-weight: bold;
+      color: red
+    }
+    .IdrisModule {
+      font-style: italic;
+      color: black
+    }
+
+  .IdrisLineNumber {
+    text-decoration: none;
+    color: lightgrey;
+    user-select: none;
+  }
+  .IdrisLineNumber:hover {
+    color: darkgray;
+  }
+  .IdrisLineNumber:target {
+    color: gray;
+  }
+  </style>
+</head>
+<body>
+<code>
+<a href="#line0" id="line0" class="IdrisLineNumber"> &nbsp;&nbsp;0 | </a><span class="IdrisComment">|||&nbsp;Signal&nbsp;raising&nbsp;and&nbsp;handling.</span><br />
+<a href="#line1" id="line1" class="IdrisLineNumber"> &nbsp;&nbsp;1 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line2" id="line2" class="IdrisLineNumber"> &nbsp;&nbsp;2 | </a><span class="IdrisComment">|||&nbsp;NOTE&nbsp;that&nbsp;there&nbsp;are&nbsp;important&nbsp;differences&nbsp;between</span><br />
+<a href="#line3" id="line3" class="IdrisLineNumber"> &nbsp;&nbsp;3 | </a><span class="IdrisComment">|||&nbsp;what&nbsp;can&nbsp;be&nbsp;done&nbsp;out-of-box&nbsp;in&nbsp;Windows&nbsp;and&nbsp;POSIX&nbsp;based</span><br />
+<a href="#line4" id="line4" class="IdrisLineNumber"> &nbsp;&nbsp;4 | </a><span class="IdrisComment">|||&nbsp;operating&nbsp;systems.&nbsp;This&nbsp;module&nbsp;tries&nbsp;to&nbsp;honor&nbsp;both</span><br />
+<a href="#line5" id="line5" class="IdrisLineNumber"> &nbsp;&nbsp;5 | </a><span class="IdrisComment">|||&nbsp;by&nbsp;putting&nbsp;things&nbsp;only&nbsp;available&nbsp;in&nbsp;POSIX&nbsp;environments</span><br />
+<a href="#line6" id="line6" class="IdrisLineNumber"> &nbsp;&nbsp;6 | </a><span class="IdrisComment">|||&nbsp;into&nbsp;appropriately&nbsp;named&nbsp;namespaces&nbsp;or&nbsp;data&nbsp;types.</span><br />
+<a href="#line7" id="line7" class="IdrisLineNumber"> &nbsp;&nbsp;7 | </a><span class="IdrisKeyword">module</span>&nbsp;<span class="IdrisModule">System.Signal</span><br />
+<a href="#line8" id="line8" class="IdrisLineNumber"> &nbsp;&nbsp;8 | </a><br />
+<a href="#line9" id="line9" class="IdrisLineNumber"> &nbsp;&nbsp;9 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Data.Fuel</span><br />
+<a href="#line10" id="line10" class="IdrisLineNumber"> &nbsp;10 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Data.List</span><br />
+<a href="#line11" id="line11" class="IdrisLineNumber"> &nbsp;11 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">System.Errno</span><br />
+<a href="#line12" id="line12" class="IdrisLineNumber"> &nbsp;12 | </a><br />
+<a href="#line13" id="line13" class="IdrisLineNumber"> &nbsp;13 | </a><span class="IdrisKeyword">%default</span>&nbsp;<span class="IdrisKeyword">total</span><br />
+<a href="#line14" id="line14" class="IdrisLineNumber"> &nbsp;14 | </a><br />
+<a href="#line15" id="line15" class="IdrisLineNumber"> &nbsp;15 | </a><span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">String</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">String</span><br />
+<a href="#line16" id="line16" class="IdrisLineNumber"> &nbsp;16 | </a><span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisBound">fn</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">&quot;C:&quot;</span>&nbsp;<span class="IdrisFunction">++</span>&nbsp;<span class="IdrisBound">fn</span>&nbsp;<span class="IdrisFunction">++</span>&nbsp;<span class="IdrisData">&quot;,&nbsp;libidris2_support,&nbsp;idris_signal.h&quot;</span><br />
+<a href="#line17" id="line17" class="IdrisLineNumber"> &nbsp;17 | </a><br />
+<a href="#line18" id="line18" class="IdrisLineNumber"> &nbsp;18 | </a><span class="IdrisComment">--</span><br />
+<a href="#line19" id="line19" class="IdrisLineNumber"> &nbsp;19 | </a><span class="IdrisComment">--&nbsp;Signals</span><br />
+<a href="#line20" id="line20" class="IdrisLineNumber"> &nbsp;20 | </a><span class="IdrisComment">--</span><br />
+<a href="#line21" id="line21" class="IdrisLineNumber"> &nbsp;21 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;sighup&quot;</span><br />
+<a href="#line22" id="line22" class="IdrisLineNumber"> &nbsp;22 | </a><span class="IdrisFunction">prim__sighup</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line23" id="line23" class="IdrisLineNumber"> &nbsp;23 | </a><br />
+<a href="#line24" id="line24" class="IdrisLineNumber"> &nbsp;24 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;sigint&quot;</span><br />
+<a href="#line25" id="line25" class="IdrisLineNumber"> &nbsp;25 | </a><span class="IdrisFunction">prim__sigint</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line26" id="line26" class="IdrisLineNumber"> &nbsp;26 | </a><br />
+<a href="#line27" id="line27" class="IdrisLineNumber"> &nbsp;27 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;sigabrt&quot;</span><br />
+<a href="#line28" id="line28" class="IdrisLineNumber"> &nbsp;28 | </a><span class="IdrisFunction">prim__sigabrt</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line29" id="line29" class="IdrisLineNumber"> &nbsp;29 | </a><br />
+<a href="#line30" id="line30" class="IdrisLineNumber"> &nbsp;30 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;sigquit&quot;</span><br />
+<a href="#line31" id="line31" class="IdrisLineNumber"> &nbsp;31 | </a><span class="IdrisFunction">prim__sigquit</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line32" id="line32" class="IdrisLineNumber"> &nbsp;32 | </a><br />
+<a href="#line33" id="line33" class="IdrisLineNumber"> &nbsp;33 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;sigill&quot;</span><br />
+<a href="#line34" id="line34" class="IdrisLineNumber"> &nbsp;34 | </a><span class="IdrisFunction">prim__sigill</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line35" id="line35" class="IdrisLineNumber"> &nbsp;35 | </a><br />
+<a href="#line36" id="line36" class="IdrisLineNumber"> &nbsp;36 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;sigsegv&quot;</span><br />
+<a href="#line37" id="line37" class="IdrisLineNumber"> &nbsp;37 | </a><span class="IdrisFunction">prim__sigsegv</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line38" id="line38" class="IdrisLineNumber"> &nbsp;38 | </a><br />
+<a href="#line39" id="line39" class="IdrisLineNumber"> &nbsp;39 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;sigtrap&quot;</span><br />
+<a href="#line40" id="line40" class="IdrisLineNumber"> &nbsp;40 | </a><span class="IdrisFunction">prim__sigtrap</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line41" id="line41" class="IdrisLineNumber"> &nbsp;41 | </a><br />
+<a href="#line42" id="line42" class="IdrisLineNumber"> &nbsp;42 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;sigfpe&quot;</span><br />
+<a href="#line43" id="line43" class="IdrisLineNumber"> &nbsp;43 | </a><span class="IdrisFunction">prim__sigfpe</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line44" id="line44" class="IdrisLineNumber"> &nbsp;44 | </a><br />
+<a href="#line45" id="line45" class="IdrisLineNumber"> &nbsp;45 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;sigusr1&quot;</span><br />
+<a href="#line46" id="line46" class="IdrisLineNumber"> &nbsp;46 | </a><span class="IdrisFunction">prim__sigusr1</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line47" id="line47" class="IdrisLineNumber"> &nbsp;47 | </a><br />
+<a href="#line48" id="line48" class="IdrisLineNumber"> &nbsp;48 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;sigusr2&quot;</span><br />
+<a href="#line49" id="line49" class="IdrisLineNumber"> &nbsp;49 | </a><span class="IdrisFunction">prim__sigusr2</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line50" id="line50" class="IdrisLineNumber"> &nbsp;50 | </a><br />
+<a href="#line51" id="line51" class="IdrisLineNumber"> &nbsp;51 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line52" id="line52" class="IdrisLineNumber"> &nbsp;52 | </a><span class="IdrisKeyword">data</span>&nbsp;<span class="IdrisType">PosixSignal</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisComment">|||&nbsp;Hangup&nbsp;(i.e.&nbsp;controlling&nbsp;terminal&nbsp;closed)</span><br />
+<a href="#line53" id="line53" class="IdrisLineNumber"> &nbsp;53 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">SigHUP</span><br />
+<a href="#line54" id="line54" class="IdrisLineNumber"> &nbsp;54 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisComment">|||&nbsp;Quit</span><br />
+<a href="#line55" id="line55" class="IdrisLineNumber"> &nbsp;55 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">SigQUIT</span><br />
+<a href="#line56" id="line56" class="IdrisLineNumber"> &nbsp;56 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisComment">|||&nbsp;Trap&nbsp;(as&nbsp;used&nbsp;by&nbsp;debuggers)</span><br />
+<a href="#line57" id="line57" class="IdrisLineNumber"> &nbsp;57 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">SigTRAP</span><br />
+<a href="#line58" id="line58" class="IdrisLineNumber"> &nbsp;58 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisData">SigUser1</span><br />
+<a href="#line59" id="line59" class="IdrisLineNumber"> &nbsp;59 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisData">SigUser2</span><br />
+<a href="#line60" id="line60" class="IdrisLineNumber"> &nbsp;60 | </a><br />
+<a href="#line61" id="line61" class="IdrisLineNumber"> &nbsp;61 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line62" id="line62" class="IdrisLineNumber"> &nbsp;62 | </a><span class="IdrisType">Eq</span>&nbsp;<span class="IdrisType">PosixSignal</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line63" id="line63" class="IdrisLineNumber"> &nbsp;63 | </a>&nbsp;&nbsp;<span class="IdrisData">SigHUP</span>&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">SigHUP</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">True</span><br />
+<a href="#line64" id="line64" class="IdrisLineNumber"> &nbsp;64 | </a>&nbsp;&nbsp;<span class="IdrisData">SigQUIT</span>&nbsp;&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">SigQUIT</span>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">True</span><br />
+<a href="#line65" id="line65" class="IdrisLineNumber"> &nbsp;65 | </a>&nbsp;&nbsp;<span class="IdrisData">SigTRAP</span>&nbsp;&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">SigTRAP</span>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">True</span><br />
+<a href="#line66" id="line66" class="IdrisLineNumber"> &nbsp;66 | </a>&nbsp;&nbsp;<span class="IdrisData">SigUser1</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">SigUser1</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">True</span><br />
+<a href="#line67" id="line67" class="IdrisLineNumber"> &nbsp;67 | </a>&nbsp;&nbsp;<span class="IdrisData">SigUser2</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">SigUser2</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">True</span><br />
+<a href="#line68" id="line68" class="IdrisLineNumber"> &nbsp;68 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">False</span><br />
+<a href="#line69" id="line69" class="IdrisLineNumber"> &nbsp;69 | </a><br />
+<a href="#line70" id="line70" class="IdrisLineNumber"> &nbsp;70 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line71" id="line71" class="IdrisLineNumber"> &nbsp;71 | </a><span class="IdrisKeyword">data</span>&nbsp;<span class="IdrisType">Signal</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisComment">|||&nbsp;Interrupt&nbsp;(e.g.&nbsp;ctrl+c&nbsp;pressed)</span><br />
+<a href="#line72" id="line72" class="IdrisLineNumber"> &nbsp;72 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">SigINT</span><br />
+<a href="#line73" id="line73" class="IdrisLineNumber"> &nbsp;73 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisComment">|||&nbsp;Abnormal&nbsp;termination</span><br />
+<a href="#line74" id="line74" class="IdrisLineNumber"> &nbsp;74 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">SigABRT</span><br />
+<a href="#line75" id="line75" class="IdrisLineNumber"> &nbsp;75 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisComment">|||&nbsp;Ill-formed&nbsp;instruction</span><br />
+<a href="#line76" id="line76" class="IdrisLineNumber"> &nbsp;76 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">SigILL</span><br />
+<a href="#line77" id="line77" class="IdrisLineNumber"> &nbsp;77 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisComment">|||&nbsp;Segmentation&nbsp;fault</span><br />
+<a href="#line78" id="line78" class="IdrisLineNumber"> &nbsp;78 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">SigSEGV</span><br />
+<a href="#line79" id="line79" class="IdrisLineNumber"> &nbsp;79 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisComment">|||&nbsp;Floating-point&nbsp;error</span><br />
+<a href="#line80" id="line80" class="IdrisLineNumber"> &nbsp;80 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">SigFPE</span><br />
+<a href="#line81" id="line81" class="IdrisLineNumber"> &nbsp;81 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisComment">|||&nbsp;Signals&nbsp;only&nbsp;available&nbsp;on&nbsp;POSIX&nbsp;operating&nbsp;systems</span><br />
+<a href="#line82" id="line82" class="IdrisLineNumber"> &nbsp;82 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">SigPosix</span>&nbsp;<span class="IdrisType">PosixSignal</span><br />
+<a href="#line83" id="line83" class="IdrisLineNumber"> &nbsp;83 | </a><br />
+<a href="#line84" id="line84" class="IdrisLineNumber"> &nbsp;84 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line85" id="line85" class="IdrisLineNumber"> &nbsp;85 | </a><span class="IdrisType">Eq</span>&nbsp;<span class="IdrisType">Signal</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line86" id="line86" class="IdrisLineNumber"> &nbsp;86 | </a>&nbsp;&nbsp;<span class="IdrisData">SigINT</span>&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">SigINT</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">True</span><br />
+<a href="#line87" id="line87" class="IdrisLineNumber"> &nbsp;87 | </a>&nbsp;&nbsp;<span class="IdrisData">SigABRT</span>&nbsp;&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">SigABRT</span>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">True</span><br />
+<a href="#line88" id="line88" class="IdrisLineNumber"> &nbsp;88 | </a>&nbsp;&nbsp;<span class="IdrisData">SigILL</span>&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">SigILL</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">True</span><br />
+<a href="#line89" id="line89" class="IdrisLineNumber"> &nbsp;89 | </a>&nbsp;&nbsp;<span class="IdrisData">SigSEGV</span>&nbsp;&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">SigSEGV</span>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">True</span><br />
+<a href="#line90" id="line90" class="IdrisLineNumber"> &nbsp;90 | </a>&nbsp;&nbsp;<span class="IdrisData">SigFPE</span>&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">SigFPE</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">True</span><br />
+<a href="#line91" id="line91" class="IdrisLineNumber"> &nbsp;91 | </a>&nbsp;&nbsp;<span class="IdrisData">SigPosix</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">SigPosix</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisBound">y</span><br />
+<a href="#line92" id="line92" class="IdrisLineNumber"> &nbsp;92 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">False</span><br />
+<a href="#line93" id="line93" class="IdrisLineNumber"> &nbsp;93 | </a><br />
+<a href="#line94" id="line94" class="IdrisLineNumber"> &nbsp;94 | </a><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Signal</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line95" id="line95" class="IdrisLineNumber"> &nbsp;95 | </a><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisData">SigINT</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">prim__sigint</span><br />
+<a href="#line96" id="line96" class="IdrisLineNumber"> &nbsp;96 | </a><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisData">SigABRT</span>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">prim__sigabrt</span><br />
+<a href="#line97" id="line97" class="IdrisLineNumber"> &nbsp;97 | </a><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisData">SigILL</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">prim__sigill</span><br />
+<a href="#line98" id="line98" class="IdrisLineNumber"> &nbsp;98 | </a><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisData">SigSEGV</span>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">prim__sigsegv</span><br />
+<a href="#line99" id="line99" class="IdrisLineNumber"> &nbsp;99 | </a><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisData">SigFPE</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">prim__sigfpe</span><br />
+<a href="#line100" id="line100" class="IdrisLineNumber"> 100 | </a><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SigPosix</span>&nbsp;<span class="IdrisData">SigHUP</span>&nbsp;&nbsp;<span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">prim__sighup</span><br />
+<a href="#line101" id="line101" class="IdrisLineNumber"> 101 | </a><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SigPosix</span>&nbsp;<span class="IdrisData">SigQUIT</span>&nbsp;<span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">prim__sigquit</span><br />
+<a href="#line102" id="line102" class="IdrisLineNumber"> 102 | </a><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SigPosix</span>&nbsp;<span class="IdrisData">SigTRAP</span>&nbsp;<span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">prim__sigtrap</span><br />
+<a href="#line103" id="line103" class="IdrisLineNumber"> 103 | </a><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SigPosix</span>&nbsp;<span class="IdrisData">SigUser1</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">prim__sigusr1</span><br />
+<a href="#line104" id="line104" class="IdrisLineNumber"> 104 | </a><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SigPosix</span>&nbsp;<span class="IdrisData">SigUser2</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">prim__sigusr2</span><br />
+<a href="#line105" id="line105" class="IdrisLineNumber"> 105 | </a><br />
+<a href="#line106" id="line106" class="IdrisLineNumber"> 106 | </a><span class="IdrisFunction">toSignal</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Maybe</span>&nbsp;<span class="IdrisType">Signal</span><br />
+<a href="#line107" id="line107" class="IdrisLineNumber"> 107 | </a><span class="IdrisFunction">toSignal</span>&nbsp;<span class="IdrisKeyword">(</span>-<span class="IdrisData">1</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Nothing</span><br />
+<a href="#line108" id="line108" class="IdrisLineNumber"> 108 | </a><span class="IdrisFunction">toSignal</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">lookup</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisFunction">codes</span><br />
+<a href="#line109" id="line109" class="IdrisLineNumber"> 109 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line110" id="line110" class="IdrisLineNumber"> 110 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">codes</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">List</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Int,</span>&nbsp;<span class="IdrisType">Signal</span><span class="IdrisKeyword">)</span><br />
+<a href="#line111" id="line111" class="IdrisLineNumber"> 111 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">codes</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">[</span><br />
+<a href="#line112" id="line112" class="IdrisLineNumber"> 112 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">prim__sigint</span>&nbsp;<span class="IdrisData">,</span>&nbsp;<span class="IdrisData">SigINT</span><span class="IdrisKeyword">)</span><br />
+<a href="#line113" id="line113" class="IdrisLineNumber"> 113 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">,</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">prim__sigabrt</span><span class="IdrisData">,</span>&nbsp;<span class="IdrisData">SigABRT</span><span class="IdrisKeyword">)</span><br />
+<a href="#line114" id="line114" class="IdrisLineNumber"> 114 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">,</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">prim__sigill</span>&nbsp;<span class="IdrisData">,</span>&nbsp;<span class="IdrisData">SigILL</span><span class="IdrisKeyword">)</span><br />
+<a href="#line115" id="line115" class="IdrisLineNumber"> 115 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">,</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">prim__sigsegv</span><span class="IdrisData">,</span>&nbsp;<span class="IdrisData">SigSEGV</span><span class="IdrisKeyword">)</span><br />
+<a href="#line116" id="line116" class="IdrisLineNumber"> 116 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">,</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">prim__sigfpe</span>&nbsp;<span class="IdrisData">,</span>&nbsp;<span class="IdrisData">SigFPE</span><span class="IdrisKeyword">)</span><br />
+<a href="#line117" id="line117" class="IdrisLineNumber"> 117 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">,</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">prim__sighup</span>&nbsp;<span class="IdrisData">,</span>&nbsp;<span class="IdrisData">SigPosix</span>&nbsp;<span class="IdrisData">SigHUP</span><span class="IdrisKeyword">)</span><br />
+<a href="#line118" id="line118" class="IdrisLineNumber"> 118 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">,</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">prim__sigquit</span><span class="IdrisData">,</span>&nbsp;<span class="IdrisData">SigPosix</span>&nbsp;<span class="IdrisData">SigQUIT</span><span class="IdrisKeyword">)</span><br />
+<a href="#line119" id="line119" class="IdrisLineNumber"> 119 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">,</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">prim__sigtrap</span><span class="IdrisData">,</span>&nbsp;<span class="IdrisData">SigPosix</span>&nbsp;<span class="IdrisData">SigTRAP</span><span class="IdrisKeyword">)</span><br />
+<a href="#line120" id="line120" class="IdrisLineNumber"> 120 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">,</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">prim__sigusr1</span><span class="IdrisData">,</span>&nbsp;<span class="IdrisData">SigPosix</span>&nbsp;<span class="IdrisData">SigUser1</span><span class="IdrisKeyword">)</span><br />
+<a href="#line121" id="line121" class="IdrisLineNumber"> 121 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">,</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">prim__sigusr2</span><span class="IdrisData">,</span>&nbsp;<span class="IdrisData">SigPosix</span>&nbsp;<span class="IdrisData">SigUser2</span><span class="IdrisKeyword">)</span><br />
+<a href="#line122" id="line122" class="IdrisLineNumber"> 122 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">]</span><br />
+<a href="#line123" id="line123" class="IdrisLineNumber"> 123 | </a><br />
+<a href="#line124" id="line124" class="IdrisLineNumber"> 124 | </a><span class="IdrisComment">--</span><br />
+<a href="#line125" id="line125" class="IdrisLineNumber"> 125 | </a><span class="IdrisComment">--&nbsp;Signal&nbsp;Handling</span><br />
+<a href="#line126" id="line126" class="IdrisLineNumber"> 126 | </a><span class="IdrisComment">--</span><br />
+<a href="#line127" id="line127" class="IdrisLineNumber"> 127 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;ignore_signal&quot;</span><br />
+<a href="#line128" id="line128" class="IdrisLineNumber"> 128 | </a><span class="IdrisFunction">prim__ignoreSignal</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisFunction">PrimIO</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line129" id="line129" class="IdrisLineNumber"> 129 | </a><br />
+<a href="#line130" id="line130" class="IdrisLineNumber"> 130 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;default_signal&quot;</span><br />
+<a href="#line131" id="line131" class="IdrisLineNumber"> 131 | </a><span class="IdrisFunction">prim__defaultSignal</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisFunction">PrimIO</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line132" id="line132" class="IdrisLineNumber"> 132 | </a><br />
+<a href="#line133" id="line133" class="IdrisLineNumber"> 133 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;collect_signal&quot;</span><br />
+<a href="#line134" id="line134" class="IdrisLineNumber"> 134 | </a><span class="IdrisFunction">prim__collectSignal</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisFunction">PrimIO</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line135" id="line135" class="IdrisLineNumber"> 135 | </a><br />
+<a href="#line136" id="line136" class="IdrisLineNumber"> 136 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;handle_next_collected_signal&quot;</span><br />
+<a href="#line137" id="line137" class="IdrisLineNumber"> 137 | </a><span class="IdrisFunction">prim__handleNextCollectedSignal</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisFunction">PrimIO</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line138" id="line138" class="IdrisLineNumber"> 138 | </a><br />
+<a href="#line139" id="line139" class="IdrisLineNumber"> 139 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;send_signal&quot;</span><br />
+<a href="#line140" id="line140" class="IdrisLineNumber"> 140 | </a><span class="IdrisFunction">prim__sendSignal</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Int</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisFunction">PrimIO</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line141" id="line141" class="IdrisLineNumber"> 141 | </a><br />
+<a href="#line142" id="line142" class="IdrisLineNumber"> 142 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">signalFFI</span>&nbsp;<span class="IdrisData">&quot;raise_signal&quot;</span><br />
+<a href="#line143" id="line143" class="IdrisLineNumber"> 143 | </a><span class="IdrisFunction">prim__raiseSignal</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisFunction">PrimIO</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line144" id="line144" class="IdrisLineNumber"> 144 | </a><br />
+<a href="#line145" id="line145" class="IdrisLineNumber"> 145 | </a><span class="IdrisComment">|||&nbsp;An&nbsp;Error&nbsp;represented&nbsp;by&nbsp;a&nbsp;code.&nbsp;See</span><br />
+<a href="#line146" id="line146" class="IdrisLineNumber"> 146 | </a><span class="IdrisComment">|||&nbsp;relevant&nbsp;`errno`&nbsp;documentation.</span><br />
+<a href="#line147" id="line147" class="IdrisLineNumber"> 147 | </a><span class="IdrisComment">|||&nbsp;https://man7.org/linux/man-pages/man3/errno.3.html</span><br />
+<a href="#line148" id="line148" class="IdrisLineNumber"> 148 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line149" id="line149" class="IdrisLineNumber"> 149 | </a><span class="IdrisKeyword">data</span>&nbsp;<span class="IdrisType">SignalError</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Error</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line150" id="line150" class="IdrisLineNumber"> 150 | </a><br />
+<a href="#line151" id="line151" class="IdrisLineNumber"> 151 | </a><span class="IdrisFunction">getError</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">HasIO</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisType">SignalError</span><br />
+<a href="#line152" id="line152" class="IdrisLineNumber"> 152 | </a><span class="IdrisFunction">getError</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Error</span>&nbsp;<span class="IdrisFunction">&lt;$&gt;</span>&nbsp;<span class="IdrisFunction">getErrno</span><br />
+<a href="#line153" id="line153" class="IdrisLineNumber"> 153 | </a><br />
+<a href="#line154" id="line154" class="IdrisLineNumber"> 154 | </a><span class="IdrisFunction">isError</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Bool</span><br />
+<a href="#line155" id="line155" class="IdrisLineNumber"> 155 | </a><span class="IdrisFunction">isError</span>&nbsp;<span class="IdrisKeyword">(</span>-<span class="IdrisData">1</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">True</span><br />
+<a href="#line156" id="line156" class="IdrisLineNumber"> 156 | </a><span class="IdrisFunction">isError</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">False</span><br />
+<a href="#line157" id="line157" class="IdrisLineNumber"> 157 | </a><br />
+<a href="#line158" id="line158" class="IdrisLineNumber"> 158 | </a><span class="IdrisComment">|||&nbsp;Ignore&nbsp;the&nbsp;given&nbsp;signal.</span><br />
+<a href="#line159" id="line159" class="IdrisLineNumber"> 159 | </a><span class="IdrisComment">|||&nbsp;Be&nbsp;careful&nbsp;doing&nbsp;this,&nbsp;as&nbsp;most&nbsp;signals&nbsp;have&nbsp;useful</span><br />
+<a href="#line160" id="line160" class="IdrisLineNumber"> 160 | </a><span class="IdrisComment">|||&nbsp;default&nbsp;behavior&nbsp;--&nbsp;you&nbsp;might&nbsp;want&nbsp;to&nbsp;set&nbsp;the&nbsp;signal</span><br />
+<a href="#line161" id="line161" class="IdrisLineNumber"> 161 | </a><span class="IdrisComment">|||&nbsp;to&nbsp;its&nbsp;default&nbsp;behavior&nbsp;instead&nbsp;with&nbsp;`defaultSignal`.</span><br />
+<a href="#line162" id="line162" class="IdrisLineNumber"> 162 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line163" id="line163" class="IdrisLineNumber"> 163 | </a><span class="IdrisFunction">ignoreSignal</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">HasIO</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">Signal</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Either</span>&nbsp;<span class="IdrisType">SignalError</span>&nbsp;<span class="IdrisType">()</span><span class="IdrisKeyword">)</span><br />
+<a href="#line164" id="line164" class="IdrisLineNumber"> 164 | </a><span class="IdrisFunction">ignoreSignal</span>&nbsp;<span class="IdrisBound">sig</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">do</span><br />
+<a href="#line165" id="line165" class="IdrisLineNumber"> 165 | </a>&nbsp;&nbsp;<span class="IdrisBound">res</span>&nbsp;<span class="IdrisKeyword">&lt;-</span>&nbsp;<span class="IdrisFunction">primIO</span>&nbsp;$&nbsp;<span class="IdrisFunction">prim__ignoreSignal</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisBound">sig</span><span class="IdrisKeyword">)</span><br />
+<a href="#line166" id="line166" class="IdrisLineNumber"> 166 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">case</span>&nbsp;<span class="IdrisFunction">isError</span>&nbsp;<span class="IdrisBound">res</span>&nbsp;<span class="IdrisKeyword">of</span><br />
+<a href="#line167" id="line167" class="IdrisLineNumber"> 167 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">False</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisFunction">pure</span>&nbsp;$&nbsp;<span class="IdrisData">Right</span>&nbsp;<span class="IdrisData">()</span><br />
+<a href="#line168" id="line168" class="IdrisLineNumber"> 168 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">True</span>&nbsp;&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisData">Left</span>&nbsp;<span class="IdrisFunction">&lt;$&gt;</span>&nbsp;<span class="IdrisFunction">getError</span><br />
+<a href="#line169" id="line169" class="IdrisLineNumber"> 169 | </a><br />
+<a href="#line170" id="line170" class="IdrisLineNumber"> 170 | </a><span class="IdrisComment">|||&nbsp;Use&nbsp;the&nbsp;default&nbsp;handler&nbsp;for&nbsp;the&nbsp;given&nbsp;signal.</span><br />
+<a href="#line171" id="line171" class="IdrisLineNumber"> 171 | </a><span class="IdrisComment">|||&nbsp;You&nbsp;can&nbsp;use&nbsp;this&nbsp;function&nbsp;to&nbsp;unset&nbsp;custom</span><br />
+<a href="#line172" id="line172" class="IdrisLineNumber"> 172 | </a><span class="IdrisComment">|||&nbsp;handling&nbsp;of&nbsp;a&nbsp;signal.</span><br />
+<a href="#line173" id="line173" class="IdrisLineNumber"> 173 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line174" id="line174" class="IdrisLineNumber"> 174 | </a><span class="IdrisFunction">defaultSignal</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">HasIO</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">Signal</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Either</span>&nbsp;<span class="IdrisType">SignalError</span>&nbsp;<span class="IdrisType">()</span><span class="IdrisKeyword">)</span><br />
+<a href="#line175" id="line175" class="IdrisLineNumber"> 175 | </a><span class="IdrisFunction">defaultSignal</span>&nbsp;<span class="IdrisBound">sig</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">do</span><br />
+<a href="#line176" id="line176" class="IdrisLineNumber"> 176 | </a>&nbsp;&nbsp;<span class="IdrisBound">res</span>&nbsp;<span class="IdrisKeyword">&lt;-</span>&nbsp;<span class="IdrisFunction">primIO</span>&nbsp;$&nbsp;<span class="IdrisFunction">prim__defaultSignal</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisBound">sig</span><span class="IdrisKeyword">)</span><br />
+<a href="#line177" id="line177" class="IdrisLineNumber"> 177 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">case</span>&nbsp;<span class="IdrisFunction">isError</span>&nbsp;<span class="IdrisBound">res</span>&nbsp;<span class="IdrisKeyword">of</span><br />
+<a href="#line178" id="line178" class="IdrisLineNumber"> 178 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">False</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisFunction">pure</span>&nbsp;$&nbsp;<span class="IdrisData">Right</span>&nbsp;<span class="IdrisData">()</span><br />
+<a href="#line179" id="line179" class="IdrisLineNumber"> 179 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">True</span>&nbsp;&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisData">Left</span>&nbsp;<span class="IdrisFunction">&lt;$&gt;</span>&nbsp;<span class="IdrisFunction">getError</span><br />
+<a href="#line180" id="line180" class="IdrisLineNumber"> 180 | </a><br />
+<a href="#line181" id="line181" class="IdrisLineNumber"> 181 | </a><span class="IdrisComment">|||&nbsp;Collect&nbsp;the&nbsp;given&nbsp;signal.</span><br />
+<a href="#line182" id="line182" class="IdrisLineNumber"> 182 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line183" id="line183" class="IdrisLineNumber"> 183 | </a><span class="IdrisComment">|||&nbsp;This&nbsp;replaces&nbsp;the&nbsp;existing&nbsp;handling&nbsp;of&nbsp;the&nbsp;given&nbsp;signal</span><br />
+<a href="#line184" id="line184" class="IdrisLineNumber"> 184 | </a><span class="IdrisComment">|||&nbsp;and&nbsp;instead&nbsp;results&nbsp;in&nbsp;Idris&nbsp;collecting&nbsp;occurrences&nbsp;of</span><br />
+<a href="#line185" id="line185" class="IdrisLineNumber"> 185 | </a><span class="IdrisComment">|||&nbsp;the&nbsp;signal&nbsp;until&nbsp;you&nbsp;call&nbsp;`handleNextCollectedSignal`.</span><br />
+<a href="#line186" id="line186" class="IdrisLineNumber"> 186 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line187" id="line187" class="IdrisLineNumber"> 187 | </a><span class="IdrisComment">|||&nbsp;First,&nbsp;call&nbsp;`collectSignal`&nbsp;for&nbsp;any&nbsp;number&nbsp;of&nbsp;signals.</span><br />
+<a href="#line188" id="line188" class="IdrisLineNumber"> 188 | </a><span class="IdrisComment">|||&nbsp;Then,&nbsp;call&nbsp;`handleNextCollectedSignal`&nbsp;in&nbsp;each&nbsp;main&nbsp;loop</span><br />
+<a href="#line189" id="line189" class="IdrisLineNumber"> 189 | </a><span class="IdrisComment">|||&nbsp;of&nbsp;your&nbsp;program&nbsp;to&nbsp;retrieve&nbsp;(and&nbsp;mark&nbsp;as&nbsp;handled)&nbsp;the&nbsp;next</span><br />
+<a href="#line190" id="line190" class="IdrisLineNumber"> 190 | </a><span class="IdrisComment">|||&nbsp;signal&nbsp;that&nbsp;was&nbsp;collected,&nbsp;if&nbsp;any.</span><br />
+<a href="#line191" id="line191" class="IdrisLineNumber"> 191 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line192" id="line192" class="IdrisLineNumber"> 192 | </a><span class="IdrisComment">|||&nbsp;Signals&nbsp;are&nbsp;not&nbsp;queued,&nbsp;so&nbsp;the&nbsp;return&nbsp;order&nbsp;of&nbsp;signals&nbsp;is</span><br />
+<a href="#line193" id="line193" class="IdrisLineNumber"> 193 | </a><span class="IdrisComment">|||&nbsp;not&nbsp;specified&nbsp;and&nbsp;signals&nbsp;may&nbsp;be&nbsp;deduplicated.</span><br />
+<a href="#line194" id="line194" class="IdrisLineNumber"> 194 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line195" id="line195" class="IdrisLineNumber"> 195 | </a><span class="IdrisFunction">collectSignal</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">HasIO</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">Signal</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Either</span>&nbsp;<span class="IdrisType">SignalError</span>&nbsp;<span class="IdrisType">()</span><span class="IdrisKeyword">)</span><br />
+<a href="#line196" id="line196" class="IdrisLineNumber"> 196 | </a><span class="IdrisFunction">collectSignal</span>&nbsp;<span class="IdrisBound">sig</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">do</span><br />
+<a href="#line197" id="line197" class="IdrisLineNumber"> 197 | </a>&nbsp;&nbsp;<span class="IdrisBound">res</span>&nbsp;<span class="IdrisKeyword">&lt;-</span>&nbsp;<span class="IdrisFunction">primIO</span>&nbsp;$&nbsp;<span class="IdrisFunction">prim__collectSignal</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisBound">sig</span><span class="IdrisKeyword">)</span><br />
+<a href="#line198" id="line198" class="IdrisLineNumber"> 198 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">case</span>&nbsp;<span class="IdrisFunction">isError</span>&nbsp;<span class="IdrisBound">res</span>&nbsp;<span class="IdrisKeyword">of</span><br />
+<a href="#line199" id="line199" class="IdrisLineNumber"> 199 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">False</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisFunction">pure</span>&nbsp;$&nbsp;<span class="IdrisData">Right</span>&nbsp;<span class="IdrisData">()</span><br />
+<a href="#line200" id="line200" class="IdrisLineNumber"> 200 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">True</span>&nbsp;&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisData">Left</span>&nbsp;<span class="IdrisFunction">&lt;$&gt;</span>&nbsp;<span class="IdrisFunction">getError</span><br />
+<a href="#line201" id="line201" class="IdrisLineNumber"> 201 | </a><br />
+<a href="#line202" id="line202" class="IdrisLineNumber"> 202 | </a><span class="IdrisComment">|||&nbsp;Get&nbsp;next&nbsp;collected&nbsp;signal&nbsp;under&nbsp;the&nbsp;pretense&nbsp;of&nbsp;handling&nbsp;it.</span><br />
+<a href="#line203" id="line203" class="IdrisLineNumber"> 203 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line204" id="line204" class="IdrisLineNumber"> 204 | </a><span class="IdrisComment">|||&nbsp;Calling&nbsp;this&nbsp;&quot;marks&quot;&nbsp;the&nbsp;signal&nbsp;as&nbsp;handled&nbsp;so&nbsp;the&nbsp;next&nbsp;time</span><br />
+<a href="#line205" id="line205" class="IdrisLineNumber"> 205 | </a><span class="IdrisComment">|||&nbsp;this&nbsp;function&nbsp;is&nbsp;called&nbsp;you&nbsp;will&nbsp;retrieve&nbsp;the&nbsp;next&nbsp;unhandled</span><br />
+<a href="#line206" id="line206" class="IdrisLineNumber"> 206 | </a><span class="IdrisComment">|||&nbsp;signal&nbsp;instead&nbsp;of&nbsp;the&nbsp;same&nbsp;signal&nbsp;again.</span><br />
+<a href="#line207" id="line207" class="IdrisLineNumber"> 207 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line208" id="line208" class="IdrisLineNumber"> 208 | </a><span class="IdrisComment">|||&nbsp;You&nbsp;get&nbsp;back&nbsp;Nothing&nbsp;if&nbsp;there&nbsp;are&nbsp;no&nbsp;pending&nbsp;signals.</span><br />
+<a href="#line209" id="line209" class="IdrisLineNumber"> 209 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line210" id="line210" class="IdrisLineNumber"> 210 | </a><span class="IdrisFunction">handleNextCollectedSignal</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">HasIO</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Maybe</span>&nbsp;<span class="IdrisType">Signal</span><span class="IdrisKeyword">)</span><br />
+<a href="#line211" id="line211" class="IdrisLineNumber"> 211 | </a><span class="IdrisFunction">handleNextCollectedSignal</span>&nbsp;<span class="IdrisKeyword">=</span><br />
+<a href="#line212" id="line212" class="IdrisLineNumber"> 212 | </a>&nbsp;&nbsp;<span class="IdrisFunction">toSignal</span>&nbsp;<span class="IdrisFunction">&lt;$&gt;</span>&nbsp;<span class="IdrisFunction">primIO</span>&nbsp;<span class="IdrisFunction">prim__handleNextCollectedSignal</span><br />
+<a href="#line213" id="line213" class="IdrisLineNumber"> 213 | </a><br />
+<a href="#line214" id="line214" class="IdrisLineNumber"> 214 | </a><span class="IdrisComment">|||&nbsp;Get&nbsp;many&nbsp;collected&nbsp;signals&nbsp;and&nbsp;mark&nbsp;them&nbsp;as&nbsp;handled.</span><br />
+<a href="#line215" id="line215" class="IdrisLineNumber"> 215 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line216" id="line216" class="IdrisLineNumber"> 216 | </a><span class="IdrisComment">|||&nbsp;Use&nbsp;`forever`&nbsp;as&nbsp;your&nbsp;fuel&nbsp;if&nbsp;you&nbsp;don&apos;t&nbsp;want&nbsp;or&nbsp;need&nbsp;to</span><br />
+<a href="#line217" id="line217" class="IdrisLineNumber"> 217 | </a><span class="IdrisComment">|||&nbsp;retain&nbsp;totality.&nbsp;Alternatively,&nbsp;pick&nbsp;a&nbsp;max&nbsp;number&nbsp;to</span><br />
+<a href="#line218" id="line218" class="IdrisLineNumber"> 218 | </a><span class="IdrisComment">|||&nbsp;retrieve&nbsp;and&nbsp;use&nbsp;`limit/1`&nbsp;as&nbsp;your&nbsp;fuel.</span><br />
+<a href="#line219" id="line219" class="IdrisLineNumber"> 219 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line220" id="line220" class="IdrisLineNumber"> 220 | </a><span class="IdrisFunction">handleManyCollectedSignals</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">HasIO</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">Fuel</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">List</span>&nbsp;<span class="IdrisType">Signal</span><span class="IdrisKeyword">)</span><br />
+<a href="#line221" id="line221" class="IdrisLineNumber"> 221 | </a><span class="IdrisFunction">handleManyCollectedSignals</span>&nbsp;<span class="IdrisData">Dry</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">pure</span>&nbsp;<span class="IdrisData">[]</span><br />
+<a href="#line222" id="line222" class="IdrisLineNumber"> 222 | </a><span class="IdrisFunction">handleManyCollectedSignals</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">More</span>&nbsp;<span class="IdrisBound">fuel</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">do</span><br />
+<a href="#line223" id="line223" class="IdrisLineNumber"> 223 | </a>&nbsp;&nbsp;<span class="IdrisData">Just</span>&nbsp;<span class="IdrisBound">next</span>&nbsp;<span class="IdrisKeyword">&lt;-</span>&nbsp;<span class="IdrisFunction">handleNextCollectedSignal</span><br />
+<a href="#line224" id="line224" class="IdrisLineNumber"> 224 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisData">Nothing</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisFunction">pure</span>&nbsp;<span class="IdrisData">[]</span><br />
+<a href="#line225" id="line225" class="IdrisLineNumber"> 225 | </a>&nbsp;&nbsp;<span class="IdrisFunction">pure</span>&nbsp;$&nbsp;<span class="IdrisBound">next</span>&nbsp;<span class="IdrisData">::</span>&nbsp;<span class="IdrisKeyword">!(</span><span class="IdrisFunction">handleManyCollectedSignals</span>&nbsp;<span class="IdrisBound">fuel</span><span class="IdrisKeyword">)</span><br />
+<a href="#line226" id="line226" class="IdrisLineNumber"> 226 | </a><br />
+<a href="#line227" id="line227" class="IdrisLineNumber"> 227 | </a><span class="IdrisComment">|||&nbsp;Send&nbsp;a&nbsp;signal&nbsp;to&nbsp;the&nbsp;current&nbsp;process.</span><br />
+<a href="#line228" id="line228" class="IdrisLineNumber"> 228 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line229" id="line229" class="IdrisLineNumber"> 229 | </a><span class="IdrisFunction">raiseSignal</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">HasIO</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">Signal</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Either</span>&nbsp;<span class="IdrisType">SignalError</span>&nbsp;<span class="IdrisType">()</span><span class="IdrisKeyword">)</span><br />
+<a href="#line230" id="line230" class="IdrisLineNumber"> 230 | </a><span class="IdrisFunction">raiseSignal</span>&nbsp;<span class="IdrisBound">sig</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">do</span><br />
+<a href="#line231" id="line231" class="IdrisLineNumber"> 231 | </a>&nbsp;&nbsp;<span class="IdrisBound">res</span>&nbsp;<span class="IdrisKeyword">&lt;-</span>&nbsp;<span class="IdrisFunction">primIO</span>&nbsp;$&nbsp;<span class="IdrisFunction">prim__raiseSignal</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisBound">sig</span><span class="IdrisKeyword">)</span><br />
+<a href="#line232" id="line232" class="IdrisLineNumber"> 232 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">case</span>&nbsp;<span class="IdrisFunction">isError</span>&nbsp;<span class="IdrisBound">res</span>&nbsp;<span class="IdrisKeyword">of</span><br />
+<a href="#line233" id="line233" class="IdrisLineNumber"> 233 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">False</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisFunction">pure</span>&nbsp;$&nbsp;<span class="IdrisData">Right</span>&nbsp;<span class="IdrisData">()</span><br />
+<a href="#line234" id="line234" class="IdrisLineNumber"> 234 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">True</span>&nbsp;&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisData">Left</span>&nbsp;<span class="IdrisFunction">&lt;$&gt;</span>&nbsp;<span class="IdrisFunction">getError</span><br />
+<a href="#line235" id="line235" class="IdrisLineNumber"> 235 | </a><br />
+<a href="#line236" id="line236" class="IdrisLineNumber"> 236 | </a><span class="IdrisKeyword">namespace</span>&nbsp;<span class="IdrisNamespace">Posix</span><br />
+<a href="#line237" id="line237" class="IdrisLineNumber"> 237 | </a>&nbsp;&nbsp;<span class="IdrisComment">|||&nbsp;Send&nbsp;a&nbsp;signal&nbsp;to&nbsp;a&nbsp;POSIX&nbsp;process&nbsp;using&nbsp;a&nbsp;PID&nbsp;to&nbsp;identify&nbsp;the&nbsp;process.</span><br />
+<a href="#line238" id="line238" class="IdrisLineNumber"> 238 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line239" id="line239" class="IdrisLineNumber"> 239 | </a>&nbsp;&nbsp;<span class="IdrisFunction">sendSignal</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">HasIO</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">Signal</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">pid</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Either</span>&nbsp;<span class="IdrisType">SignalError</span>&nbsp;<span class="IdrisType">()</span><span class="IdrisKeyword">)</span><br />
+<a href="#line240" id="line240" class="IdrisLineNumber"> 240 | </a>&nbsp;&nbsp;<span class="IdrisFunction">sendSignal</span>&nbsp;<span class="IdrisBound">sig</span>&nbsp;<span class="IdrisBound">pid</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">do</span><br />
+<a href="#line241" id="line241" class="IdrisLineNumber"> 241 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisBound">res</span>&nbsp;<span class="IdrisKeyword">&lt;-</span>&nbsp;<span class="IdrisFunction">primIO</span>&nbsp;$&nbsp;<span class="IdrisFunction">prim__sendSignal</span>&nbsp;<span class="IdrisBound">pid</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">signalCode</span>&nbsp;<span class="IdrisBound">sig</span><span class="IdrisKeyword">)</span><br />
+<a href="#line242" id="line242" class="IdrisLineNumber"> 242 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">case</span>&nbsp;<span class="IdrisFunction">isError</span>&nbsp;<span class="IdrisBound">res</span>&nbsp;<span class="IdrisKeyword">of</span><br />
+<a href="#line243" id="line243" class="IdrisLineNumber"> 243 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">False</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisFunction">pure</span>&nbsp;$&nbsp;<span class="IdrisData">Right</span>&nbsp;<span class="IdrisData">()</span><br />
+<a href="#line244" id="line244" class="IdrisLineNumber"> 244 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">True</span>&nbsp;&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisData">Left</span>&nbsp;<span class="IdrisFunction">&lt;$&gt;</span>&nbsp;<span class="IdrisFunction">getError</span><br />
+<a href="#line245" id="line245" class="IdrisLineNumber"> 245 | </a><br />
+</code>
+</body>
+</html>

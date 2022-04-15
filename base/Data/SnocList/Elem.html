@@ -1,2 +1,135 @@
-INTERNAL ERROR: ../../libs/base/build/ttc/Data/SnocList/Elem.ttm: File Not Found
-Couldn't open metadata file: ../../libs/base/build/ttc/Data/SnocList/Elem.ttm
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+      .IdrisData {
+      
+      color: darkred
+    }
+    .IdrisType {
+      
+      color: blue
+    }
+    .IdrisBound {
+      
+      color: black
+    }
+    .IdrisFunction {
+      
+      color: darkgreen
+    }
+    .IdrisKeyword {
+      text-decoration: underline;
+      color: 
+    }
+    .IdrisImplicit {
+      
+      color: black
+    }
+    .IdrisComment {
+      
+      color: #b22222
+    }
+    .IdrisNamespace {
+      font-style: italic;
+      color: black
+    }
+    .IdrisPostulate {
+      font-weight: bold;
+      color: red
+    }
+    .IdrisModule {
+      font-style: italic;
+      color: black
+    }
+
+  .IdrisLineNumber {
+    text-decoration: none;
+    color: lightgrey;
+    user-select: none;
+  }
+  .IdrisLineNumber:hover {
+    color: darkgray;
+  }
+  .IdrisLineNumber:target {
+    color: gray;
+  }
+  </style>
+</head>
+<body>
+<code>
+<a href="#line0" id="line0" class="IdrisLineNumber"> &nbsp;0 | </a><span class="IdrisKeyword">module</span>&nbsp;<span class="IdrisModule">Data.SnocList.Elem</span><br />
+<a href="#line1" id="line1" class="IdrisLineNumber"> &nbsp;1 | </a><br />
+<a href="#line2" id="line2" class="IdrisLineNumber"> &nbsp;2 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Data.SnocList</span><br />
+<a href="#line3" id="line3" class="IdrisLineNumber"> &nbsp;3 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Decidable.Equality</span><br />
+<a href="#line4" id="line4" class="IdrisLineNumber"> &nbsp;4 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Control.Function</span><br />
+<a href="#line5" id="line5" class="IdrisLineNumber"> &nbsp;5 | </a><br />
+<a href="#line6" id="line6" class="IdrisLineNumber"> &nbsp;6 | </a><span class="IdrisComment">|||&nbsp;A&nbsp;proof&nbsp;that&nbsp;some&nbsp;element&nbsp;is&nbsp;found&nbsp;in&nbsp;a&nbsp;list.</span><br />
+<a href="#line7" id="line7" class="IdrisLineNumber"> &nbsp;7 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line8" id="line8" class="IdrisLineNumber"> &nbsp;8 | </a><span class="IdrisKeyword">data</span>&nbsp;<span class="IdrisType">Elem</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">SnocList</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Type</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line9" id="line9" class="IdrisLineNumber"> &nbsp;9 | </a>&nbsp;&nbsp;<span class="IdrisComment">|||&nbsp;A&nbsp;proof&nbsp;that&nbsp;the&nbsp;element&nbsp;is&nbsp;at&nbsp;the&nbsp;head&nbsp;of&nbsp;the&nbsp;list</span><br />
+<a href="#line10" id="line10" class="IdrisLineNumber"> 10 | </a>&nbsp;&nbsp;<span class="IdrisData">Here</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Elem</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">sx</span>&nbsp;<span class="IdrisData">:&lt;</span>&nbsp;<span class="IdrisBound">x</span><span class="IdrisKeyword">)</span><br />
+<a href="#line11" id="line11" class="IdrisLineNumber"> 11 | </a>&nbsp;&nbsp;<span class="IdrisComment">|||&nbsp;A&nbsp;proof&nbsp;that&nbsp;the&nbsp;element&nbsp;is&nbsp;in&nbsp;the&nbsp;tail&nbsp;of&nbsp;the&nbsp;list</span><br />
+<a href="#line12" id="line12" class="IdrisLineNumber"> 12 | </a>&nbsp;&nbsp;<span class="IdrisData">There</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisKeyword">{0</span>&nbsp;<span class="IdrisBound">x</span><span class="IdrisKeyword">,</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">}</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Elem</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">sx</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Elem</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">sx</span>&nbsp;<span class="IdrisData">:&lt;</span>&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">)</span><br />
+<a href="#line13" id="line13" class="IdrisLineNumber"> 13 | </a><br />
+<a href="#line14" id="line14" class="IdrisLineNumber"> 14 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line15" id="line15" class="IdrisLineNumber"> 15 | </a><span class="IdrisType">Uninhabited</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Here</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">There</span>&nbsp;<span class="IdrisBound">e</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line16" id="line16" class="IdrisLineNumber"> 16 | </a>&nbsp;&nbsp;<span class="IdrisFunction">uninhabited</span>&nbsp;Refl&nbsp;<span class="IdrisKeyword">impossible</span><br />
+<a href="#line17" id="line17" class="IdrisLineNumber"> 17 | </a><br />
+<a href="#line18" id="line18" class="IdrisLineNumber"> 18 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line19" id="line19" class="IdrisLineNumber"> 19 | </a><span class="IdrisType">Uninhabited</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">There</span>&nbsp;<span class="IdrisBound">e</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Here</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line20" id="line20" class="IdrisLineNumber"> 20 | </a>&nbsp;&nbsp;<span class="IdrisFunction">uninhabited</span>&nbsp;Refl&nbsp;<span class="IdrisKeyword">impossible</span><br />
+<a href="#line21" id="line21" class="IdrisLineNumber"> 21 | </a><br />
+<a href="#line22" id="line22" class="IdrisLineNumber"> 22 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line23" id="line23" class="IdrisLineNumber"> 23 | </a><span class="IdrisType">Uninhabited</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Elem</span>&nbsp;<span class="IdrisKeyword">{</span><span class="IdrisBound">a</span><span class="IdrisKeyword">}</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisData">[&lt;]</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line24" id="line24" class="IdrisLineNumber"> 24 | </a>&nbsp;&nbsp;<span class="IdrisFunction">uninhabited</span>&nbsp;Here&nbsp;<span class="IdrisKeyword">impossible</span><br />
+<a href="#line25" id="line25" class="IdrisLineNumber"> 25 | </a>&nbsp;&nbsp;<span class="IdrisFunction">uninhabited</span>&nbsp;<span class="IdrisKeyword">(</span>There&nbsp;p<span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">impossible</span><br />
+<a href="#line26" id="line26" class="IdrisLineNumber"> 26 | </a><br />
+<a href="#line27" id="line27" class="IdrisLineNumber"> 27 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line28" id="line28" class="IdrisLineNumber"> 28 | </a><span class="IdrisType">Injective</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">There</span>&nbsp;<span class="IdrisKeyword">{</span><span class="IdrisBound">x</span><span class="IdrisKeyword">}</span>&nbsp;<span class="IdrisKeyword">{</span><span class="IdrisBound">y</span><span class="IdrisKeyword">}</span>&nbsp;<span class="IdrisKeyword">{</span><span class="IdrisBound">sx</span><span class="IdrisKeyword">})</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line29" id="line29" class="IdrisLineNumber"> 29 | </a>&nbsp;&nbsp;<span class="IdrisFunction">injective</span>&nbsp;<span class="IdrisData">Refl</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Refl</span><br />
+<a href="#line30" id="line30" class="IdrisLineNumber"> 30 | </a><br />
+<a href="#line31" id="line31" class="IdrisLineNumber"> 31 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line32" id="line32" class="IdrisLineNumber"> 32 | </a><span class="IdrisType">DecEq</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">x</span>&nbsp;<span class="IdrisType">`Elem`</span>&nbsp;<span class="IdrisBound">sx</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line33" id="line33" class="IdrisLineNumber"> 33 | </a>&nbsp;&nbsp;<span class="IdrisFunction">decEq</span>&nbsp;<span class="IdrisData">Here</span>&nbsp;<span class="IdrisData">Here</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Yes</span>&nbsp;<span class="IdrisData">Refl</span><br />
+<a href="#line34" id="line34" class="IdrisLineNumber"> 34 | </a>&nbsp;&nbsp;<span class="IdrisFunction">decEq</span>&nbsp;<span class="IdrisData">Here</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">There</span>&nbsp;<span class="IdrisKeyword">_)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">No</span>&nbsp;<span class="IdrisFunction">absurd</span><br />
+<a href="#line35" id="line35" class="IdrisLineNumber"> 35 | </a>&nbsp;&nbsp;<span class="IdrisFunction">decEq</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">There</span>&nbsp;<span class="IdrisKeyword">_)</span>&nbsp;<span class="IdrisData">Here</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">No</span>&nbsp;<span class="IdrisFunction">absurd</span><br />
+<a href="#line36" id="line36" class="IdrisLineNumber"> 36 | </a>&nbsp;&nbsp;<span class="IdrisFunction">decEq</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">There</span>&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">There</span>&nbsp;<span class="IdrisBound">z</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">with</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">decEq</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisBound">z</span><span class="IdrisKeyword">)</span><br />
+<a href="#line37" id="line37" class="IdrisLineNumber"> 37 | </a>&nbsp;&nbsp;&nbsp;&nbsp;decEq&nbsp;<span class="IdrisKeyword">(</span>There&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span>There&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisData">Yes</span>&nbsp;<span class="IdrisData">Refl</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Yes</span>&nbsp;<span class="IdrisData">Refl</span><br />
+<a href="#line38" id="line38" class="IdrisLineNumber"> 38 | </a>&nbsp;&nbsp;&nbsp;&nbsp;decEq&nbsp;<span class="IdrisKeyword">(</span>There&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span>There&nbsp;<span class="IdrisBound">z</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisData">No</span>&nbsp;<span class="IdrisBound">neq</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">No</span>&nbsp;$&nbsp;<span class="IdrisBound">neq</span>&nbsp;<span class="IdrisFunction">.</span>&nbsp;<span class="IdrisFunction">injective</span><br />
+<a href="#line39" id="line39" class="IdrisLineNumber"> 39 | </a><br />
+<a href="#line40" id="line40" class="IdrisLineNumber"> 40 | </a><span class="IdrisComment">|||&nbsp;Remove&nbsp;the&nbsp;element&nbsp;at&nbsp;the&nbsp;given&nbsp;position.</span><br />
+<a href="#line41" id="line41" class="IdrisLineNumber"> 41 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line42" id="line42" class="IdrisLineNumber"> 42 | </a><span class="IdrisFunction">dropElem</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">sx</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">SnocList</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">p</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Elem</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">sx</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">SnocList</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line43" id="line43" class="IdrisLineNumber"> 43 | </a><span class="IdrisFunction">dropElem</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">sy</span>&nbsp;<span class="IdrisData">:&lt;</span>&nbsp;<span class="IdrisKeyword">_)</span>&nbsp;<span class="IdrisData">Here</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">sy</span><br />
+<a href="#line44" id="line44" class="IdrisLineNumber"> 44 | </a><span class="IdrisFunction">dropElem</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">sy</span>&nbsp;<span class="IdrisData">:&lt;</span>&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">There</span>&nbsp;<span class="IdrisBound">p</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">dropElem</span>&nbsp;<span class="IdrisBound">sy</span>&nbsp;<span class="IdrisBound">p</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisData">:&lt;</span>&nbsp;<span class="IdrisBound">y</span><br />
+<a href="#line45" id="line45" class="IdrisLineNumber"> 45 | </a><br />
+<a href="#line46" id="line46" class="IdrisLineNumber"> 46 | </a><span class="IdrisComment">|||&nbsp;Erase&nbsp;the&nbsp;indices,&nbsp;returning&nbsp;the&nbsp;numeric&nbsp;position&nbsp;of&nbsp;the&nbsp;element</span><br />
+<a href="#line47" id="line47" class="IdrisLineNumber"> 47 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line48" id="line48" class="IdrisLineNumber"> 48 | </a><span class="IdrisFunction">elemToNat</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Elem</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">sx</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Nat</span><br />
+<a href="#line49" id="line49" class="IdrisLineNumber"> 49 | </a><span class="IdrisFunction">elemToNat</span>&nbsp;<span class="IdrisData">Here</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Z</span><br />
+<a href="#line50" id="line50" class="IdrisLineNumber"> 50 | </a><span class="IdrisFunction">elemToNat</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">There</span>&nbsp;<span class="IdrisBound">p</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">S</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">elemToNat</span>&nbsp;<span class="IdrisBound">p</span><span class="IdrisKeyword">)</span><br />
+<a href="#line51" id="line51" class="IdrisLineNumber"> 51 | </a><br />
+<a href="#line52" id="line52" class="IdrisLineNumber"> 52 | </a><span class="IdrisComment">|||&nbsp;Find&nbsp;the&nbsp;element&nbsp;with&nbsp;a&nbsp;proof&nbsp;at&nbsp;a&nbsp;given&nbsp;position&nbsp;(in&nbsp;reverse),&nbsp;if&nbsp;it&nbsp;is&nbsp;valid</span><br />
+<a href="#line53" id="line53" class="IdrisLineNumber"> 53 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line54" id="line54" class="IdrisLineNumber"> 54 | </a><span class="IdrisFunction">indexElem</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Nat</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">sx</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">SnocList</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Maybe</span>&nbsp;(x&nbsp;<span class="IdrisType">**</span>&nbsp;<span class="IdrisType">Elem</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">sx</span>)<br />
+<a href="#line55" id="line55" class="IdrisLineNumber"> 55 | </a><span class="IdrisFunction">indexElem</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisData">[&lt;]</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Nothing</span><br />
+<a href="#line56" id="line56" class="IdrisLineNumber"> 56 | </a><span class="IdrisFunction">indexElem</span>&nbsp;<span class="IdrisData">Z</span>&nbsp;<span class="IdrisKeyword">(_</span>&nbsp;<span class="IdrisData">:&lt;</span>&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Just</span>&nbsp;(<span class="IdrisBound">y</span>&nbsp;<span class="IdrisData">**</span>&nbsp;<span class="IdrisData">Here</span>)<br />
+<a href="#line57" id="line57" class="IdrisLineNumber"> 57 | </a><span class="IdrisFunction">indexElem</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">S</span>&nbsp;<span class="IdrisBound">k</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">sy</span>&nbsp;<span class="IdrisData">:&lt;</span>&nbsp;<span class="IdrisKeyword">_)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">(\</span>(<span class="IdrisBound">y</span>&nbsp;<span class="IdrisData">**</span>&nbsp;<span class="IdrisBound">p</span>)&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;(<span class="IdrisBound">y</span>&nbsp;<span class="IdrisData">**</span>&nbsp;<span class="IdrisData">There</span>&nbsp;<span class="IdrisBound">p</span>)<span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisFunction">`map`</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">indexElem</span>&nbsp;<span class="IdrisBound">k</span>&nbsp;<span class="IdrisBound">sy</span><span class="IdrisKeyword">)</span><br />
+<a href="#line58" id="line58" class="IdrisLineNumber"> 58 | </a><br />
+<a href="#line59" id="line59" class="IdrisLineNumber"> 59 | </a><span class="IdrisComment">|||&nbsp;Lift&nbsp;the&nbsp;membership&nbsp;proof&nbsp;to&nbsp;a&nbsp;mapped&nbsp;list</span><br />
+<a href="#line60" id="line60" class="IdrisLineNumber"> 60 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line61" id="line61" class="IdrisLineNumber"> 61 | </a><span class="IdrisFunction">elemMap</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisKeyword">(0</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Elem</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">sx</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Elem</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">x</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">map</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">sx</span><span class="IdrisKeyword">)</span><br />
+<a href="#line62" id="line62" class="IdrisLineNumber"> 62 | </a><span class="IdrisFunction">elemMap</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisData">Here</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Here</span><br />
+<a href="#line63" id="line63" class="IdrisLineNumber"> 63 | </a><span class="IdrisFunction">elemMap</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">There</span>&nbsp;<span class="IdrisBound">el</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">There</span>&nbsp;$&nbsp;<span class="IdrisFunction">elemMap</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">el</span><br />
+<a href="#line64" id="line64" class="IdrisLineNumber"> 64 | </a><br />
+<a href="#line65" id="line65" class="IdrisLineNumber"> 65 | </a><span class="IdrisComment">|||&nbsp;An&nbsp;item&nbsp;not&nbsp;in&nbsp;the&nbsp;head&nbsp;and&nbsp;not&nbsp;in&nbsp;the&nbsp;tail&nbsp;is&nbsp;not&nbsp;in&nbsp;the&nbsp;list&nbsp;at&nbsp;all.</span><br />
+<a href="#line66" id="line66" class="IdrisLineNumber"> 66 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line67" id="line67" class="IdrisLineNumber"> 67 | </a><span class="IdrisFunction">neitherHereNorThere</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisFunction">Not</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">x</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisFunction">Not</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Elem</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">sx</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisFunction">Not</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Elem</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">sx</span>&nbsp;<span class="IdrisData">:&lt;</span>&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">))</span><br />
+<a href="#line68" id="line68" class="IdrisLineNumber"> 68 | </a><span class="IdrisFunction">neitherHereNorThere</span>&nbsp;<span class="IdrisBound">xny</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisData">Here</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">xny</span>&nbsp;<span class="IdrisData">Refl</span><br />
+<a href="#line69" id="line69" class="IdrisLineNumber"> 69 | </a><span class="IdrisFunction">neitherHereNorThere</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisBound">xnxs</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">There</span>&nbsp;<span class="IdrisBound">xxs</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">xnxs</span>&nbsp;<span class="IdrisBound">xxs</span><br />
+<a href="#line70" id="line70" class="IdrisLineNumber"> 70 | </a><br />
+</code>
+</body>
+</html>
