@@ -620,6 +620,7 @@ jobs:
           make -C libs/prelude/ install docs IDRIS2=idris2
           make -C libs/base/ install docs IDRIS2=idris2
           make -C libs/contrib/ install docs IDRIS2=idris2
+          make -C libs/network/ install docs IDRIS2=idris2
           make -C libs/linear/ install docs IDRIS2=idris2
           make -C libs/test/ install docs IDRIS2=idris2
           make -C libs/papers/ install docs IDRIS2=idris2
