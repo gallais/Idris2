@@ -110,10 +110,9 @@ jobs:
     needs: quick-check
     runs-on: ubuntu-latest
     if: |
-      false &&
-      (!contains(needs.initialise.outputs.commit_message, '[ci:')
+      !contains(needs.initialise.outputs.commit_message, '[ci:')
       || contains(needs.initialise.outputs.commit_message, '[ci: ubuntu]')
-      || contains(needs.initialise.outputs.commit_message, '[ci: chez]'))
+      || contains(needs.initialise.outputs.commit_message, '[ci: chez]')
     env:
       IDRIS2_CG: chez
       SCHEME: scheme
@@ -140,9 +139,9 @@ jobs:
     needs: quick-check
     runs-on: macos-latest
     if: |
-      false && (!contains(needs.initialise.outputs.commit_message, '[ci:')
+      !contains(needs.initialise.outputs.commit_message, '[ci:')
       || contains(needs.initialise.outputs.commit_message, '[ci: macos]')
-      || contains(needs.initialise.outputs.commit_message, '[ci: chez]'))
+      || contains(needs.initialise.outputs.commit_message, '[ci: chez]')
     env:
       SCHEME: chez
     steps:
@@ -168,11 +167,10 @@ jobs:
     needs: quick-check
     runs-on: windows-latest
     if: |
-      false &&
-      (!contains(needs.initialise.outputs.commit_message, '[ci:')
+      !contains(needs.initialise.outputs.commit_message, '[ci:')
       || contains(needs.initialise.outputs.commit_message, '[ci: windows]')
       || contains(needs.initialise.outputs.commit_message, '[ci: chez]')
-      || contains(needs.initialise.outputs.commit_message, '[ci: racket]'))
+      || contains(needs.initialise.outputs.commit_message, '[ci: racket]')
     env:
       MSYSTEM: MINGW64
       MSYS2_PATH_TYPE: inherit
@@ -219,10 +217,9 @@ jobs:
     needs: quick-check
     runs-on: ubuntu-latest
     if: |
-      false &&
-      (!contains(needs.initialise.outputs.commit_message, '[ci:')
+      !contains(needs.initialise.outputs.commit_message, '[ci:')
       || contains(needs.initialise.outputs.commit_message, '[ci: nix]')
-      || contains(needs.initialise.outputs.commit_message, '[ci: chez]'))
+      || contains(needs.initialise.outputs.commit_message, '[ci: chez]')
     steps:
     - uses: actions/checkout@v2
       with:
@@ -238,10 +235,9 @@ jobs:
     needs: quick-check
     runs-on: ubuntu-latest
     if: |
-      false
-      && (!contains(needs.initialise.outputs.commit_message, '[ci:')
+      !contains(needs.initialise.outputs.commit_message, '[ci:')
       || contains(needs.initialise.outputs.commit_message, '[ci: ubuntu]')
-      || contains(needs.initialise.outputs.commit_message, '[ci: racket]'))
+      || contains(needs.initialise.outputs.commit_message, '[ci: racket]')
 
     env:
       IDRIS2_CG: racket
@@ -621,15 +617,22 @@ jobs:
         uses: actions/checkout@v2
       - name: Build html doc
         run: |
-          make -C libs/prelude/ install IDRIS2=idris2
-          make -C libs/base/ install IDRIS2=idris2
-          make -C libs/contrib/ install IDRIS2=idris2
-          make -C libs/linear/ install IDRIS2=idris2
-          make -C libs/test/ install IDRIS2=idris2
-          make -C libs/papers/ install IDRIS2=idris2
+          make -C libs/prelude/ install docs IDRIS2=idris2
+          make -C libs/base/ install docs IDRIS2=idris2
+          make -C libs/contrib/ install docs IDRIS2=idris2
+          make -C libs/linear/ install docs IDRIS2=idris2
+          make -C libs/test/ install docs IDRIS2=idris2
+          make -C libs/papers/ install docs IDRIS2=idris2
 
           cd .github/scripts
           ./katla.sh
+          cp -r ../../libs/prelude/build/docs html/prelude
+          cp -r ../../libs/base/build/docs html/base
+          cp -r ../../libs/contrib/build/docs html/contrib
+          cp -r ../../libs/network/build/docs html/network
+          cp -r ../../libs/linear/build/docs html/linear
+          cp -r ../../libs/test/build/docs html/test
+          cp -r ../../libs/papers/build/docs html/papers
       - name: Deploy HTML
         uses: JamesIves/github-pages-deploy-action@4.1.3
 
