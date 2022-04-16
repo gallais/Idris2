@@ -1,0 +1,143 @@
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+      .IdrisData {
+      
+      color: darkred
+    }
+    .IdrisType {
+      
+      color: blue
+    }
+    .IdrisBound {
+      
+      color: black
+    }
+    .IdrisFunction {
+      
+      color: darkgreen
+    }
+    .IdrisKeyword {
+      text-decoration: underline;
+      color: 
+    }
+    .IdrisImplicit {
+      
+      color: black
+    }
+    .IdrisComment {
+      
+      color: #b22222
+    }
+    .IdrisNamespace {
+      font-style: italic;
+      color: black
+    }
+    .IdrisPostulate {
+      font-weight: bold;
+      color: red
+    }
+    .IdrisModule {
+      font-style: italic;
+      color: black
+    }
+
+  .IdrisLineNumber {
+    text-decoration: none;
+    color: lightgrey;
+    user-select: none;
+  }
+  .IdrisLineNumber:hover {
+    color: darkgray;
+  }
+  .IdrisLineNumber:target {
+    color: gray;
+  }
+  </style>
+</head>
+<body>
+<code>
+<a href="#line0" id="line0" class="IdrisLineNumber"> &nbsp;0 | </a><span class="IdrisKeyword">module</span>&nbsp;<span class="IdrisModule">Data.These</span><br />
+<a href="#line1" id="line1" class="IdrisLineNumber"> &nbsp;1 | </a><br />
+<a href="#line2" id="line2" class="IdrisLineNumber"> &nbsp;2 | </a><span class="IdrisKeyword">%default</span>&nbsp;<span class="IdrisKeyword">total</span><br />
+<a href="#line3" id="line3" class="IdrisLineNumber"> &nbsp;3 | </a><br />
+<a href="#line4" id="line4" class="IdrisLineNumber"> &nbsp;4 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line5" id="line5" class="IdrisLineNumber"> &nbsp;5 | </a><span class="IdrisKeyword">data</span>&nbsp;<span class="IdrisType">These</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">This</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisData">That</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisData">Both</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line6" id="line6" class="IdrisLineNumber"> &nbsp;6 | </a><br />
+<a href="#line7" id="line7" class="IdrisLineNumber"> &nbsp;7 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line8" id="line8" class="IdrisLineNumber"> &nbsp;8 | </a><span class="IdrisFunction">fromEither</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Either</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">These</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line9" id="line9" class="IdrisLineNumber"> &nbsp;9 | </a><span class="IdrisFunction">fromEither</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">either</span>&nbsp;<span class="IdrisData">This</span>&nbsp;<span class="IdrisData">That</span><br />
+<a href="#line10" id="line10" class="IdrisLineNumber"> 10 | </a><br />
+<a href="#line11" id="line11" class="IdrisLineNumber"> 11 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line12" id="line12" class="IdrisLineNumber"> 12 | </a><span class="IdrisFunction">fromThis</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">These</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Maybe</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line13" id="line13" class="IdrisLineNumber"> 13 | </a><span class="IdrisFunction">fromThis</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">This</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Just</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line14" id="line14" class="IdrisLineNumber"> 14 | </a><span class="IdrisFunction">fromThis</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">That</span>&nbsp;<span class="IdrisKeyword">_)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Nothing</span><br />
+<a href="#line15" id="line15" class="IdrisLineNumber"> 15 | </a><span class="IdrisFunction">fromThis</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Both</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">_)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Just</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line16" id="line16" class="IdrisLineNumber"> 16 | </a><br />
+<a href="#line17" id="line17" class="IdrisLineNumber"> 17 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line18" id="line18" class="IdrisLineNumber"> 18 | </a><span class="IdrisFunction">fromThat</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">These</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Maybe</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line19" id="line19" class="IdrisLineNumber"> 19 | </a><span class="IdrisFunction">fromThat</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">This</span>&nbsp;<span class="IdrisKeyword">_)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Nothing</span><br />
+<a href="#line20" id="line20" class="IdrisLineNumber"> 20 | </a><span class="IdrisFunction">fromThat</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">That</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Just</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line21" id="line21" class="IdrisLineNumber"> 21 | </a><span class="IdrisFunction">fromThat</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Both</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Just</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line22" id="line22" class="IdrisLineNumber"> 22 | </a><br />
+<a href="#line23" id="line23" class="IdrisLineNumber"> 23 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line24" id="line24" class="IdrisLineNumber"> 24 | </a><span class="IdrisFunction">these</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">c</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">b</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">c</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">c</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">These</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">c</span><br />
+<a href="#line25" id="line25" class="IdrisLineNumber"> 25 | </a><span class="IdrisFunction">these</span>&nbsp;<span class="IdrisBound">l</span>&nbsp;<span class="IdrisBound">r</span>&nbsp;<span class="IdrisBound">lr</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">This</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">l</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line26" id="line26" class="IdrisLineNumber"> 26 | </a><span class="IdrisFunction">these</span>&nbsp;<span class="IdrisBound">l</span>&nbsp;<span class="IdrisBound">r</span>&nbsp;<span class="IdrisBound">lr</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">That</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">r</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line27" id="line27" class="IdrisLineNumber"> 27 | </a><span class="IdrisFunction">these</span>&nbsp;<span class="IdrisBound">l</span>&nbsp;<span class="IdrisBound">r</span>&nbsp;<span class="IdrisBound">lr</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Both</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">lr</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line28" id="line28" class="IdrisLineNumber"> 28 | </a><br />
+<a href="#line29" id="line29" class="IdrisLineNumber"> 29 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line30" id="line30" class="IdrisLineNumber"> 30 | </a><span class="IdrisFunction">swap</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">These</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">These</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line31" id="line31" class="IdrisLineNumber"> 31 | </a><span class="IdrisFunction">swap</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">This</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">That</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line32" id="line32" class="IdrisLineNumber"> 32 | </a><span class="IdrisFunction">swap</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">That</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">This</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line33" id="line33" class="IdrisLineNumber"> 33 | </a><span class="IdrisFunction">swap</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Both</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Both</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line34" id="line34" class="IdrisLineNumber"> 34 | </a><br />
+<a href="#line35" id="line35" class="IdrisLineNumber"> 35 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line36" id="line36" class="IdrisLineNumber"> 36 | </a><span class="IdrisKeyword">(</span><span class="IdrisType">Show</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisType">,</span>&nbsp;<span class="IdrisType">Show</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">Show</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">These</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line37" id="line37" class="IdrisLineNumber"> 37 | </a>&nbsp;&nbsp;<span class="IdrisFunction">showPrec</span>&nbsp;<span class="IdrisBound">d</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">This</span>&nbsp;<span class="IdrisBound">x</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">showCon</span>&nbsp;<span class="IdrisBound">d</span>&nbsp;<span class="IdrisData">&quot;This&quot;</span>&nbsp;$&nbsp;<span class="IdrisFunction">showArg</span>&nbsp;<span class="IdrisBound">x</span><br />
+<a href="#line38" id="line38" class="IdrisLineNumber"> 38 | </a>&nbsp;&nbsp;<span class="IdrisFunction">showPrec</span>&nbsp;<span class="IdrisBound">d</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">That</span>&nbsp;<span class="IdrisBound">x</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">showCon</span>&nbsp;<span class="IdrisBound">d</span>&nbsp;<span class="IdrisData">&quot;That&quot;</span>&nbsp;$&nbsp;<span class="IdrisFunction">showArg</span>&nbsp;<span class="IdrisBound">x</span><br />
+<a href="#line39" id="line39" class="IdrisLineNumber"> 39 | </a>&nbsp;&nbsp;<span class="IdrisFunction">showPrec</span>&nbsp;<span class="IdrisBound">d</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Both</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">showCon</span>&nbsp;<span class="IdrisBound">d</span>&nbsp;<span class="IdrisData">&quot;Both&quot;</span>&nbsp;$&nbsp;<span class="IdrisFunction">showArg</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisFunction">++</span>&nbsp;<span class="IdrisFunction">showArg</span>&nbsp;<span class="IdrisBound">y</span><br />
+<a href="#line40" id="line40" class="IdrisLineNumber"> 40 | </a><br />
+<a href="#line41" id="line41" class="IdrisLineNumber"> 41 | </a><span class="IdrisKeyword">%inline</span><br />
+<a href="#line42" id="line42" class="IdrisLineNumber"> 42 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line43" id="line43" class="IdrisLineNumber"> 43 | </a><span class="IdrisType">Bifunctor</span>&nbsp;<span class="IdrisType">These</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line44" id="line44" class="IdrisLineNumber"> 44 | </a>&nbsp;&nbsp;<span class="IdrisFunction">bimap</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">g</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">This</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">This</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span><br />
+<a href="#line45" id="line45" class="IdrisLineNumber"> 45 | </a>&nbsp;&nbsp;<span class="IdrisFunction">bimap</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">g</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">That</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">That</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">g</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span><br />
+<a href="#line46" id="line46" class="IdrisLineNumber"> 46 | </a>&nbsp;&nbsp;<span class="IdrisFunction">bimap</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">g</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Both</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">Both</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">g</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span><br />
+<a href="#line47" id="line47" class="IdrisLineNumber"> 47 | </a><br />
+<a href="#line48" id="line48" class="IdrisLineNumber"> 48 | </a><span class="IdrisKeyword">%inline</span><br />
+<a href="#line49" id="line49" class="IdrisLineNumber"> 49 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line50" id="line50" class="IdrisLineNumber"> 50 | </a><span class="IdrisType">Bifoldable</span>&nbsp;<span class="IdrisType">These</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line51" id="line51" class="IdrisLineNumber"> 51 | </a>&nbsp;&nbsp;<span class="IdrisFunction">bifoldr</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisBound">acc</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">This</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">acc</span><br />
+<a href="#line52" id="line52" class="IdrisLineNumber"> 52 | </a>&nbsp;&nbsp;<span class="IdrisFunction">bifoldr</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisBound">g</span>&nbsp;<span class="IdrisBound">acc</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">That</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">g</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisBound">acc</span><br />
+<a href="#line53" id="line53" class="IdrisLineNumber"> 53 | </a>&nbsp;&nbsp;<span class="IdrisFunction">bifoldr</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">g</span>&nbsp;<span class="IdrisBound">acc</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Both</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">g</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisBound">acc</span><span class="IdrisKeyword">)</span><br />
+<a href="#line54" id="line54" class="IdrisLineNumber"> 54 | </a><br />
+<a href="#line55" id="line55" class="IdrisLineNumber"> 55 | </a>&nbsp;&nbsp;<span class="IdrisFunction">bifoldl</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisBound">acc</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">This</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">acc</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line56" id="line56" class="IdrisLineNumber"> 56 | </a>&nbsp;&nbsp;<span class="IdrisFunction">bifoldl</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisBound">g</span>&nbsp;<span class="IdrisBound">acc</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">That</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">g</span>&nbsp;<span class="IdrisBound">acc</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line57" id="line57" class="IdrisLineNumber"> 57 | </a>&nbsp;&nbsp;<span class="IdrisFunction">bifoldl</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">g</span>&nbsp;<span class="IdrisBound">acc</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Both</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">g</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">acc</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line58" id="line58" class="IdrisLineNumber"> 58 | </a><br />
+<a href="#line59" id="line59" class="IdrisLineNumber"> 59 | </a>&nbsp;&nbsp;<span class="IdrisFunction">binull</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">False</span><br />
+<a href="#line60" id="line60" class="IdrisLineNumber"> 60 | </a><br />
+<a href="#line61" id="line61" class="IdrisLineNumber"> 61 | </a><span class="IdrisKeyword">%inline</span><br />
+<a href="#line62" id="line62" class="IdrisLineNumber"> 62 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line63" id="line63" class="IdrisLineNumber"> 63 | </a><span class="IdrisType">Bitraversable</span>&nbsp;<span class="IdrisType">These</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line64" id="line64" class="IdrisLineNumber"> 64 | </a>&nbsp;&nbsp;<span class="IdrisFunction">bitraverse</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">This</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">This</span>&nbsp;<span class="IdrisFunction">&lt;$&gt;</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line65" id="line65" class="IdrisLineNumber"> 65 | </a>&nbsp;&nbsp;<span class="IdrisFunction">bitraverse</span>&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisBound">g</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">That</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">That</span>&nbsp;<span class="IdrisFunction">&lt;$&gt;</span>&nbsp;<span class="IdrisBound">g</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line66" id="line66" class="IdrisLineNumber"> 66 | </a>&nbsp;&nbsp;<span class="IdrisFunction">bitraverse</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">g</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Both</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">[|</span>&nbsp;<span class="IdrisData">Both</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">g</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">|]</span><br />
+<a href="#line67" id="line67" class="IdrisLineNumber"> 67 | </a><br />
+<a href="#line68" id="line68" class="IdrisLineNumber"> 68 | </a><span class="IdrisKeyword">%inline</span><br />
+<a href="#line69" id="line69" class="IdrisLineNumber"> 69 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line70" id="line70" class="IdrisLineNumber"> 70 | </a><span class="IdrisType">Functor</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">These</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line71" id="line71" class="IdrisLineNumber"> 71 | </a>&nbsp;&nbsp;<span class="IdrisFunction">map</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">mapSnd</span><br />
+<a href="#line72" id="line72" class="IdrisLineNumber"> 72 | </a><br />
+<a href="#line73" id="line73" class="IdrisLineNumber"> 73 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line74" id="line74" class="IdrisLineNumber"> 74 | </a><span class="IdrisFunction">bifold</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Monoid</span>&nbsp;<span class="IdrisBound">m</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">These</span>&nbsp;<span class="IdrisBound">m</span>&nbsp;<span class="IdrisBound">m</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">m</span><br />
+<a href="#line75" id="line75" class="IdrisLineNumber"> 75 | </a><span class="IdrisFunction">bifold</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">This</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line76" id="line76" class="IdrisLineNumber"> 76 | </a><span class="IdrisFunction">bifold</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">That</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line77" id="line77" class="IdrisLineNumber"> 77 | </a><span class="IdrisFunction">bifold</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Both</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">b</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisFunction">&lt;+&gt;</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line78" id="line78" class="IdrisLineNumber"> 78 | </a><br />
+</code>
+</body>
+</html>

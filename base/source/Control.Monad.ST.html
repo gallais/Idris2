@@ -1,0 +1,141 @@
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+      .IdrisData {
+      
+      color: darkred
+    }
+    .IdrisType {
+      
+      color: blue
+    }
+    .IdrisBound {
+      
+      color: black
+    }
+    .IdrisFunction {
+      
+      color: darkgreen
+    }
+    .IdrisKeyword {
+      text-decoration: underline;
+      color: 
+    }
+    .IdrisImplicit {
+      
+      color: black
+    }
+    .IdrisComment {
+      
+      color: #b22222
+    }
+    .IdrisNamespace {
+      font-style: italic;
+      color: black
+    }
+    .IdrisPostulate {
+      font-weight: bold;
+      color: red
+    }
+    .IdrisModule {
+      font-style: italic;
+      color: black
+    }
+
+  .IdrisLineNumber {
+    text-decoration: none;
+    color: lightgrey;
+    user-select: none;
+  }
+  .IdrisLineNumber:hover {
+    color: darkgray;
+  }
+  .IdrisLineNumber:target {
+    color: gray;
+  }
+  </style>
+</head>
+<body>
+<code>
+<a href="#line0" id="line0" class="IdrisLineNumber"> &nbsp;0 | </a><span class="IdrisComment">|||&nbsp;Provides&nbsp;mutable&nbsp;references&nbsp;as&nbsp;described&nbsp;in&nbsp;Lazy&nbsp;Functional&nbsp;State&nbsp;Threads.</span><br />
+<a href="#line1" id="line1" class="IdrisLineNumber"> &nbsp;1 | </a><span class="IdrisKeyword">module</span>&nbsp;<span class="IdrisModule">Control.Monad.ST</span><br />
+<a href="#line2" id="line2" class="IdrisLineNumber"> &nbsp;2 | </a><br />
+<a href="#line3" id="line3" class="IdrisLineNumber"> &nbsp;3 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Data.IORef</span><br />
+<a href="#line4" id="line4" class="IdrisLineNumber"> &nbsp;4 | </a><br />
+<a href="#line5" id="line5" class="IdrisLineNumber"> &nbsp;5 | </a><span class="IdrisKeyword">%default</span>&nbsp;<span class="IdrisKeyword">total</span><br />
+<a href="#line6" id="line6" class="IdrisLineNumber"> &nbsp;6 | </a><br />
+<a href="#line7" id="line7" class="IdrisLineNumber"> &nbsp;7 | </a><span class="IdrisComment">|||&nbsp;A&nbsp;mutable&nbsp;reference,&nbsp;bound&nbsp;to&nbsp;a&nbsp;state&nbsp;thread.</span><br />
+<a href="#line8" id="line8" class="IdrisLineNumber"> &nbsp;8 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line9" id="line9" class="IdrisLineNumber"> &nbsp;9 | </a><span class="IdrisComment">|||&nbsp;A&nbsp;value&nbsp;of&nbsp;type&nbsp;`STRef&nbsp;s&nbsp;a`&nbsp;contains&nbsp;a&nbsp;mutable&nbsp;`a`,&nbsp;bound&nbsp;to&nbsp;a&nbsp;&quot;thread&quot;</span><br />
+<a href="#line10" id="line10" class="IdrisLineNumber"> 10 | </a><span class="IdrisComment">|||&nbsp;`s`.&nbsp;Any&nbsp;access&nbsp;to&nbsp;the&nbsp;reference&nbsp;must&nbsp;occur&nbsp;in&nbsp;an&nbsp;`ST&nbsp;s`&nbsp;monad&nbsp;with&nbsp;the</span><br />
+<a href="#line11" id="line11" class="IdrisLineNumber"> 11 | </a><span class="IdrisComment">|||&nbsp;same&nbsp;&quot;thread&quot;.</span><br />
+<a href="#line12" id="line12" class="IdrisLineNumber"> 12 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line13" id="line13" class="IdrisLineNumber"> 13 | </a><span class="IdrisKeyword">data</span>&nbsp;<span class="IdrisType">STRef</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Type</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Type</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Type</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line14" id="line14" class="IdrisLineNumber"> 14 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">MkSTRef</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">IORef</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">STRef</span>&nbsp;<span class="IdrisBound">s</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line15" id="line15" class="IdrisLineNumber"> 15 | </a><br />
+<a href="#line16" id="line16" class="IdrisLineNumber"> 16 | </a><span class="IdrisComment">|||&nbsp;The&nbsp;`ST`&nbsp;monad&nbsp;allows&nbsp;for&nbsp;mutable&nbsp;access&nbsp;to&nbsp;references,&nbsp;but&nbsp;unlike&nbsp;`IO`,&nbsp;it</span><br />
+<a href="#line17" id="line17" class="IdrisLineNumber"> 17 | </a><span class="IdrisComment">|||&nbsp;is&nbsp;&quot;escapable&quot;.</span><br />
+<a href="#line18" id="line18" class="IdrisLineNumber"> 18 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line19" id="line19" class="IdrisLineNumber"> 19 | </a><span class="IdrisComment">|||&nbsp;The&nbsp;parameter&nbsp;`s`&nbsp;is&nbsp;a&nbsp;&quot;thread&quot;&nbsp;--&nbsp;it&nbsp;ensures&nbsp;that&nbsp;access&nbsp;to&nbsp;mutable</span><br />
+<a href="#line20" id="line20" class="IdrisLineNumber"> 20 | </a><span class="IdrisComment">|||&nbsp;references&nbsp;created&nbsp;in&nbsp;each&nbsp;thread&nbsp;must&nbsp;occur&nbsp;in&nbsp;that&nbsp;same&nbsp;thread.</span><br />
+<a href="#line21" id="line21" class="IdrisLineNumber"> 21 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line22" id="line22" class="IdrisLineNumber"> 22 | </a><span class="IdrisKeyword">data</span>&nbsp;<span class="IdrisType">ST</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Type</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Type</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Type</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line23" id="line23" class="IdrisLineNumber"> 23 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">MkST</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">IO</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">ST</span>&nbsp;<span class="IdrisBound">s</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line24" id="line24" class="IdrisLineNumber"> 24 | </a><br />
+<a href="#line25" id="line25" class="IdrisLineNumber"> 25 | </a><span class="IdrisComment">|||&nbsp;Run&nbsp;a&nbsp;`ST`&nbsp;computation.</span><br />
+<a href="#line26" id="line26" class="IdrisLineNumber"> 26 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line27" id="line27" class="IdrisLineNumber"> 27 | </a><span class="IdrisFunction">runST</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisKeyword">(forall</span>&nbsp;<span class="IdrisBound">s</span>&nbsp;<span class="IdrisKeyword">.</span>&nbsp;<span class="IdrisType">ST</span>&nbsp;<span class="IdrisBound">s</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line28" id="line28" class="IdrisLineNumber"> 28 | </a><span class="IdrisFunction">runST</span>&nbsp;<span class="IdrisBound">p</span><br />
+<a href="#line29" id="line29" class="IdrisLineNumber"> 29 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">let</span>&nbsp;<span class="IdrisData">MkST</span>&nbsp;<span class="IdrisBound">prog</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">p</span>&nbsp;<span class="IdrisKeyword">{</span><span class="IdrisBound">s</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisType">()</span><span class="IdrisKeyword">}</span>&nbsp;<span class="IdrisKeyword">in</span>&nbsp;<span class="IdrisComment">--&nbsp;anything&nbsp;will&nbsp;do&nbsp;:)</span><br />
+<a href="#line30" id="line30" class="IdrisLineNumber"> 30 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">unsafePerformIO</span>&nbsp;<span class="IdrisBound">prog</span><br />
+<a href="#line31" id="line31" class="IdrisLineNumber"> 31 | </a><br />
+<a href="#line32" id="line32" class="IdrisLineNumber"> 32 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line33" id="line33" class="IdrisLineNumber"> 33 | </a><span class="IdrisType">Functor</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">ST</span>&nbsp;<span class="IdrisBound">s</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line34" id="line34" class="IdrisLineNumber"> 34 | </a>&nbsp;&nbsp;<span class="IdrisFunction">map</span>&nbsp;<span class="IdrisBound">fn</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">MkST</span>&nbsp;<span class="IdrisBound">st</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">MkST</span>&nbsp;$&nbsp;<span class="IdrisBound">fn</span>&nbsp;<span class="IdrisFunction">&lt;$&gt;</span>&nbsp;<span class="IdrisBound">st</span><br />
+<a href="#line35" id="line35" class="IdrisLineNumber"> 35 | </a><br />
+<a href="#line36" id="line36" class="IdrisLineNumber"> 36 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line37" id="line37" class="IdrisLineNumber"> 37 | </a><span class="IdrisType">Applicative</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">ST</span>&nbsp;<span class="IdrisBound">s</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line38" id="line38" class="IdrisLineNumber"> 38 | </a>&nbsp;&nbsp;<span class="IdrisFunction">pure</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">MkST</span>&nbsp;<span class="IdrisFunction">.</span>&nbsp;<span class="IdrisFunction">pure</span><br />
+<a href="#line39" id="line39" class="IdrisLineNumber"> 39 | </a>&nbsp;&nbsp;<span class="IdrisData">MkST</span>&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisFunction">&lt;*&gt;</span>&nbsp;<span class="IdrisData">MkST</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">MkST</span>&nbsp;$&nbsp;<span class="IdrisBound">f</span>&nbsp;<span class="IdrisFunction">&lt;*&gt;</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line40" id="line40" class="IdrisLineNumber"> 40 | </a><br />
+<a href="#line41" id="line41" class="IdrisLineNumber"> 41 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line42" id="line42" class="IdrisLineNumber"> 42 | </a><span class="IdrisType">Monad</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">ST</span>&nbsp;<span class="IdrisBound">s</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line43" id="line43" class="IdrisLineNumber"> 43 | </a>&nbsp;&nbsp;<span class="IdrisData">MkST</span>&nbsp;<span class="IdrisBound">p</span>&nbsp;<span class="IdrisFunction">&gt;&gt;=</span>&nbsp;<span class="IdrisBound">k</span><br />
+<a href="#line44" id="line44" class="IdrisLineNumber"> 44 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">MkST</span>&nbsp;$&nbsp;<span class="IdrisKeyword">do</span>&nbsp;<span class="IdrisBound">p&apos;</span>&nbsp;<span class="IdrisKeyword">&lt;-</span>&nbsp;<span class="IdrisBound">p</span><br />
+<a href="#line45" id="line45" class="IdrisLineNumber"> 45 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">let</span>&nbsp;<span class="IdrisData">MkST</span>&nbsp;<span class="IdrisBound">kp</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">k</span>&nbsp;<span class="IdrisBound">p&apos;</span><br />
+<a href="#line46" id="line46" class="IdrisLineNumber"> 46 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisBound">kp</span><br />
+<a href="#line47" id="line47" class="IdrisLineNumber"> 47 | </a><br />
+<a href="#line48" id="line48" class="IdrisLineNumber"> 48 | </a><span class="IdrisComment">|||&nbsp;Create&nbsp;a&nbsp;new&nbsp;mutable&nbsp;reference&nbsp;with&nbsp;the&nbsp;given&nbsp;value.</span><br />
+<a href="#line49" id="line49" class="IdrisLineNumber"> 49 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line50" id="line50" class="IdrisLineNumber"> 50 | </a><span class="IdrisFunction">newSTRef</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">ST</span>&nbsp;<span class="IdrisBound">s</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">STRef</span>&nbsp;<span class="IdrisBound">s</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span><br />
+<a href="#line51" id="line51" class="IdrisLineNumber"> 51 | </a><span class="IdrisFunction">newSTRef</span>&nbsp;<span class="IdrisBound">val</span><br />
+<a href="#line52" id="line52" class="IdrisLineNumber"> 52 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">MkST</span>&nbsp;$&nbsp;<span class="IdrisKeyword">do</span>&nbsp;<span class="IdrisBound">r</span>&nbsp;<span class="IdrisKeyword">&lt;-</span>&nbsp;<span class="IdrisFunction">newIORef</span>&nbsp;<span class="IdrisBound">val</span><br />
+<a href="#line53" id="line53" class="IdrisLineNumber"> 53 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">pure</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">MkSTRef</span>&nbsp;<span class="IdrisBound">r</span><span class="IdrisKeyword">)</span><br />
+<a href="#line54" id="line54" class="IdrisLineNumber"> 54 | </a><br />
+<a href="#line55" id="line55" class="IdrisLineNumber"> 55 | </a><span class="IdrisComment">|||&nbsp;Read&nbsp;the&nbsp;value&nbsp;of&nbsp;a&nbsp;mutable&nbsp;reference.</span><br />
+<a href="#line56" id="line56" class="IdrisLineNumber"> 56 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line57" id="line57" class="IdrisLineNumber"> 57 | </a><span class="IdrisComment">|||&nbsp;This&nbsp;occurs&nbsp;within&nbsp;`ST&nbsp;s`&nbsp;to&nbsp;prevent&nbsp;`STRef`s&nbsp;from&nbsp;being&nbsp;usable&nbsp;if&nbsp;they&nbsp;are</span><br />
+<a href="#line58" id="line58" class="IdrisLineNumber"> 58 | </a><span class="IdrisComment">|||&nbsp;&quot;leaked&quot;&nbsp;via&nbsp;`runST`.</span><br />
+<a href="#line59" id="line59" class="IdrisLineNumber"> 59 | </a><span class="IdrisKeyword">%inline</span><br />
+<a href="#line60" id="line60" class="IdrisLineNumber"> 60 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line61" id="line61" class="IdrisLineNumber"> 61 | </a><span class="IdrisFunction">readSTRef</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">STRef</span>&nbsp;<span class="IdrisBound">s</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">ST</span>&nbsp;<span class="IdrisBound">s</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line62" id="line62" class="IdrisLineNumber"> 62 | </a><span class="IdrisFunction">readSTRef</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">MkSTRef</span>&nbsp;<span class="IdrisBound">r</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">MkST</span>&nbsp;$&nbsp;<span class="IdrisFunction">readIORef</span>&nbsp;<span class="IdrisBound">r</span><br />
+<a href="#line63" id="line63" class="IdrisLineNumber"> 63 | </a><br />
+<a href="#line64" id="line64" class="IdrisLineNumber"> 64 | </a><span class="IdrisComment">|||&nbsp;Write&nbsp;to&nbsp;a&nbsp;mutable&nbsp;reference.</span><br />
+<a href="#line65" id="line65" class="IdrisLineNumber"> 65 | </a><span class="IdrisKeyword">%inline</span><br />
+<a href="#line66" id="line66" class="IdrisLineNumber"> 66 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line67" id="line67" class="IdrisLineNumber"> 67 | </a><span class="IdrisFunction">writeSTRef</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">STRef</span>&nbsp;<span class="IdrisBound">s</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">val</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">ST</span>&nbsp;<span class="IdrisBound">s</span>&nbsp;<span class="IdrisType">()</span><br />
+<a href="#line68" id="line68" class="IdrisLineNumber"> 68 | </a><span class="IdrisFunction">writeSTRef</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">MkSTRef</span>&nbsp;<span class="IdrisBound">r</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisBound">val</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">MkST</span>&nbsp;$&nbsp;<span class="IdrisFunction">writeIORef</span>&nbsp;<span class="IdrisBound">r</span>&nbsp;<span class="IdrisBound">val</span><br />
+<a href="#line69" id="line69" class="IdrisLineNumber"> 69 | </a><br />
+<a href="#line70" id="line70" class="IdrisLineNumber"> 70 | </a><span class="IdrisComment">|||&nbsp;Apply&nbsp;a&nbsp;function&nbsp;to&nbsp;the&nbsp;contents&nbsp;of&nbsp;a&nbsp;mutable&nbsp;reference.</span><br />
+<a href="#line71" id="line71" class="IdrisLineNumber"> 71 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line72" id="line72" class="IdrisLineNumber"> 72 | </a><span class="IdrisFunction">modifySTRef</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">STRef</span>&nbsp;<span class="IdrisBound">s</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">ST</span>&nbsp;<span class="IdrisBound">s</span>&nbsp;<span class="IdrisType">()</span><br />
+<a href="#line73" id="line73" class="IdrisLineNumber"> 73 | </a><span class="IdrisFunction">modifySTRef</span>&nbsp;<span class="IdrisBound">ref</span>&nbsp;<span class="IdrisBound">f</span><br />
+<a href="#line74" id="line74" class="IdrisLineNumber"> 74 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">do</span>&nbsp;<span class="IdrisBound">val</span>&nbsp;<span class="IdrisKeyword">&lt;-</span>&nbsp;<span class="IdrisFunction">readSTRef</span>&nbsp;<span class="IdrisBound">ref</span><br />
+<a href="#line75" id="line75" class="IdrisLineNumber"> 75 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">writeSTRef</span>&nbsp;<span class="IdrisBound">ref</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">f</span>&nbsp;<span class="IdrisBound">val</span><span class="IdrisKeyword">)</span><br />
+<a href="#line76" id="line76" class="IdrisLineNumber"> 76 | </a><br />
+</code>
+</body>
+</html>

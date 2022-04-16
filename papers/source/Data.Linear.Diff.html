@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+      .IdrisData {
+      
+      color: darkred
+    }
+    .IdrisType {
+      
+      color: blue
+    }
+    .IdrisBound {
+      
+      color: black
+    }
+    .IdrisFunction {
+      
+      color: darkgreen
+    }
+    .IdrisKeyword {
+      text-decoration: underline;
+      color: 
+    }
+    .IdrisImplicit {
+      
+      color: black
+    }
+    .IdrisComment {
+      
+      color: #b22222
+    }
+    .IdrisNamespace {
+      font-style: italic;
+      color: black
+    }
+    .IdrisPostulate {
+      font-weight: bold;
+      color: red
+    }
+    .IdrisModule {
+      font-style: italic;
+      color: black
+    }
+
+  .IdrisLineNumber {
+    text-decoration: none;
+    color: lightgrey;
+    user-select: none;
+  }
+  .IdrisLineNumber:hover {
+    color: darkgray;
+  }
+  .IdrisLineNumber:target {
+    color: gray;
+  }
+  </style>
+</head>
+<body>
+<code>
+<a href="#line0" id="line0" class="IdrisLineNumber"> &nbsp;0 | </a><span class="IdrisComment">|||&nbsp;This&nbsp;module&nbsp;is&nbsp;based&nbsp;on&nbsp;the&nbsp;content&nbsp;of&nbsp;the&nbsp;functional&nbsp;pearl</span><br />
+<a href="#line1" id="line1" class="IdrisLineNumber"> &nbsp;1 | </a><span class="IdrisComment">|||&nbsp;How&nbsp;to&nbsp;Take&nbsp;the&nbsp;Inverse&nbsp;of&nbsp;a&nbsp;Type</span><br />
+<a href="#line2" id="line2" class="IdrisLineNumber"> &nbsp;2 | </a><span class="IdrisComment">|||&nbsp;by&nbsp;Daniel&nbsp;Marshall&nbsp;and&nbsp;Dominic&nbsp;Orchard</span><br />
+<a href="#line3" id="line3" class="IdrisLineNumber"> &nbsp;3 | </a><br />
+<a href="#line4" id="line4" class="IdrisLineNumber"> &nbsp;4 | </a><span class="IdrisKeyword">module</span>&nbsp;<span class="IdrisModule">Data.Linear.Diff</span><br />
+<a href="#line5" id="line5" class="IdrisLineNumber"> &nbsp;5 | </a><br />
+<a href="#line6" id="line6" class="IdrisLineNumber"> &nbsp;6 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Data.Linear</span><br />
+<a href="#line7" id="line7" class="IdrisLineNumber"> &nbsp;7 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Data.Linear.Inverse</span><br />
+<a href="#line8" id="line8" class="IdrisLineNumber"> &nbsp;8 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Data.Linear.LEither</span><br />
+<a href="#line9" id="line9" class="IdrisLineNumber"> &nbsp;9 | </a><br />
+<a href="#line10" id="line10" class="IdrisLineNumber"> 10 | </a><span class="IdrisKeyword">%default</span>&nbsp;<span class="IdrisKeyword">total</span><br />
+<a href="#line11" id="line11" class="IdrisLineNumber"> 11 | </a><br />
+<a href="#line12" id="line12" class="IdrisLineNumber"> 12 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line13" id="line13" class="IdrisLineNumber"> 13 | </a><span class="IdrisFunction">Quadruple</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Type</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Type</span><br />
+<a href="#line14" id="line14" class="IdrisLineNumber"> 14 | </a><span class="IdrisFunction">Quadruple</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisType">LPair</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">LPair</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">LPair</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">))</span><br />
+<a href="#line15" id="line15" class="IdrisLineNumber"> 15 | </a><br />
+<a href="#line16" id="line16" class="IdrisLineNumber"> 16 | </a><span class="IdrisComment">--&nbsp;Differentiating&nbsp;a&#8308;&nbsp;wrt&nbsp;a&nbsp;gives&nbsp;us&nbsp;4a&#179;</span><br />
+<a href="#line17" id="line17" class="IdrisLineNumber"> 17 | </a><span class="IdrisKeyword">data</span>&nbsp;<span class="IdrisType">QuadContexts</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Type</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Type</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line18" id="line18" class="IdrisLineNumber"> 18 | </a>&nbsp;&nbsp;<span class="IdrisData">Mk1</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisKeyword">(1</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">,</span>&nbsp;<span class="IdrisBound">z</span><span class="IdrisKeyword">,</span>&nbsp;<span class="IdrisBound">w</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">QuadContexts</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line19" id="line19" class="IdrisLineNumber"> 19 | </a>&nbsp;&nbsp;<span class="IdrisData">Mk2</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisKeyword">(1</span>&nbsp;<span class="IdrisBound">x</span><span class="IdrisKeyword">,</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisBound">z</span><span class="IdrisKeyword">,</span>&nbsp;<span class="IdrisBound">w</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">QuadContexts</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line20" id="line20" class="IdrisLineNumber"> 20 | </a>&nbsp;&nbsp;<span class="IdrisData">Mk3</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisKeyword">(1</span>&nbsp;<span class="IdrisBound">x</span><span class="IdrisKeyword">,</span>&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">,</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisBound">w</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">QuadContexts</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line21" id="line21" class="IdrisLineNumber"> 21 | </a>&nbsp;&nbsp;<span class="IdrisData">Mk4</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisKeyword">(1</span>&nbsp;<span class="IdrisBound">x</span><span class="IdrisKeyword">,</span>&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">,</span>&nbsp;<span class="IdrisBound">z</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">QuadContexts</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line22" id="line22" class="IdrisLineNumber"> 22 | </a><br />
+<a href="#line23" id="line23" class="IdrisLineNumber"> 23 | </a><span class="IdrisComment">--&nbsp;Differentiating&nbsp;a&#8308;&nbsp;wrt&nbsp;a&#178;&nbsp;gives&nbsp;us&nbsp;4a&#179;&nbsp;*&nbsp;(2a)&#8315;&#185;</span><br />
+<a href="#line24" id="line24" class="IdrisLineNumber"> 24 | </a><span class="IdrisKeyword">data</span>&nbsp;<span class="IdrisType">QuadTwoContexts</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Type</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Type</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line25" id="line25" class="IdrisLineNumber"> 25 | </a>&nbsp;&nbsp;<span class="IdrisData">Mk</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">QuadContexts</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisFunction">-@</span>&nbsp;<span class="IdrisFunction">Inverse</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">LEither</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisFunction">-@</span>&nbsp;<span class="IdrisType">QuadTwoContexts</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line26" id="line26" class="IdrisLineNumber"> 26 | </a><br />
+<a href="#line27" id="line27" class="IdrisLineNumber"> 27 | </a><span class="IdrisComment">--&nbsp;Consume&nbsp;the&nbsp;element&nbsp;next&nbsp;to&nbsp;the&nbsp;hole&nbsp;such&nbsp;that&nbsp;the&nbsp;2-hole</span><br />
+<a href="#line28" id="line28" class="IdrisLineNumber"> 28 | </a><span class="IdrisComment">--&nbsp;does&nbsp;not&nbsp;separate&nbsp;the&nbsp;remaining&nbsp;values&nbsp;of&nbsp;the&nbsp;original&nbsp;tuple</span><br />
+<a href="#line29" id="line29" class="IdrisLineNumber"> 29 | </a><span class="IdrisFunction">fromContext</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">LPair</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisFunction">-@</span>&nbsp;<span class="IdrisType">QuadTwoContexts</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisFunction">-@</span>&nbsp;<span class="IdrisFunction">Quadruple</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line30" id="line30" class="IdrisLineNumber"> 30 | </a><span class="IdrisFunction">fromContext</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk1</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisBound">z</span>&nbsp;<span class="IdrisBound">w</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span><br />
+<a href="#line31" id="line31" class="IdrisLineNumber"> 31 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Right</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisFunction">`divide`</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisFunction">`seq`</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">z</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">w</span><span class="IdrisKeyword">)</span><br />
+<a href="#line32" id="line32" class="IdrisLineNumber"> 32 | </a><span class="IdrisFunction">fromContext</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk2</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">z</span>&nbsp;<span class="IdrisBound">w</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span><br />
+<a href="#line33" id="line33" class="IdrisLineNumber"> 33 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Left</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisFunction">`divide`</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisFunction">`seq`</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">z</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">w</span><span class="IdrisKeyword">)</span><br />
+<a href="#line34" id="line34" class="IdrisLineNumber"> 34 | </a><span class="IdrisFunction">fromContext</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk3</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisBound">w</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span><br />
+<a href="#line35" id="line35" class="IdrisLineNumber"> 35 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Right</span>&nbsp;<span class="IdrisBound">w</span>&nbsp;<span class="IdrisFunction">`divide`</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisFunction">`seq`</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">x</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span><span class="IdrisKeyword">)</span><br />
+<a href="#line36" id="line36" class="IdrisLineNumber"> 36 | </a><span class="IdrisFunction">fromContext</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk4</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisBound">z</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span><br />
+<a href="#line37" id="line37" class="IdrisLineNumber"> 37 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Left</span>&nbsp;<span class="IdrisBound">z</span>&nbsp;<span class="IdrisFunction">`divide`</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisFunction">`seq`</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">x</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span><span class="IdrisKeyword">)</span><br />
+<a href="#line38" id="line38" class="IdrisLineNumber"> 38 | </a><br />
+<a href="#line39" id="line39" class="IdrisLineNumber"> 39 | </a><span class="IdrisComment">--&nbsp;The&nbsp;current&nbsp;hole&nbsp;in&nbsp;QuadTwoContexts&nbsp;is&nbsp;understood&nbsp;to&nbsp;be&nbsp;the</span><br />
+<a href="#line40" id="line40" class="IdrisLineNumber"> 40 | </a><span class="IdrisComment">--&nbsp;2nd&nbsp;one&nbsp;placeholder&nbsp;for&nbsp;the&nbsp;fillers.</span><br />
+<a href="#line41" id="line41" class="IdrisLineNumber"> 41 | </a><span class="IdrisComment">--&nbsp;Always&nbsp;consume&nbsp;the&nbsp;element&nbsp;to&nbsp;the&nbsp;left&nbsp;of&nbsp;it&nbsp;to&nbsp;fit&nbsp;the&nbsp;2-hole</span><br />
+<a href="#line42" id="line42" class="IdrisLineNumber"> 42 | </a><span class="IdrisComment">--&nbsp;(if&nbsp;none&nbsp;then&nbsp;throw&nbsp;the&nbsp;left&nbsp;hole&nbsp;away)</span><br />
+<a href="#line43" id="line43" class="IdrisLineNumber"> 43 | </a><span class="IdrisFunction">fromContext&apos;</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">LPair</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisFunction">-@</span>&nbsp;<span class="IdrisType">QuadTwoContexts</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisFunction">-@</span>&nbsp;<span class="IdrisFunction">Quadruple</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line44" id="line44" class="IdrisLineNumber"> 44 | </a><span class="IdrisFunction">fromContext&apos;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk1</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisBound">z</span>&nbsp;<span class="IdrisBound">w</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span><br />
+<a href="#line45" id="line45" class="IdrisLineNumber"> 45 | </a>&nbsp;&nbsp;<span class="IdrisComment">--&nbsp;first&nbsp;hole&nbsp;outside&nbsp;of&nbsp;the&nbsp;tuple</span><br />
+<a href="#line46" id="line46" class="IdrisLineNumber"> 46 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Left</span>&nbsp;<span class="IdrisBound">h1</span>&nbsp;<span class="IdrisFunction">`divide`</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisFunction">`seq`</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">h2</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">z</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">w</span><span class="IdrisKeyword">)</span><br />
+<a href="#line47" id="line47" class="IdrisLineNumber"> 47 | </a><span class="IdrisFunction">fromContext&apos;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk2</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">z</span>&nbsp;<span class="IdrisBound">w</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span><br />
+<a href="#line48" id="line48" class="IdrisLineNumber"> 48 | </a>&nbsp;&nbsp;<span class="IdrisComment">--&nbsp;2-hole&nbsp;at&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;tuple</span><br />
+<a href="#line49" id="line49" class="IdrisLineNumber"> 49 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Left</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisFunction">`divide`</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisFunction">`seq`</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">z</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">w</span><span class="IdrisKeyword">)</span><br />
+<a href="#line50" id="line50" class="IdrisLineNumber"> 50 | </a><span class="IdrisFunction">fromContext&apos;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk3</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisBound">w</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span><br />
+<a href="#line51" id="line51" class="IdrisLineNumber"> 51 | </a>&nbsp;&nbsp;<span class="IdrisComment">--&nbsp;2-hole&nbsp;in&nbsp;the&nbsp;middle&nbsp;of&nbsp;the&nbsp;tuple</span><br />
+<a href="#line52" id="line52" class="IdrisLineNumber"> 52 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Left</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisFunction">`divide`</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisFunction">`seq`</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">x</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">w</span><span class="IdrisKeyword">)</span><br />
+<a href="#line53" id="line53" class="IdrisLineNumber"> 53 | </a><span class="IdrisFunction">fromContext&apos;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Mk4</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisBound">z</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span><br />
+<a href="#line54" id="line54" class="IdrisLineNumber"> 54 | </a>&nbsp;&nbsp;<span class="IdrisComment">--&nbsp;2-hole&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;tuple</span><br />
+<a href="#line55" id="line55" class="IdrisLineNumber"> 55 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Left</span>&nbsp;<span class="IdrisBound">z</span>&nbsp;<span class="IdrisFunction">`divide`</span>&nbsp;<span class="IdrisBound">inv</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisFunction">`seq`</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">x</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h1</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisBound">h2</span><span class="IdrisKeyword">)</span><br />
+<a href="#line56" id="line56" class="IdrisLineNumber"> 56 | </a><br />
+</code>
+</body>
+</html>

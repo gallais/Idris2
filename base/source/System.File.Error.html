@@ -1,0 +1,122 @@
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+      .IdrisData {
+      
+      color: darkred
+    }
+    .IdrisType {
+      
+      color: blue
+    }
+    .IdrisBound {
+      
+      color: black
+    }
+    .IdrisFunction {
+      
+      color: darkgreen
+    }
+    .IdrisKeyword {
+      text-decoration: underline;
+      color: 
+    }
+    .IdrisImplicit {
+      
+      color: black
+    }
+    .IdrisComment {
+      
+      color: #b22222
+    }
+    .IdrisNamespace {
+      font-style: italic;
+      color: black
+    }
+    .IdrisPostulate {
+      font-weight: bold;
+      color: red
+    }
+    .IdrisModule {
+      font-style: italic;
+      color: black
+    }
+
+  .IdrisLineNumber {
+    text-decoration: none;
+    color: lightgrey;
+    user-select: none;
+  }
+  .IdrisLineNumber:hover {
+    color: darkgray;
+  }
+  .IdrisLineNumber:target {
+    color: gray;
+  }
+  </style>
+</head>
+<body>
+<code>
+<a href="#line0" id="line0" class="IdrisLineNumber"> &nbsp;0 | </a><span class="IdrisKeyword">module</span>&nbsp;<span class="IdrisModule">System.File.Error</span><br />
+<a href="#line1" id="line1" class="IdrisLineNumber"> &nbsp;1 | </a><br />
+<a href="#line2" id="line2" class="IdrisLineNumber"> &nbsp;2 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">System.Errno</span><br />
+<a href="#line3" id="line3" class="IdrisLineNumber"> &nbsp;3 | </a><br />
+<a href="#line4" id="line4" class="IdrisLineNumber"> &nbsp;4 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">System.File.Support</span><br />
+<a href="#line5" id="line5" class="IdrisLineNumber"> &nbsp;5 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisModule">System.File.Types</span><br />
+<a href="#line6" id="line6" class="IdrisLineNumber"> &nbsp;6 | </a><br />
+<a href="#line7" id="line7" class="IdrisLineNumber"> &nbsp;7 | </a><span class="IdrisKeyword">%default</span>&nbsp;<span class="IdrisKeyword">total</span><br />
+<a href="#line8" id="line8" class="IdrisLineNumber"> &nbsp;8 | </a><br />
+<a href="#line9" id="line9" class="IdrisLineNumber"> &nbsp;9 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">supportC</span>&nbsp;<span class="IdrisData">&quot;idris2_fileError&quot;</span><br />
+<a href="#line10" id="line10" class="IdrisLineNumber"> 10 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">&quot;node:lambda:x=&gt;(x===1?1:0)&quot;</span><br />
+<a href="#line11" id="line11" class="IdrisLineNumber"> 11 | </a><span class="IdrisFunction">prim__error</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisFunction">FilePtr</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisFunction">PrimIO</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line12" id="line12" class="IdrisLineNumber"> 12 | </a><br />
+<a href="#line13" id="line13" class="IdrisLineNumber"> 13 | </a><span class="IdrisKeyword">%foreign</span>&nbsp;<span class="IdrisFunction">supportC</span>&nbsp;<span class="IdrisData">&quot;idris2_fileErrno&quot;</span><br />
+<a href="#line14" id="line14" class="IdrisLineNumber"> 14 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">supportNode</span>&nbsp;<span class="IdrisData">&quot;fileErrno&quot;</span><br />
+<a href="#line15" id="line15" class="IdrisLineNumber"> 15 | </a><span class="IdrisFunction">prim__fileErrno</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisFunction">PrimIO</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line16" id="line16" class="IdrisLineNumber"> 16 | </a><br />
+<a href="#line17" id="line17" class="IdrisLineNumber"> 17 | </a><span class="IdrisComment">|||&nbsp;The&nbsp;types&nbsp;of&nbsp;errors&nbsp;that&nbsp;can&nbsp;occur&nbsp;during&nbsp;file&nbsp;operations.</span><br />
+<a href="#line18" id="line18" class="IdrisLineNumber"> 18 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line19" id="line19" class="IdrisLineNumber"> 19 | </a><span class="IdrisKeyword">data</span>&nbsp;<span class="IdrisType">FileError</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisComment">|||&nbsp;A&nbsp;generic&nbsp;error&nbsp;with&nbsp;an&nbsp;errno</span><br />
+<a href="#line20" id="line20" class="IdrisLineNumber"> 20 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">GenericFileError</span>&nbsp;<span class="IdrisType">Int</span><br />
+<a href="#line21" id="line21" class="IdrisLineNumber"> 21 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisData">FileReadError</span><br />
+<a href="#line22" id="line22" class="IdrisLineNumber"> 22 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisData">FileWriteError</span><br />
+<a href="#line23" id="line23" class="IdrisLineNumber"> 23 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisData">FileNotFound</span><br />
+<a href="#line24" id="line24" class="IdrisLineNumber"> 24 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisData">PermissionDenied</span><br />
+<a href="#line25" id="line25" class="IdrisLineNumber"> 25 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisData">FileExists</span><br />
+<a href="#line26" id="line26" class="IdrisLineNumber"> 26 | </a><br />
+<a href="#line27" id="line27" class="IdrisLineNumber"> 27 | </a><span class="IdrisComment">|||&nbsp;Return&nbsp;the&nbsp;`FileError`&nbsp;corresponding&nbsp;to&nbsp;the&nbsp;errno&nbsp;that&nbsp;was&nbsp;set&nbsp;when&nbsp;the</span><br />
+<a href="#line28" id="line28" class="IdrisLineNumber"> 28 | </a><span class="IdrisComment">|||&nbsp;function&nbsp;call&nbsp;before&nbsp;this&nbsp;one&nbsp;errored.</span><br />
+<a href="#line29" id="line29" class="IdrisLineNumber"> 29 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line30" id="line30" class="IdrisLineNumber"> 30 | </a><span class="IdrisFunction">returnError</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">HasIO</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Either</span>&nbsp;<span class="IdrisType">FileError</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span><br />
+<a href="#line31" id="line31" class="IdrisLineNumber"> 31 | </a><span class="IdrisFunction">returnError</span><br />
+<a href="#line32" id="line32" class="IdrisLineNumber"> 32 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">do</span>&nbsp;<span class="IdrisBound">err</span>&nbsp;<span class="IdrisKeyword">&lt;-</span>&nbsp;<span class="IdrisFunction">primIO</span>&nbsp;<span class="IdrisFunction">prim__fileErrno</span><br />
+<a href="#line33" id="line33" class="IdrisLineNumber"> 33 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">pure</span>&nbsp;$&nbsp;<span class="IdrisData">Left</span>&nbsp;$<br />
+<a href="#line34" id="line34" class="IdrisLineNumber"> 34 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">case</span>&nbsp;<span class="IdrisBound">err</span>&nbsp;<span class="IdrisKeyword">of</span><br />
+<a href="#line35" id="line35" class="IdrisLineNumber"> 35 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">0</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisData">FileReadError</span><br />
+<a href="#line36" id="line36" class="IdrisLineNumber"> 36 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">1</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisData">FileWriteError</span><br />
+<a href="#line37" id="line37" class="IdrisLineNumber"> 37 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">2</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisData">FileNotFound</span><br />
+<a href="#line38" id="line38" class="IdrisLineNumber"> 38 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">3</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisData">PermissionDenied</span><br />
+<a href="#line39" id="line39" class="IdrisLineNumber"> 39 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisData">4</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisData">FileExists</span><br />
+<a href="#line40" id="line40" class="IdrisLineNumber"> 40 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">_</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisData">GenericFileError</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">err</span><span class="IdrisFunction">-</span><span class="IdrisData">5</span><span class="IdrisKeyword">)</span><br />
+<a href="#line41" id="line41" class="IdrisLineNumber"> 41 | </a><br />
+<a href="#line42" id="line42" class="IdrisLineNumber"> 42 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line43" id="line43" class="IdrisLineNumber"> 43 | </a><span class="IdrisType">Show</span>&nbsp;<span class="IdrisType">FileError</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line44" id="line44" class="IdrisLineNumber"> 44 | </a>&nbsp;&nbsp;<span class="IdrisFunction">show</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">GenericFileError</span>&nbsp;<span class="IdrisBound">errno</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">strerror</span>&nbsp;<span class="IdrisBound">errno</span><br />
+<a href="#line45" id="line45" class="IdrisLineNumber"> 45 | </a>&nbsp;&nbsp;<span class="IdrisFunction">show</span>&nbsp;<span class="IdrisData">FileReadError</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">&quot;File&nbsp;Read&nbsp;Error&quot;</span><br />
+<a href="#line46" id="line46" class="IdrisLineNumber"> 46 | </a>&nbsp;&nbsp;<span class="IdrisFunction">show</span>&nbsp;<span class="IdrisData">FileWriteError</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">&quot;File&nbsp;Write&nbsp;Error&quot;</span><br />
+<a href="#line47" id="line47" class="IdrisLineNumber"> 47 | </a>&nbsp;&nbsp;<span class="IdrisFunction">show</span>&nbsp;<span class="IdrisData">FileNotFound</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">&quot;File&nbsp;Not&nbsp;Found&quot;</span><br />
+<a href="#line48" id="line48" class="IdrisLineNumber"> 48 | </a>&nbsp;&nbsp;<span class="IdrisFunction">show</span>&nbsp;<span class="IdrisData">PermissionDenied</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">&quot;Permission&nbsp;Denied&quot;</span><br />
+<a href="#line49" id="line49" class="IdrisLineNumber"> 49 | </a>&nbsp;&nbsp;<span class="IdrisFunction">show</span>&nbsp;<span class="IdrisData">FileExists</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">&quot;File&nbsp;Exists&quot;</span><br />
+<a href="#line50" id="line50" class="IdrisLineNumber"> 50 | </a><br />
+<a href="#line51" id="line51" class="IdrisLineNumber"> 51 | </a><span class="IdrisComment">|||&nbsp;Check&nbsp;if&nbsp;the&nbsp;error&nbsp;indicator&nbsp;for&nbsp;the&nbsp;given&nbsp;file&nbsp;handle&nbsp;is&nbsp;set.</span><br />
+<a href="#line52" id="line52" class="IdrisLineNumber"> 52 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line53" id="line53" class="IdrisLineNumber"> 53 | </a><span class="IdrisFunction">fileError</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">HasIO</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">File</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisType">Bool</span><br />
+<a href="#line54" id="line54" class="IdrisLineNumber"> 54 | </a><span class="IdrisFunction">fileError</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">FHandle</span>&nbsp;<span class="IdrisBound">f</span><span class="IdrisKeyword">)</span><br />
+<a href="#line55" id="line55" class="IdrisLineNumber"> 55 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">do</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisKeyword">&lt;-</span>&nbsp;<span class="IdrisFunction">primIO</span>&nbsp;$&nbsp;<span class="IdrisFunction">prim__error</span>&nbsp;<span class="IdrisBound">f</span><br />
+<a href="#line56" id="line56" class="IdrisLineNumber"> 56 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">pure</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">x</span>&nbsp;<span class="IdrisFunction">/=</span>&nbsp;<span class="IdrisData">0</span><span class="IdrisKeyword">)</span><br />
+<a href="#line57" id="line57" class="IdrisLineNumber"> 57 | </a><br />
+</code>
+</body>
+</html>

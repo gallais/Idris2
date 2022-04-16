@@ -1,0 +1,153 @@
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+      .IdrisData {
+      
+      color: darkred
+    }
+    .IdrisType {
+      
+      color: blue
+    }
+    .IdrisBound {
+      
+      color: black
+    }
+    .IdrisFunction {
+      
+      color: darkgreen
+    }
+    .IdrisKeyword {
+      text-decoration: underline;
+      color: 
+    }
+    .IdrisImplicit {
+      
+      color: black
+    }
+    .IdrisComment {
+      
+      color: #b22222
+    }
+    .IdrisNamespace {
+      font-style: italic;
+      color: black
+    }
+    .IdrisPostulate {
+      font-weight: bold;
+      color: red
+    }
+    .IdrisModule {
+      font-style: italic;
+      color: black
+    }
+
+  .IdrisLineNumber {
+    text-decoration: none;
+    color: lightgrey;
+    user-select: none;
+  }
+  .IdrisLineNumber:hover {
+    color: darkgray;
+  }
+  .IdrisLineNumber:target {
+    color: gray;
+  }
+  </style>
+</head>
+<body>
+<code>
+<a href="#line0" id="line0" class="IdrisLineNumber"> &nbsp;0 | </a><span class="IdrisKeyword">module</span>&nbsp;<span class="IdrisModule">Data.Linear.Interface</span><br />
+<a href="#line1" id="line1" class="IdrisLineNumber"> &nbsp;1 | </a><br />
+<a href="#line2" id="line2" class="IdrisLineNumber"> &nbsp;2 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Data.Linear.Notation</span><br />
+<a href="#line3" id="line3" class="IdrisLineNumber"> &nbsp;3 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Data.Linear.Bifunctor</span><br />
+<a href="#line4" id="line4" class="IdrisLineNumber"> &nbsp;4 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisModule">Data.Linear.Copies</span><br />
+<a href="#line5" id="line5" class="IdrisLineNumber"> &nbsp;5 | </a><br />
+<a href="#line6" id="line6" class="IdrisLineNumber"> &nbsp;6 | </a><span class="IdrisKeyword">%default</span>&nbsp;<span class="IdrisKeyword">total</span><br />
+<a href="#line7" id="line7" class="IdrisLineNumber"> &nbsp;7 | </a><br />
+<a href="#line8" id="line8" class="IdrisLineNumber"> &nbsp;8 | </a><span class="IdrisComment">|||&nbsp;An&nbsp;interface&nbsp;for&nbsp;consumable&nbsp;types</span><br />
+<a href="#line9" id="line9" class="IdrisLineNumber"> &nbsp;9 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line10" id="line10" class="IdrisLineNumber"> 10 | </a><span class="IdrisKeyword">interface</span>&nbsp;<span class="IdrisType">Consumable</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line11" id="line11" class="IdrisLineNumber"> 11 | </a>&nbsp;&nbsp;<span class="IdrisFunction">consume</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisFunction">-@</span>&nbsp;<span class="IdrisType">()</span><br />
+<a href="#line12" id="line12" class="IdrisLineNumber"> 12 | </a><br />
+<a href="#line13" id="line13" class="IdrisLineNumber"> 13 | </a><span class="IdrisComment">|||&nbsp;Void&nbsp;and&nbsp;the&nbsp;unit&nbsp;type&nbsp;are&nbsp;trivially&nbsp;consumable</span><br />
+<a href="#line14" id="line14" class="IdrisLineNumber"> 14 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line15" id="line15" class="IdrisLineNumber"> 15 | </a><span class="IdrisType">Consumable</span>&nbsp;<span class="IdrisType">Void</span>&nbsp;<span class="IdrisKeyword">where</span>&nbsp;<span class="IdrisFunction">consume</span>&nbsp;<span class="IdrisBound">v</span>&nbsp;<span class="IdrisKeyword">impossible</span><br />
+<a href="#line16" id="line16" class="IdrisLineNumber"> 16 | </a><br />
+<a href="#line17" id="line17" class="IdrisLineNumber"> 17 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line18" id="line18" class="IdrisLineNumber"> 18 | </a><span class="IdrisType">Consumable</span>&nbsp;<span class="IdrisType">()</span>&nbsp;<span class="IdrisKeyword">where</span>&nbsp;<span class="IdrisFunction">consume</span>&nbsp;<span class="IdrisBound">u</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">u</span><br />
+<a href="#line19" id="line19" class="IdrisLineNumber"> 19 | </a><br />
+<a href="#line20" id="line20" class="IdrisLineNumber"> 20 | </a><span class="IdrisComment">|||&nbsp;Unions&nbsp;can&nbsp;be&nbsp;consumed&nbsp;by&nbsp;pattern&nbsp;matching</span><br />
+<a href="#line21" id="line21" class="IdrisLineNumber"> 21 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line22" id="line22" class="IdrisLineNumber"> 22 | </a><span class="IdrisType">Consumable</span>&nbsp;<span class="IdrisType">Bool</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line23" id="line23" class="IdrisLineNumber"> 23 | </a>&nbsp;&nbsp;<span class="IdrisFunction">consume</span>&nbsp;<span class="IdrisData">True</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">()</span><br />
+<a href="#line24" id="line24" class="IdrisLineNumber"> 24 | </a>&nbsp;&nbsp;<span class="IdrisFunction">consume</span>&nbsp;<span class="IdrisData">False</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">()</span><br />
+<a href="#line25" id="line25" class="IdrisLineNumber"> 25 | </a><br />
+<a href="#line26" id="line26" class="IdrisLineNumber"> 26 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line27" id="line27" class="IdrisLineNumber"> 27 | </a><span class="IdrisType">Consumable</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">!*</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line28" id="line28" class="IdrisLineNumber"> 28 | </a>&nbsp;&nbsp;<span class="IdrisFunction">consume</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">MkBang</span>&nbsp;<span class="IdrisBound">v</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">()</span><br />
+<a href="#line29" id="line29" class="IdrisLineNumber"> 29 | </a><br />
+<a href="#line30" id="line30" class="IdrisLineNumber"> 30 | </a><span class="IdrisComment">|||&nbsp;We&nbsp;can&nbsp;cheat&nbsp;to&nbsp;make&nbsp;built-in&nbsp;types&nbsp;consumable</span><br />
+<a href="#line31" id="line31" class="IdrisLineNumber"> 31 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line32" id="line32" class="IdrisLineNumber"> 32 | </a><span class="IdrisType">Consumable</span>&nbsp;<span class="IdrisType">Int</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line33" id="line33" class="IdrisLineNumber"> 33 | </a>&nbsp;&nbsp;<span class="IdrisFunction">consume</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisPostulate">believe_me</span>&nbsp;<span class="IdrisKeyword">(\</span>&nbsp;<span class="IdrisKeyword">0</span>&nbsp;<span class="IdrisBound">i</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Int</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisData">()</span><span class="IdrisKeyword">)</span><br />
+<a href="#line34" id="line34" class="IdrisLineNumber"> 34 | </a><br />
+<a href="#line35" id="line35" class="IdrisLineNumber"> 35 | </a><span class="IdrisComment">--&nbsp;But&nbsp;crucially&nbsp;we&nbsp;don&apos;t&nbsp;have&nbsp;`Consumable&nbsp;World`&nbsp;or&nbsp;`Consumable&nbsp;Handle`.</span><br />
+<a href="#line36" id="line36" class="IdrisLineNumber"> 36 | </a><br />
+<a href="#line37" id="line37" class="IdrisLineNumber"> 37 | </a><span class="IdrisKeyword">infixr</span>&nbsp;<span class="IdrisKeyword">5</span>&nbsp;`seq`<br />
+<a href="#line38" id="line38" class="IdrisLineNumber"> 38 | </a><span class="IdrisComment">|||&nbsp;We&nbsp;can&nbsp;sequentially&nbsp;compose&nbsp;a&nbsp;computation&nbsp;returning&nbsp;a&nbsp;value&nbsp;that&nbsp;is</span><br />
+<a href="#line39" id="line39" class="IdrisLineNumber"> 39 | </a><span class="IdrisComment">|||&nbsp;consumable&nbsp;with&nbsp;another&nbsp;computation.&nbsp;This&nbsp;is&nbsp;done&nbsp;by&nbsp;first&nbsp;consuming</span><br />
+<a href="#line40" id="line40" class="IdrisLineNumber"> 40 | </a><span class="IdrisComment">|||&nbsp;the&nbsp;result&nbsp;of&nbsp;the&nbsp;first&nbsp;computation&nbsp;and&nbsp;then&nbsp;returning&nbsp;the&nbsp;second&nbsp;one.</span><br />
+<a href="#line41" id="line41" class="IdrisLineNumber"> 41 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line42" id="line42" class="IdrisLineNumber"> 42 | </a><span class="IdrisFunction">seq</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Consumable</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisFunction">-@</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisFunction">-@</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line43" id="line43" class="IdrisLineNumber"> 43 | </a><span class="IdrisBound">a</span>&nbsp;<span class="IdrisFunction">`seq`</span>&nbsp;<span class="IdrisBound">b</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">let</span>&nbsp;<span class="IdrisKeyword">1</span>&nbsp;<span class="IdrisData">()</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">consume</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">in</span>&nbsp;<span class="IdrisBound">b</span><br />
+<a href="#line44" id="line44" class="IdrisLineNumber"> 44 | </a><br />
+<a href="#line45" id="line45" class="IdrisLineNumber"> 45 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line46" id="line46" class="IdrisLineNumber"> 46 | </a><span class="IdrisKeyword">interface</span>&nbsp;<span class="IdrisType">Duplicable</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line47" id="line47" class="IdrisLineNumber"> 47 | </a>&nbsp;&nbsp;<span class="IdrisFunction">duplicate</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisKeyword">(1</span>&nbsp;<span class="IdrisBound">v</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisData">2</span>&nbsp;<span class="IdrisType">`Copies`</span>&nbsp;<span class="IdrisBound">v</span><br />
+<a href="#line48" id="line48" class="IdrisLineNumber"> 48 | </a><br />
+<a href="#line49" id="line49" class="IdrisLineNumber"> 49 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line50" id="line50" class="IdrisLineNumber"> 50 | </a><span class="IdrisType">Duplicable</span>&nbsp;<span class="IdrisType">Void</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line51" id="line51" class="IdrisLineNumber"> 51 | </a>&nbsp;&nbsp;<span class="IdrisFunction">duplicate</span>&nbsp;<span class="IdrisBound">v</span>&nbsp;<span class="IdrisKeyword">impossible</span><br />
+<a href="#line52" id="line52" class="IdrisLineNumber"> 52 | </a><br />
+<a href="#line53" id="line53" class="IdrisLineNumber"> 53 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line54" id="line54" class="IdrisLineNumber"> 54 | </a><span class="IdrisType">Duplicable</span>&nbsp;<span class="IdrisType">()</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line55" id="line55" class="IdrisLineNumber"> 55 | </a>&nbsp;&nbsp;<span class="IdrisFunction">duplicate</span>&nbsp;<span class="IdrisData">()</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">[(),</span>&nbsp;<span class="IdrisData">()]</span><br />
+<a href="#line56" id="line56" class="IdrisLineNumber"> 56 | </a><br />
+<a href="#line57" id="line57" class="IdrisLineNumber"> 57 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line58" id="line58" class="IdrisLineNumber"> 58 | </a><span class="IdrisType">Duplicable</span>&nbsp;<span class="IdrisType">Bool</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line59" id="line59" class="IdrisLineNumber"> 59 | </a>&nbsp;&nbsp;<span class="IdrisFunction">duplicate</span>&nbsp;<span class="IdrisData">True</span>&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">[True,</span>&nbsp;<span class="IdrisData">True]</span><br />
+<a href="#line60" id="line60" class="IdrisLineNumber"> 60 | </a>&nbsp;&nbsp;<span class="IdrisFunction">duplicate</span>&nbsp;<span class="IdrisData">False</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">[False,</span>&nbsp;<span class="IdrisData">False]</span><br />
+<a href="#line61" id="line61" class="IdrisLineNumber"> 61 | </a><br />
+<a href="#line62" id="line62" class="IdrisLineNumber"> 62 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line63" id="line63" class="IdrisLineNumber"> 63 | </a><span class="IdrisType">Duplicable</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">!*</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line64" id="line64" class="IdrisLineNumber"> 64 | </a>&nbsp;&nbsp;<span class="IdrisFunction">duplicate</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">MkBang</span>&nbsp;<span class="IdrisBound">v</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">[MkBang</span>&nbsp;<span class="IdrisBound">v</span><span class="IdrisData">,</span>&nbsp;<span class="IdrisData">MkBang</span>&nbsp;<span class="IdrisBound">v</span><span class="IdrisData">]</span><br />
+<a href="#line65" id="line65" class="IdrisLineNumber"> 65 | </a><br />
+<a href="#line66" id="line66" class="IdrisLineNumber"> 66 | </a><span class="IdrisComment">|||&nbsp;Comonoid&nbsp;is&nbsp;the&nbsp;dual&nbsp;of&nbsp;Monoid,&nbsp;it&nbsp;can&nbsp;consume&nbsp;a&nbsp;value&nbsp;linearly&nbsp;and&nbsp;duplicate&nbsp;a&nbsp;value&nbsp;linearly</span><br />
+<a href="#line67" id="line67" class="IdrisLineNumber"> 67 | </a><span class="IdrisComment">|||&nbsp;`comult`&nbsp;returns&nbsp;a&nbsp;pair&nbsp;instead&nbsp;of&nbsp;2&nbsp;copies,&nbsp;because&nbsp;we&nbsp;do&nbsp;not&nbsp;guarantee&nbsp;that&nbsp;the&nbsp;two&nbsp;values</span><br />
+<a href="#line68" id="line68" class="IdrisLineNumber"> 68 | </a><span class="IdrisComment">|||&nbsp;are&nbsp;identical,&nbsp;unlike&nbsp;with&nbsp;`duplicate`.&nbsp;For&nbsp;example&nbsp;if&nbsp;we&nbsp;build&nbsp;a&nbsp;comonoid&nbsp;out&nbsp;of&nbsp;a&nbsp;group,&nbsp;with</span><br />
+<a href="#line69" id="line69" class="IdrisLineNumber"> 69 | </a><span class="IdrisComment">|||&nbsp;comult&nbsp;returning&nbsp;both&nbsp;the&nbsp;element&nbsp;given&nbsp;and&nbsp;its&nbsp;inverse:</span><br />
+<a href="#line70" id="line70" class="IdrisLineNumber"> 70 | </a><span class="IdrisComment">|||&nbsp;comult&nbsp;x&nbsp;=&nbsp;x&nbsp;#&nbsp;inverse&nbsp;x</span><br />
+<a href="#line71" id="line71" class="IdrisLineNumber"> 71 | </a><span class="IdrisComment">|||&nbsp;It&nbsp;is&nbsp;not&nbsp;necessarily&nbsp;the&nbsp;case&nbsp;that&nbsp;x&nbsp;equals&nbsp;its&nbsp;inverse.&nbsp;For&nbsp;example&nbsp;the&nbsp;finite&nbsp;groupe&nbsp;of&nbsp;size</span><br />
+<a href="#line72" id="line72" class="IdrisLineNumber"> 72 | </a><span class="IdrisComment">|||&nbsp;3,&nbsp;has&nbsp;1&nbsp;and&nbsp;2&nbsp;as&nbsp;inverses&nbsp;of&nbsp;each&nbsp;other&nbsp;wrt&nbsp;to&nbsp;addition,&nbsp;but&nbsp;are&nbsp;not&nbsp;the&nbsp;same.</span><br />
+<a href="#line73" id="line73" class="IdrisLineNumber"> 73 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line74" id="line74" class="IdrisLineNumber"> 74 | </a><span class="IdrisKeyword">interface</span>&nbsp;<span class="IdrisType">Comonoid</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line75" id="line75" class="IdrisLineNumber"> 75 | </a>&nbsp;&nbsp;<span class="IdrisFunction">counit</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisFunction">-@</span>&nbsp;<span class="IdrisType">()</span><br />
+<a href="#line76" id="line76" class="IdrisLineNumber"> 76 | </a>&nbsp;&nbsp;<span class="IdrisFunction">comult</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisFunction">-@</span>&nbsp;<span class="IdrisType">LPair</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line77" id="line77" class="IdrisLineNumber"> 77 | </a><br />
+<a href="#line78" id="line78" class="IdrisLineNumber"> 78 | </a><span class="IdrisComment">|||&nbsp;If&nbsp;a&nbsp;value&nbsp;is&nbsp;consumable&nbsp;and&nbsp;duplicable&nbsp;we&nbsp;can&nbsp;make&nbsp;an&nbsp;instance&nbsp;of&nbsp;Comonoid&nbsp;for&nbsp;it</span><br />
+<a href="#line79" id="line79" class="IdrisLineNumber"> 79 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line80" id="line80" class="IdrisLineNumber"> 80 | </a><span class="IdrisKeyword">[</span><span class="IdrisFunction">AutoComonoid</span><span class="IdrisKeyword">]</span>&nbsp;<span class="IdrisType">Consumable</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">Duplicable</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">Comonoid</span>&nbsp;<span class="IdrisBound">a</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line81" id="line81" class="IdrisLineNumber"> 81 | </a>&nbsp;&nbsp;<span class="IdrisFunction">counit</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">consume</span><br />
+<a href="#line82" id="line82" class="IdrisLineNumber"> 82 | </a>&nbsp;&nbsp;<span class="IdrisFunction">comult</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">pair</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">duplicate</span>&nbsp;<span class="IdrisBound">x</span><span class="IdrisKeyword">)</span><br />
+<a href="#line83" id="line83" class="IdrisLineNumber"> 83 | </a><br />
+<a href="#line84" id="line84" class="IdrisLineNumber"> 84 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line85" id="line85" class="IdrisLineNumber"> 85 | </a><span class="IdrisType">Comonoid</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">!*</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line86" id="line86" class="IdrisLineNumber"> 86 | </a>&nbsp;&nbsp;<span class="IdrisFunction">counit</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">MkBang</span>&nbsp;<span class="IdrisKeyword">_)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">()</span><br />
+<a href="#line87" id="line87" class="IdrisLineNumber"> 87 | </a>&nbsp;&nbsp;<span class="IdrisFunction">comult</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">MkBang</span>&nbsp;<span class="IdrisBound">v</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisData">MkBang</span>&nbsp;<span class="IdrisBound">v</span>&nbsp;<span class="IdrisData">#</span>&nbsp;<span class="IdrisData">MkBang</span>&nbsp;<span class="IdrisBound">v</span><br />
+<a href="#line88" id="line88" class="IdrisLineNumber"> 88 | </a><br />
+</code>
+</body>
+</html>

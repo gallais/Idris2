@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+      .IdrisData {
+      
+      color: darkred
+    }
+    .IdrisType {
+      
+      color: blue
+    }
+    .IdrisBound {
+      
+      color: black
+    }
+    .IdrisFunction {
+      
+      color: darkgreen
+    }
+    .IdrisKeyword {
+      text-decoration: underline;
+      color: 
+    }
+    .IdrisImplicit {
+      
+      color: black
+    }
+    .IdrisComment {
+      
+      color: #b22222
+    }
+    .IdrisNamespace {
+      font-style: italic;
+      color: black
+    }
+    .IdrisPostulate {
+      font-weight: bold;
+      color: red
+    }
+    .IdrisModule {
+      font-style: italic;
+      color: black
+    }
+
+  .IdrisLineNumber {
+    text-decoration: none;
+    color: lightgrey;
+    user-select: none;
+  }
+  .IdrisLineNumber:hover {
+    color: darkgray;
+  }
+  .IdrisLineNumber:target {
+    color: gray;
+  }
+  </style>
+</head>
+<body>
+<code>
+<a href="#line0" id="line0" class="IdrisLineNumber"> &nbsp;0 | </a><span class="IdrisKeyword">module</span>&nbsp;<span class="IdrisModule">Data.Stream.Extra</span><br />
+<a href="#line1" id="line1" class="IdrisLineNumber"> &nbsp;1 | </a><br />
+<a href="#line2" id="line2" class="IdrisLineNumber"> &nbsp;2 | </a><span class="IdrisKeyword">%default</span>&nbsp;<span class="IdrisKeyword">total</span><br />
+<a href="#line3" id="line3" class="IdrisLineNumber"> &nbsp;3 | </a><br />
+<a href="#line4" id="line4" class="IdrisLineNumber"> &nbsp;4 | </a><span class="IdrisComment">|||&nbsp;Insert&nbsp;elements&nbsp;from&nbsp;a&nbsp;Foldable&nbsp;at&nbsp;the&nbsp;start&nbsp;of&nbsp;an&nbsp;existing&nbsp;Stream</span><br />
+<a href="#line5" id="line5" class="IdrisLineNumber"> &nbsp;5 | </a><span class="IdrisComment">|||&nbsp;@&nbsp;pfx&nbsp;the&nbsp;Foldable&nbsp;containing&nbsp;elements&nbsp;to&nbsp;prepend</span><br />
+<a href="#line6" id="line6" class="IdrisLineNumber"> &nbsp;6 | </a><span class="IdrisComment">|||&nbsp;@&nbsp;stream&nbsp;the&nbsp;Stream&nbsp;to&nbsp;prepend&nbsp;the&nbsp;elements&nbsp;to</span><br />
+<a href="#line7" id="line7" class="IdrisLineNumber"> &nbsp;7 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line8" id="line8" class="IdrisLineNumber"> &nbsp;8 | </a><span class="IdrisFunction">startWith</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Foldable</span>&nbsp;<span class="IdrisBound">t</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">pfx</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">t</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">stream</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Stream</span>&nbsp;<span class="IdrisBound">a</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Stream</span>&nbsp;<span class="IdrisBound">a</span><br />
+<a href="#line9" id="line9" class="IdrisLineNumber"> &nbsp;9 | </a><span class="IdrisFunction">startWith</span>&nbsp;<span class="IdrisBound">pfx</span>&nbsp;<span class="IdrisBound">stream</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">foldr</span>&nbsp;<span class="IdrisKeyword">(\</span><span class="IdrisBound">x</span><span class="IdrisKeyword">,</span>&nbsp;<span class="IdrisBound">xs</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisData">::</span>&nbsp;<span class="IdrisBound">xs</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisBound">stream</span>&nbsp;<span class="IdrisBound">pfx</span><br />
+<a href="#line10" id="line10" class="IdrisLineNumber"> 10 | </a><br />
+</code>
+</body>
+</html>

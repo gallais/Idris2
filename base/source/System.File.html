@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+      .IdrisData {
+      
+      color: darkred
+    }
+    .IdrisType {
+      
+      color: blue
+    }
+    .IdrisBound {
+      
+      color: black
+    }
+    .IdrisFunction {
+      
+      color: darkgreen
+    }
+    .IdrisKeyword {
+      text-decoration: underline;
+      color: 
+    }
+    .IdrisImplicit {
+      
+      color: black
+    }
+    .IdrisComment {
+      
+      color: #b22222
+    }
+    .IdrisNamespace {
+      font-style: italic;
+      color: black
+    }
+    .IdrisPostulate {
+      font-weight: bold;
+      color: red
+    }
+    .IdrisModule {
+      font-style: italic;
+      color: black
+    }
+
+  .IdrisLineNumber {
+    text-decoration: none;
+    color: lightgrey;
+    user-select: none;
+  }
+  .IdrisLineNumber:hover {
+    color: darkgray;
+  }
+  .IdrisLineNumber:target {
+    color: gray;
+  }
+  </style>
+</head>
+<body>
+<code>
+<a href="#line0" id="line0" class="IdrisLineNumber"> &nbsp;0 | </a><span class="IdrisKeyword">module</span>&nbsp;<span class="IdrisModule">System.File</span><br />
+<a href="#line1" id="line1" class="IdrisLineNumber"> &nbsp;1 | </a><br />
+<a href="#line2" id="line2" class="IdrisLineNumber"> &nbsp;2 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Data.Buffer</span><br />
+<a href="#line3" id="line3" class="IdrisLineNumber"> &nbsp;3 | </a><br />
+<a href="#line4" id="line4" class="IdrisLineNumber"> &nbsp;4 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisModule">System.File.Buffer</span><br />
+<a href="#line5" id="line5" class="IdrisLineNumber"> &nbsp;5 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisModule">System.File.Error</span><br />
+<a href="#line6" id="line6" class="IdrisLineNumber"> &nbsp;6 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisModule">System.File.Handle</span><br />
+<a href="#line7" id="line7" class="IdrisLineNumber"> &nbsp;7 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisModule">System.File.Meta</span><br />
+<a href="#line8" id="line8" class="IdrisLineNumber"> &nbsp;8 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisModule">System.File.Mode</span><br />
+<a href="#line9" id="line9" class="IdrisLineNumber"> &nbsp;9 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisModule">System.File.Permissions</span><br />
+<a href="#line10" id="line10" class="IdrisLineNumber"> 10 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisModule">System.File.Process</span><br />
+<a href="#line11" id="line11" class="IdrisLineNumber"> 11 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisModule">System.File.ReadWrite</span><br />
+<a href="#line12" id="line12" class="IdrisLineNumber"> 12 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisModule">System.File.Types</span><br />
+<a href="#line13" id="line13" class="IdrisLineNumber"> 13 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisModule">System.File.Virtual</span><br />
+<a href="#line14" id="line14" class="IdrisLineNumber"> 14 | </a><br />
+<a href="#line15" id="line15" class="IdrisLineNumber"> 15 | </a><span class="IdrisComment">|||&nbsp;Copy&nbsp;the&nbsp;file&nbsp;at&nbsp;the&nbsp;specified&nbsp;source&nbsp;to&nbsp;the&nbsp;given&nbsp;destination.</span><br />
+<a href="#line16" id="line16" class="IdrisLineNumber"> 16 | </a><span class="IdrisComment">|||&nbsp;Returns&nbsp;the&nbsp;number&nbsp;of&nbsp;bytes&nbsp;that&nbsp;have&nbsp;been&nbsp;written&nbsp;upon&nbsp;a&nbsp;write&nbsp;error.</span><br />
+<a href="#line17" id="line17" class="IdrisLineNumber"> 17 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line18" id="line18" class="IdrisLineNumber"> 18 | </a><span class="IdrisComment">|||&nbsp;@&nbsp;src&nbsp;&nbsp;the&nbsp;file&nbsp;to&nbsp;copy</span><br />
+<a href="#line19" id="line19" class="IdrisLineNumber"> 19 | </a><span class="IdrisComment">|||&nbsp;@&nbsp;dest&nbsp;the&nbsp;place&nbsp;to&nbsp;copy&nbsp;the&nbsp;file&nbsp;to</span><br />
+<a href="#line20" id="line20" class="IdrisLineNumber"> 20 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line21" id="line21" class="IdrisLineNumber"> 21 | </a><span class="IdrisFunction">copyFile</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">HasIO</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">src</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">String</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">dest</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">String</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisBound">io</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Either</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">FileError,</span>&nbsp;<span class="IdrisType">Int</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisType">()</span><span class="IdrisKeyword">)</span><br />
+<a href="#line22" id="line22" class="IdrisLineNumber"> 22 | </a><span class="IdrisFunction">copyFile</span>&nbsp;<span class="IdrisBound">src</span>&nbsp;<span class="IdrisBound">dest</span><br />
+<a href="#line23" id="line23" class="IdrisLineNumber"> 23 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">do</span>&nbsp;<span class="IdrisData">Right</span>&nbsp;<span class="IdrisBound">buf</span>&nbsp;<span class="IdrisKeyword">&lt;-</span>&nbsp;<span class="IdrisFunction">createBufferFromFile</span>&nbsp;<span class="IdrisBound">src</span><br />
+<a href="#line24" id="line24" class="IdrisLineNumber"> 24 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">|</span>&nbsp;<span class="IdrisData">Left</span>&nbsp;<span class="IdrisBound">err</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisFunction">pure</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">Left</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">err</span><span class="IdrisData">,</span>&nbsp;<span class="IdrisData">0</span><span class="IdrisKeyword">))</span><br />
+<a href="#line25" id="line25" class="IdrisLineNumber"> 25 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">writeBufferToFile</span>&nbsp;<span class="IdrisBound">dest</span>&nbsp;<span class="IdrisBound">buf</span>&nbsp;<span class="IdrisKeyword">!(</span><span class="IdrisFunction">rawSize</span>&nbsp;<span class="IdrisBound">buf</span><span class="IdrisKeyword">)</span><br />
+<a href="#line26" id="line26" class="IdrisLineNumber"> 26 | </a><br />
+</code>
+</body>
+</html>

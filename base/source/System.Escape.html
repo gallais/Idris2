@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+      .IdrisData {
+      
+      color: darkred
+    }
+    .IdrisType {
+      
+      color: blue
+    }
+    .IdrisBound {
+      
+      color: black
+    }
+    .IdrisFunction {
+      
+      color: darkgreen
+    }
+    .IdrisKeyword {
+      text-decoration: underline;
+      color: 
+    }
+    .IdrisImplicit {
+      
+      color: black
+    }
+    .IdrisComment {
+      
+      color: #b22222
+    }
+    .IdrisNamespace {
+      font-style: italic;
+      color: black
+    }
+    .IdrisPostulate {
+      font-weight: bold;
+      color: red
+    }
+    .IdrisModule {
+      font-style: italic;
+      color: black
+    }
+
+  .IdrisLineNumber {
+    text-decoration: none;
+    color: lightgrey;
+    user-select: none;
+  }
+  .IdrisLineNumber:hover {
+    color: darkgray;
+  }
+  .IdrisLineNumber:target {
+    color: gray;
+  }
+  </style>
+</head>
+<body>
+<code>
+<a href="#line0" id="line0" class="IdrisLineNumber"> &nbsp;0 | </a><span class="IdrisKeyword">module</span>&nbsp;<span class="IdrisModule">System.Escape</span><br />
+<a href="#line1" id="line1" class="IdrisLineNumber"> &nbsp;1 | </a><br />
+<a href="#line2" id="line2" class="IdrisLineNumber"> &nbsp;2 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Data.List</span><br />
+<a href="#line3" id="line3" class="IdrisLineNumber"> &nbsp;3 | </a><br />
+<a href="#line4" id="line4" class="IdrisLineNumber"> &nbsp;4 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">System.Info</span><br />
+<a href="#line5" id="line5" class="IdrisLineNumber"> &nbsp;5 | </a><br />
+<a href="#line6" id="line6" class="IdrisLineNumber"> &nbsp;6 | </a><span class="IdrisComment">|||&nbsp;Escape&nbsp;special&nbsp;characters&nbsp;in&nbsp;an&nbsp;Idris&nbsp;string,&nbsp;for&nbsp;use&nbsp;as&nbsp;a&nbsp;string&nbsp;literal</span><br />
+<a href="#line7" id="line7" class="IdrisLineNumber"> &nbsp;7 | </a><span class="IdrisComment">|||&nbsp;in&nbsp;the&nbsp;shell</span><br />
+<a href="#line8" id="line8" class="IdrisLineNumber"> &nbsp;8 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line9" id="line9" class="IdrisLineNumber"> &nbsp;9 | </a><span class="IdrisFunction">escapeArg</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">String</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">String</span><br />
+<a href="#line10" id="line10" class="IdrisLineNumber"> 10 | </a><span class="IdrisFunction">escapeArg</span>&nbsp;<span class="IdrisBound">cmd</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">let</span>&nbsp;<span class="IdrisBound">escapedCmdChars</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">pack</span>&nbsp;$&nbsp;<span class="IdrisFunction">unpack</span>&nbsp;<span class="IdrisBound">cmd</span>&nbsp;<span class="IdrisFunction">&gt;&gt;=</span>&nbsp;<span class="IdrisFunction">escapeArgChar</span>&nbsp;<span class="IdrisKeyword">in</span><br />
+<a href="#line11" id="line11" class="IdrisLineNumber"> 11 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">if</span>&nbsp;<span class="IdrisFunction">isWindows</span><br />
+<a href="#line12" id="line12" class="IdrisLineNumber"> 12 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">then</span>&nbsp;<span class="IdrisBound">escapedCmdChars</span><br />
+<a href="#line13" id="line13" class="IdrisLineNumber"> 13 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">else</span>&nbsp;<span class="IdrisData">&quot;\&quot;&quot;</span>&nbsp;<span class="IdrisFunction">++</span>&nbsp;<span class="IdrisBound">escapedCmdChars</span>&nbsp;<span class="IdrisFunction">++</span>&nbsp;<span class="IdrisData">&quot;\&quot;&quot;</span><br />
+<a href="#line14" id="line14" class="IdrisLineNumber"> 14 | </a>&nbsp;&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line15" id="line15" class="IdrisLineNumber"> 15 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">escapeArgChar</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Char</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">List</span>&nbsp;<span class="IdrisType">Char</span><br />
+<a href="#line16" id="line16" class="IdrisLineNumber"> 16 | </a>&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">escapeArgChar</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisKeyword">=</span><br />
+<a href="#line17" id="line17" class="IdrisLineNumber"> 17 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">if</span>&nbsp;<span class="IdrisFunction">isWindows</span><br />
+<a href="#line18" id="line18" class="IdrisLineNumber"> 18 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">then</span>&nbsp;<span class="IdrisKeyword">if</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;%&apos;</span>&nbsp;&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;^&apos;</span>&nbsp;&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;&amp;&apos;</span>&nbsp;&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;&lt;&apos;</span>&nbsp;&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;&gt;&apos;</span>&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;|&apos;</span>&nbsp;<span class="IdrisFunction">||</span><br />
+<a href="#line19" id="line19" class="IdrisLineNumber"> 19 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;\&apos;&apos;</span>&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;&quot;&apos;</span>&nbsp;&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;`&apos;</span>&nbsp;&nbsp;<span class="IdrisFunction">||</span><br />
+<a href="#line20" id="line20" class="IdrisLineNumber"> 20 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;&nbsp;&apos;</span>&nbsp;&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;\t&apos;</span>&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;\n&apos;</span>&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;;&apos;</span>&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;,&apos;</span>&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;=&apos;</span>&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;\x0B&apos;</span>&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;\x0C&apos;</span>&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;\xFF&apos;</span>&nbsp;<span class="IdrisFunction">||</span><br />
+<a href="#line21" id="line21" class="IdrisLineNumber"> 21 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;(&apos;</span>&nbsp;&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;)&apos;</span>&nbsp;&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;!&apos;</span><br />
+<a href="#line22" id="line22" class="IdrisLineNumber"> 22 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">then</span>&nbsp;<span class="IdrisData">[&apos;^&apos;,</span>&nbsp;<span class="IdrisBound">c</span><span class="IdrisData">]</span><br />
+<a href="#line23" id="line23" class="IdrisLineNumber"> 23 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">else</span>&nbsp;<span class="IdrisData">[</span><span class="IdrisBound">c</span><span class="IdrisData">]</span><br />
+<a href="#line24" id="line24" class="IdrisLineNumber"> 24 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">else</span>&nbsp;<span class="IdrisKeyword">if</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;$&apos;</span>&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;`&apos;</span>&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;\\&apos;</span>&nbsp;<span class="IdrisFunction">||</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">==</span>&nbsp;<span class="IdrisData">&apos;&quot;&apos;</span><br />
+<a href="#line25" id="line25" class="IdrisLineNumber"> 25 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">then</span>&nbsp;<span class="IdrisData">[&apos;\\&apos;,</span>&nbsp;<span class="IdrisBound">c</span><span class="IdrisData">]</span><br />
+<a href="#line26" id="line26" class="IdrisLineNumber"> 26 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisKeyword">else</span>&nbsp;<span class="IdrisData">[</span><span class="IdrisBound">c</span><span class="IdrisData">]</span><br />
+<a href="#line27" id="line27" class="IdrisLineNumber"> 27 | </a><br />
+<a href="#line28" id="line28" class="IdrisLineNumber"> 28 | </a><span class="IdrisComment">|||&nbsp;Escape&nbsp;special&nbsp;characters&nbsp;in&nbsp;a&nbsp;list&nbsp;of&nbsp;shell&nbsp;arguments,&nbsp;as&nbsp;a&nbsp;single&nbsp;command</span><br />
+<a href="#line29" id="line29" class="IdrisLineNumber"> 29 | </a><span class="IdrisComment">|||&nbsp;for&nbsp;the&nbsp;shell.</span><br />
+<a href="#line30" id="line30" class="IdrisLineNumber"> 30 | </a><span class="IdrisComment">|||&nbsp;eg.&nbsp;the&nbsp;list&nbsp;[&quot;a&quot;,&nbsp;&quot;b&quot;,&nbsp;&quot;c&nbsp;d&quot;]&nbsp;is&nbsp;interpreted&nbsp;as&nbsp;the&nbsp;command&nbsp;`a&nbsp;b&nbsp;&quot;c&nbsp;d&quot;`</span><br />
+<a href="#line31" id="line31" class="IdrisLineNumber"> 31 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line32" id="line32" class="IdrisLineNumber"> 32 | </a><span class="IdrisFunction">escapeCmd</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">List</span>&nbsp;<span class="IdrisType">String</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">String</span><br />
+<a href="#line33" id="line33" class="IdrisLineNumber"> 33 | </a><span class="IdrisFunction">escapeCmd</span>&nbsp;<span class="IdrisBound">cmd</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">concat</span>&nbsp;$&nbsp;<span class="IdrisFunction">intersperse</span>&nbsp;<span class="IdrisData">&quot;&nbsp;&quot;</span>&nbsp;$&nbsp;<span class="IdrisFunction">map</span>&nbsp;<span class="IdrisFunction">escapeArg</span>&nbsp;<span class="IdrisBound">cmd</span><br />
+<a href="#line34" id="line34" class="IdrisLineNumber"> 34 | </a><br />
+</code>
+</body>
+</html>

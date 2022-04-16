@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+      .IdrisData {
+      
+      color: darkred
+    }
+    .IdrisType {
+      
+      color: blue
+    }
+    .IdrisBound {
+      
+      color: black
+    }
+    .IdrisFunction {
+      
+      color: darkgreen
+    }
+    .IdrisKeyword {
+      text-decoration: underline;
+      color: 
+    }
+    .IdrisImplicit {
+      
+      color: black
+    }
+    .IdrisComment {
+      
+      color: #b22222
+    }
+    .IdrisNamespace {
+      font-style: italic;
+      color: black
+    }
+    .IdrisPostulate {
+      font-weight: bold;
+      color: red
+    }
+    .IdrisModule {
+      font-style: italic;
+      color: black
+    }
+
+  .IdrisLineNumber {
+    text-decoration: none;
+    color: lightgrey;
+    user-select: none;
+  }
+  .IdrisLineNumber:hover {
+    color: darkgray;
+  }
+  .IdrisLineNumber:target {
+    color: gray;
+  }
+  </style>
+</head>
+<body>
+<code>
+<a href="#line0" id="line0" class="IdrisLineNumber"> &nbsp;0 | </a><span class="IdrisKeyword">module</span>&nbsp;<span class="IdrisModule">Text.PrettyPrint.Prettyprinter.Render.String</span><br />
+<a href="#line1" id="line1" class="IdrisLineNumber"> &nbsp;1 | </a><br />
+<a href="#line2" id="line2" class="IdrisLineNumber"> &nbsp;2 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Data.String</span><br />
+<a href="#line3" id="line3" class="IdrisLineNumber"> &nbsp;3 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Text.PrettyPrint.Prettyprinter.Doc</span><br />
+<a href="#line4" id="line4" class="IdrisLineNumber"> &nbsp;4 | </a><br />
+<a href="#line5" id="line5" class="IdrisLineNumber"> &nbsp;5 | </a><span class="IdrisKeyword">%default</span>&nbsp;<span class="IdrisKeyword">total</span><br />
+<a href="#line6" id="line6" class="IdrisLineNumber"> &nbsp;6 | </a><br />
+<a href="#line7" id="line7" class="IdrisLineNumber"> &nbsp;7 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line8" id="line8" class="IdrisLineNumber"> &nbsp;8 | </a><span class="IdrisFunction">renderString</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">SimpleDocStream</span>&nbsp;<span class="IdrisBound">ann</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">String</span><br />
+<a href="#line9" id="line9" class="IdrisLineNumber"> &nbsp;9 | </a><span class="IdrisFunction">renderString</span>&nbsp;<span class="IdrisData">SEmpty</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">neutral</span><br />
+<a href="#line10" id="line10" class="IdrisLineNumber"> 10 | </a><span class="IdrisFunction">renderString</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SChar</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisBound">rest</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">singleton</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisFunction">&lt;+&gt;</span>&nbsp;<span class="IdrisFunction">renderString</span>&nbsp;<span class="IdrisBound">rest</span><br />
+<a href="#line11" id="line11" class="IdrisLineNumber"> 11 | </a><span class="IdrisFunction">renderString</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SText</span>&nbsp;<span class="IdrisBound">l</span>&nbsp;<span class="IdrisBound">t</span>&nbsp;<span class="IdrisBound">rest</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">t</span>&nbsp;<span class="IdrisFunction">&lt;+&gt;</span>&nbsp;<span class="IdrisFunction">renderString</span>&nbsp;<span class="IdrisBound">rest</span><br />
+<a href="#line12" id="line12" class="IdrisLineNumber"> 12 | </a><span class="IdrisFunction">renderString</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SLine</span>&nbsp;<span class="IdrisBound">l</span>&nbsp;<span class="IdrisBound">rest</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">singleton</span>&nbsp;<span class="IdrisData">&apos;\n&apos;</span>&nbsp;<span class="IdrisFunction">&lt;+&gt;</span>&nbsp;<span class="IdrisFunction">textSpaces</span>&nbsp;<span class="IdrisBound">l</span>&nbsp;<span class="IdrisFunction">&lt;+&gt;</span>&nbsp;<span class="IdrisFunction">renderString</span>&nbsp;<span class="IdrisBound">rest</span><br />
+<a href="#line13" id="line13" class="IdrisLineNumber"> 13 | </a><span class="IdrisFunction">renderString</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SAnnPush</span>&nbsp;<span class="IdrisBound">ann</span>&nbsp;<span class="IdrisBound">rest</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">renderString</span>&nbsp;<span class="IdrisBound">rest</span><br />
+<a href="#line14" id="line14" class="IdrisLineNumber"> 14 | </a><span class="IdrisFunction">renderString</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SAnnPop</span>&nbsp;<span class="IdrisBound">rest</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">renderString</span>&nbsp;<span class="IdrisBound">rest</span><br />
+<a href="#line15" id="line15" class="IdrisLineNumber"> 15 | </a><br />
+<a href="#line16" id="line16" class="IdrisLineNumber"> 16 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line17" id="line17" class="IdrisLineNumber"> 17 | </a><span class="IdrisFunction">renderIO</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">SimpleDocStream</span>&nbsp;<span class="IdrisBound">ann</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">IO</span>&nbsp;<span class="IdrisType">()</span><br />
+<a href="#line18" id="line18" class="IdrisLineNumber"> 18 | </a><span class="IdrisFunction">renderIO</span>&nbsp;<span class="IdrisData">SEmpty</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">pure</span>&nbsp;<span class="IdrisData">()</span><br />
+<a href="#line19" id="line19" class="IdrisLineNumber"> 19 | </a><span class="IdrisFunction">renderIO</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SChar</span>&nbsp;<span class="IdrisBound">c</span>&nbsp;<span class="IdrisBound">rest</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">do</span>&nbsp;<span class="IdrisFunction">putChar</span>&nbsp;<span class="IdrisBound">c</span>;&nbsp;<span class="IdrisFunction">renderIO</span>&nbsp;<span class="IdrisBound">rest</span><br />
+<a href="#line20" id="line20" class="IdrisLineNumber"> 20 | </a><span class="IdrisFunction">renderIO</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SText</span>&nbsp;<span class="IdrisBound">l</span>&nbsp;<span class="IdrisBound">t</span>&nbsp;<span class="IdrisBound">rest</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">do</span>&nbsp;<span class="IdrisFunction">putStr</span>&nbsp;<span class="IdrisBound">t</span>;&nbsp;<span class="IdrisFunction">renderIO</span>&nbsp;<span class="IdrisBound">rest</span><br />
+<a href="#line21" id="line21" class="IdrisLineNumber"> 21 | </a><span class="IdrisFunction">renderIO</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SLine</span>&nbsp;<span class="IdrisBound">l</span>&nbsp;<span class="IdrisBound">rest</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisKeyword">do</span>&nbsp;<span class="IdrisFunction">putChar</span>&nbsp;<span class="IdrisData">&apos;\n&apos;</span><br />
+<a href="#line22" id="line22" class="IdrisLineNumber"> 22 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">putStr</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisFunction">textSpaces</span>&nbsp;<span class="IdrisBound">l</span><span class="IdrisKeyword">)</span><br />
+<a href="#line23" id="line23" class="IdrisLineNumber"> 23 | </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="IdrisFunction">renderIO</span>&nbsp;<span class="IdrisBound">rest</span><br />
+<a href="#line24" id="line24" class="IdrisLineNumber"> 24 | </a><span class="IdrisFunction">renderIO</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SAnnPush</span>&nbsp;<span class="IdrisBound">ann</span>&nbsp;<span class="IdrisBound">rest</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">renderIO</span>&nbsp;<span class="IdrisBound">rest</span><br />
+<a href="#line25" id="line25" class="IdrisLineNumber"> 25 | </a><span class="IdrisFunction">renderIO</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisData">SAnnPop</span>&nbsp;<span class="IdrisBound">rest</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">renderIO</span>&nbsp;<span class="IdrisBound">rest</span><br />
+<a href="#line26" id="line26" class="IdrisLineNumber"> 26 | </a><br />
+<a href="#line27" id="line27" class="IdrisLineNumber"> 27 | </a><span class="IdrisComment">|||&nbsp;Prettyprints&nbsp;a&nbsp;document&nbsp;to&nbsp;standard&nbsp;output,&nbsp;using&nbsp;default&nbsp;options.</span><br />
+<a href="#line28" id="line28" class="IdrisLineNumber"> 28 | </a><span class="IdrisKeyword">export</span><br />
+<a href="#line29" id="line29" class="IdrisLineNumber"> 29 | </a><span class="IdrisFunction">putDoc</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisType">Doc</span>&nbsp;<span class="IdrisBound">ann</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">IO</span>&nbsp;<span class="IdrisType">()</span><br />
+<a href="#line30" id="line30" class="IdrisLineNumber"> 30 | </a><span class="IdrisFunction">putDoc</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisFunction">renderIO</span>&nbsp;<span class="IdrisFunction">.</span>&nbsp;<span class="IdrisFunction">layoutPretty</span>&nbsp;<span class="IdrisFunction">defaultLayoutOptions</span><br />
+<a href="#line31" id="line31" class="IdrisLineNumber"> 31 | </a><br />
+</code>
+</body>
+</html>

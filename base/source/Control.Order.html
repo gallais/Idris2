@@ -1,0 +1,107 @@
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+      .IdrisData {
+      
+      color: darkred
+    }
+    .IdrisType {
+      
+      color: blue
+    }
+    .IdrisBound {
+      
+      color: black
+    }
+    .IdrisFunction {
+      
+      color: darkgreen
+    }
+    .IdrisKeyword {
+      text-decoration: underline;
+      color: 
+    }
+    .IdrisImplicit {
+      
+      color: black
+    }
+    .IdrisComment {
+      
+      color: #b22222
+    }
+    .IdrisNamespace {
+      font-style: italic;
+      color: black
+    }
+    .IdrisPostulate {
+      font-weight: bold;
+      color: red
+    }
+    .IdrisModule {
+      font-style: italic;
+      color: black
+    }
+
+  .IdrisLineNumber {
+    text-decoration: none;
+    color: lightgrey;
+    user-select: none;
+  }
+  .IdrisLineNumber:hover {
+    color: darkgray;
+  }
+  .IdrisLineNumber:target {
+    color: gray;
+  }
+  </style>
+</head>
+<body>
+<code>
+<a href="#line0" id="line0" class="IdrisLineNumber"> &nbsp;0 | </a><span class="IdrisComment">|||&nbsp;An&nbsp;order&nbsp;is&nbsp;a&nbsp;particular&nbsp;kind&nbsp;of&nbsp;binary&nbsp;relation.&nbsp;The&nbsp;order</span><br />
+<a href="#line1" id="line1" class="IdrisLineNumber"> &nbsp;1 | </a><span class="IdrisComment">|||&nbsp;relation&nbsp;is&nbsp;intended&nbsp;to&nbsp;proceed&nbsp;in&nbsp;some&nbsp;direction,&nbsp;though&nbsp;not</span><br />
+<a href="#line2" id="line2" class="IdrisLineNumber"> &nbsp;2 | </a><span class="IdrisComment">|||&nbsp;necessarily&nbsp;with&nbsp;a&nbsp;unique&nbsp;path.</span><br />
+<a href="#line3" id="line3" class="IdrisLineNumber"> &nbsp;3 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line4" id="line4" class="IdrisLineNumber"> &nbsp;4 | </a><span class="IdrisComment">|||&nbsp;Orders&nbsp;are&nbsp;often&nbsp;defined&nbsp;simply&nbsp;as&nbsp;bundles&nbsp;of&nbsp;binary&nbsp;relation</span><br />
+<a href="#line5" id="line5" class="IdrisLineNumber"> &nbsp;5 | </a><span class="IdrisComment">|||&nbsp;properties.</span><br />
+<a href="#line6" id="line6" class="IdrisLineNumber"> &nbsp;6 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line7" id="line7" class="IdrisLineNumber"> &nbsp;7 | </a><span class="IdrisComment">|||&nbsp;A&nbsp;prominent&nbsp;example&nbsp;of&nbsp;an&nbsp;order&nbsp;relation&nbsp;is&nbsp;LTE&nbsp;over&nbsp;Nat.</span><br />
+<a href="#line8" id="line8" class="IdrisLineNumber"> &nbsp;8 | </a><br />
+<a href="#line9" id="line9" class="IdrisLineNumber"> &nbsp;9 | </a><span class="IdrisKeyword">module</span>&nbsp;<span class="IdrisModule">Control.Order</span><br />
+<a href="#line10" id="line10" class="IdrisLineNumber"> 10 | </a><br />
+<a href="#line11" id="line11" class="IdrisLineNumber"> 11 | </a><span class="IdrisKeyword">import</span>&nbsp;<span class="IdrisModule">Control.Relation</span><br />
+<a href="#line12" id="line12" class="IdrisLineNumber"> 12 | </a><br />
+<a href="#line13" id="line13" class="IdrisLineNumber"> 13 | </a><span class="IdrisComment">|||&nbsp;A&nbsp;preorder&nbsp;is&nbsp;reflexive&nbsp;and&nbsp;transitive.</span><br />
+<a href="#line14" id="line14" class="IdrisLineNumber"> 14 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line15" id="line15" class="IdrisLineNumber"> 15 | </a><span class="IdrisKeyword">interface</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Reflexive</span>&nbsp;<span class="IdrisBound">ty</span>&nbsp;<span class="IdrisBound">rel</span>,&nbsp;<span class="IdrisType">Transitive</span>&nbsp;<span class="IdrisBound">ty</span>&nbsp;<span class="IdrisBound">rel</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">Preorder</span>&nbsp;<span class="IdrisBound">ty</span>&nbsp;<span class="IdrisBound">rel</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line16" id="line16" class="IdrisLineNumber"> 16 | </a><br />
+<a href="#line17" id="line17" class="IdrisLineNumber"> 17 | </a><span class="IdrisComment">|||&nbsp;A&nbsp;partial&nbsp;order&nbsp;is&nbsp;an&nbsp;antisymmetrics&nbsp;preorder.</span><br />
+<a href="#line18" id="line18" class="IdrisLineNumber"> 18 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line19" id="line19" class="IdrisLineNumber"> 19 | </a><span class="IdrisKeyword">interface</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">Preorder</span>&nbsp;<span class="IdrisBound">ty</span>&nbsp;<span class="IdrisBound">rel</span>,&nbsp;<span class="IdrisType">Antisymmetric</span>&nbsp;<span class="IdrisBound">ty</span>&nbsp;<span class="IdrisBound">rel</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">PartialOrder</span>&nbsp;<span class="IdrisBound">ty</span>&nbsp;<span class="IdrisBound">rel</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line20" id="line20" class="IdrisLineNumber"> 20 | </a><br />
+<a href="#line21" id="line21" class="IdrisLineNumber"> 21 | </a><span class="IdrisComment">|||&nbsp;A&nbsp;relation&nbsp;is&nbsp;connex&nbsp;if&nbsp;for&nbsp;any&nbsp;two&nbsp;distinct&nbsp;x&nbsp;and&nbsp;y,&nbsp;either&nbsp;x&nbsp;~&nbsp;y&nbsp;or&nbsp;y&nbsp;~&nbsp;x.</span><br />
+<a href="#line22" id="line22" class="IdrisLineNumber"> 22 | </a><span class="IdrisComment">|||</span><br />
+<a href="#line23" id="line23" class="IdrisLineNumber"> 23 | </a><span class="IdrisComment">|||&nbsp;This&nbsp;can&nbsp;also&nbsp;be&nbsp;stated&nbsp;as&nbsp;a&nbsp;trichotomy:&nbsp;x&nbsp;~&nbsp;y&nbsp;or&nbsp;x&nbsp;=&nbsp;y&nbsp;or&nbsp;y&nbsp;~&nbsp;x.</span><br />
+<a href="#line24" id="line24" class="IdrisLineNumber"> 24 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line25" id="line25" class="IdrisLineNumber"> 25 | </a><span class="IdrisKeyword">interface</span>&nbsp;<span class="IdrisType">Connex</span>&nbsp;<span class="IdrisBound">ty</span>&nbsp;<span class="IdrisBound">rel</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line26" id="line26" class="IdrisLineNumber"> 26 | </a>&nbsp;&nbsp;<span class="IdrisFunction">connex</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisKeyword">{</span><span class="IdrisBound">x</span><span class="IdrisKeyword">,</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">ty</span><span class="IdrisKeyword">}</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisFunction">Not</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">x</span>&nbsp;<span class="IdrisKeyword">=</span>&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Either</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">rel</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">rel</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisBound">x</span><span class="IdrisKeyword">)</span><br />
+<a href="#line27" id="line27" class="IdrisLineNumber"> 27 | </a><br />
+<a href="#line28" id="line28" class="IdrisLineNumber"> 28 | </a><span class="IdrisComment">|||&nbsp;A&nbsp;relation&nbsp;is&nbsp;strongly&nbsp;connex&nbsp;if&nbsp;for&nbsp;any&nbsp;two&nbsp;x&nbsp;and&nbsp;y,&nbsp;either&nbsp;x&nbsp;~&nbsp;y&nbsp;or&nbsp;y&nbsp;~&nbsp;x.</span><br />
+<a href="#line29" id="line29" class="IdrisLineNumber"> 29 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line30" id="line30" class="IdrisLineNumber"> 30 | </a><span class="IdrisKeyword">interface</span>&nbsp;<span class="IdrisType">StronglyConnex</span>&nbsp;<span class="IdrisBound">ty</span>&nbsp;<span class="IdrisBound">rel</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line31" id="line31" class="IdrisLineNumber"> 31 | </a>&nbsp;&nbsp;<span class="IdrisFunction">order</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">x</span><span class="IdrisKeyword">,</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisKeyword">:</span>&nbsp;<span class="IdrisBound">ty</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">-&gt;</span>&nbsp;<span class="IdrisType">Either</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">rel</span>&nbsp;<span class="IdrisBound">x</span>&nbsp;<span class="IdrisBound">y</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisBound">rel</span>&nbsp;<span class="IdrisBound">y</span>&nbsp;<span class="IdrisBound">x</span><span class="IdrisKeyword">)</span><br />
+<a href="#line32" id="line32" class="IdrisLineNumber"> 32 | </a><br />
+<a href="#line33" id="line33" class="IdrisLineNumber"> 33 | </a><span class="IdrisComment">|||&nbsp;A&nbsp;linear&nbsp;order&nbsp;is&nbsp;a&nbsp;connex&nbsp;partial&nbsp;order.</span><br />
+<a href="#line34" id="line34" class="IdrisLineNumber"> 34 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line35" id="line35" class="IdrisLineNumber"> 35 | </a><span class="IdrisKeyword">interface</span>&nbsp;<span class="IdrisKeyword">(</span><span class="IdrisType">PartialOrder</span>&nbsp;<span class="IdrisBound">ty</span>&nbsp;<span class="IdrisBound">rel</span>,&nbsp;<span class="IdrisType">Connex</span>&nbsp;<span class="IdrisBound">ty</span>&nbsp;<span class="IdrisBound">rel</span><span class="IdrisKeyword">)</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">LinearOrder</span>&nbsp;<span class="IdrisBound">ty</span>&nbsp;<span class="IdrisBound">rel</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line36" id="line36" class="IdrisLineNumber"> 36 | </a><br />
+<a href="#line37" id="line37" class="IdrisLineNumber"> 37 | </a><span class="IdrisComment">----------------------------------------</span><br />
+<a href="#line38" id="line38" class="IdrisLineNumber"> 38 | </a><br />
+<a href="#line39" id="line39" class="IdrisLineNumber"> 39 | </a><span class="IdrisComment">|||&nbsp;Every&nbsp;equivalence&nbsp;relation&nbsp;is&nbsp;a&nbsp;preorder.</span><br />
+<a href="#line40" id="line40" class="IdrisLineNumber"> 40 | </a><span class="IdrisKeyword">public</span>&nbsp;<span class="IdrisKeyword">export</span><br />
+<a href="#line41" id="line41" class="IdrisLineNumber"> 41 | </a><span class="IdrisKeyword">[</span><span class="IdrisFunction">EP</span><span class="IdrisKeyword">]</span>&nbsp;<span class="IdrisType">Equivalence</span>&nbsp;<span class="IdrisBound">ty</span>&nbsp;<span class="IdrisBound">rel</span>&nbsp;<span class="IdrisKeyword">=&gt;</span>&nbsp;<span class="IdrisType">Preorder</span>&nbsp;<span class="IdrisBound">ty</span>&nbsp;<span class="IdrisBound">rel</span>&nbsp;<span class="IdrisKeyword">where</span><br />
+<a href="#line42" id="line42" class="IdrisLineNumber"> 42 | </a><br />
+</code>
+</body>
+</html>
