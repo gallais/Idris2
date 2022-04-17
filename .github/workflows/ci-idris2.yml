@@ -627,13 +627,6 @@ jobs:
 
           cd .github/scripts
           ./katla.sh
-          cp -r ../../libs/prelude/build/docs html/prelude
-          cp -r ../../libs/base/build/docs html/base
-          cp -r ../../libs/contrib/build/docs html/contrib
-          cp -r ../../libs/network/build/docs html/network
-          cp -r ../../libs/linear/build/docs html/linear
-          cp -r ../../libs/test/build/docs html/test
-          cp -r ../../libs/papers/build/docs html/papers
       - name: Deploy HTML
         uses: JamesIves/github-pages-deploy-action@4.1.3
 
