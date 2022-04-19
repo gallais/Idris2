@@ -23,7 +23,7 @@ while IFS= read -r libdirectory; do
     find html/"$libname"/docs/ -name "*.html" >tmp2
     while IFS= read -r file; do
         filename=$(basename "$file" ".html")
-        sed -i "s|<h1>${filename}</h1>|<h1><a href=\"../source/${filename}.html\">${filename}</a></h1>|" "$file"
+        sed -i "s|<h1>${filename}</h1>|<h1>${filename}<span style=\"float:right\">(<a href=\"../source/${filename}.html\">source</a>)</span></h1>|" "$file"
     done <tmp2
     rm tmp2
 done <tmp
