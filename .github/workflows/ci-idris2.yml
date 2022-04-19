@@ -612,7 +612,7 @@ jobs:
           make
           mkdir -p "${HOME}"/.local/bin/
           cp -r build/exec/* "${HOME}"/.local/bin/
-          echo "${HOME}/.local/bin" >> $GITHUB_PATH
+          echo "${HOME}/.local/bin" >> "$GITHUB_PATH"
       - name: Checkout idris2
         uses: actions/checkout@v2
       - name: Build html doc
