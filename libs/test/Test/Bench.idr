@@ -3,13 +3,20 @@
 
 module Test.Bench
 
+import Data.Bits
 import Data.Fin
 import Data.Maybe
 import Data.Stream
 import Data.String
 import Data.Vect
 
+import Data.IORef
+import Data.SortedMap
+
 import System.Clock
+
+import Control.Monad.State
+import Control.Monad.Random.Interface
 
 %default total
 
@@ -279,25 +286,6 @@ tmultiplyV : Matrix n m Double -> Vect n Double -> Vect m Double
 tmultiplyV m v = (sum . zipWith (*) v) <$> m
   -- todo: less error accumulating sum
 
-
-{-
--- Compute /R&#0178;/, the coefficient of determination that
--- indicates goodness-of-fit of a regression.
---
--- This value will be 1 if the predictors fit perfectly, dropping to 0
--- if they have no explanatory power.
-rSquare :: Matrix m n Double               -- ^ Predictors (regressors).
-        -> Vector m Double               -- ^ Responders.
-        -> Vector               -- ^ Regression coefficients.
-        -> Double
-rSquare pred resp coeff = 1 - r / t
-  where
-    r   = sum $ flip U.imap resp $ \i x -> square (x - p i)
-    t   = sum $ flip U.map resp $ \x -> square (x - mean resp)
-    p i = sum . flip U.imap coeff $ \j -> (* unsafeIndex pred i j)
-
--}
-
 allFins : (n : Nat) -> Vect n (Fin n)
 allFins n = go n id where
 
@@ -400,11 +388,101 @@ ols a b
   = ifThenElse (m < n) (oops "Fewer rows than columns")
   $ let (q, r) = qrDecomposition a in solve r (q `tmultiplyV` b)
 
-olsRegress : {m, n : Nat} ->
-             Vect (S m) (Vect n Double) ->
-             Vect n Double ->
-             (Vect (S (m + 1)) Double, Double)
+olsRegress :
+  {m, n : Nat} ->
+  Vect (S m) (Vect n Double) ->
+  Vect n Double ->
+  (Vect (S (m + 1)) Double, Double)
 olsRegress preds resps
   = let mxpreds = preds ++ [replicate n 1] in
     let coeffs = ols mxpreds resps in
     (coeffs, rSquare mxpreds resps coeffs)
+
+record ConfLevel (a : Type) where
+  constructor MkConfLevel
+  confLevel : a
+
+record ConfInt (a : Type) where
+  constructor MkConfInt
+  confIntLDX : a
+  confIntUDX : a
+  confIntCL : ConfLevel a
+
+record Estimate (e : Type -> Type) (a : Type) where
+  constructor MkEstimate
+  estPoint : a
+  estError : e a
+
+bootstrapRegress :
+  MonadRandom Int64 io =>
+  HasIO io =>
+  Nat ->
+  ConfLevel Double ->
+  (List (Vect m Double) -> Vect m Double -> (Vect m Double, Double)) ->
+  List (Vect m Double) ->
+  io (Vect m (Estimate ConfInt Double), Estimate ConfInt Double)
+bootstrapRegress  = ?a
+
+record Experiment where
+  constructor MkExperiment
+  expNumber : Nat
+  expName : String
+  expData : List Measured
+
+record Regression where
+  constructor MkRegression
+  regResponder : String
+  regCoeffs : SortedMap String (Estimate ConfInt Double)
+  regRsquare : Estimate ConfInt Double
+
+data OutlierEffect
+  = Unaffected -- less than 1%
+  | Slight     -- Up to 10%
+  | Moderate   -- Up to 50%
+  | Severe     -- More than 50% (useless measurements)
+
+
+record OutlierVariance where
+  constructor MkOutlierVariance
+  ovEffect : OutlierEffect
+  ovDesc : String
+  ovFranction : Double
+
+record SampleAnalysis where
+  constructor MkSampleAnalysis
+  anRegress : List Regression
+  anMean : Estimate ConfInt Double
+  anStdDev : Estimate ConfInt Double
+  anOutlierVariable : OutlierVariance
+
+record Outliers where
+  constructor MkOutliers
+  sampleSeen : Nat
+  lowSever : Nat
+  lowMild : Nat
+  highMild : Nat
+  highSevere : Nat
+
+record Report where
+  constructor MkReport
+  reportNumber : Nat
+  reportName : String
+  reportKeys : List String
+  reportMeasured : List Measured
+  reportAnalysis : SampleAnalysis
+  reportOutliers : Outliers
+
+record Criterion (a : Type) where
+  constructor MkCriterion
+  runCriterion : State Integer a
+
+
+-- regress :
+
+analyseSample : Experiment -> Report
+analyseSample (MkExperiment i name meas)
+  = let stime = map (measTime . rescale)
+              $ filter ((>= threshold) . measTime) meas in
+    let n = length meas in
+    let s = length stime in
+    ?zg
