@@ -28,6 +28,15 @@ endBounds : Bounds -> (Int, Int)
 endBounds b = (b.endLine, b.endCol)
 
 export
+mkBounds : (Int, Int) -> (Int, Int) -> Bounds
+mkBounds (startLine, startCol) (endLine, endCol)
+  = MkBounds startLine startCol endLine endCol
+
+export
+mkBoundsCorrect : (bds : Bounds) -> mkBounds (startBounds bds) (endBounds bds) === bds
+mkBoundsCorrect (MkBounds _ _ _ _) = Refl
+
+export
 Eq Bounds where
   (MkBounds sl sc el ec) == (MkBounds sl' sc' el' ec') =
       sl == sl'

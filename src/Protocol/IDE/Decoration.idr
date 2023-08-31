@@ -62,8 +62,6 @@ SExpable Decoration where
     display Postulate = "postulate"
     display Module    = "module"
 
-export
-FromSExpable Decoration where
   fromSExp (SExpList [SymbolAtom "decor", SymbolAtom decor]) =
     case decor of
       "comment"   => Just Comment
@@ -77,3 +75,13 @@ FromSExpable Decoration where
       "module"    => Just Module
       _ => Nothing
   fromSExp _ = Nothing
+
+  correctSExp Comment = Refl
+  correctSExp Typ = Refl
+  correctSExp Function = Refl
+  correctSExp Data = Refl
+  correctSExp Keyword = Refl
+  correctSExp Bound = Refl
+  correctSExp Namespace = Refl
+  correctSExp Postulate = Refl
+  correctSExp Module = Refl

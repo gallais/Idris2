@@ -7,6 +7,7 @@ import Protocol.IDE.FileContext
 
 import Data.List1
 import Data.Maybe
+import Data.So
 
 %default total
 
@@ -28,31 +29,39 @@ record REPLOption where
   val  : type.sem
 %unbound_implicits on
 
-sexpOptionVal : {type : OptionType} -> type.sem -> SExp
-sexpOptionVal {type = BOOL  } = toSExp
-sexpOptionVal {type = STRING} = toSExp
-sexpOptionVal {type = ATOM  } = toSExp
+-- Did I just break the protocol? This used to collapse STRING and ATOM!
+toSExpOption : (type : OptionType) -> type.sem -> SExp
+toSExpOption BOOL = BoolAtom
+toSExpOption STRING = StringAtom
+toSExpOption ATOM = SymbolAtom
+
+fromSExpOption : SExp -> Maybe (type : OptionType ** type.sem)
+fromSExpOption (BoolAtom b) = Just (BOOL ** b)
+fromSExpOption (StringAtom str) = Just (STRING ** str)
+fromSExpOption (SymbolAtom at) = Just (ATOM ** at)
+fromSExpOption _ = Nothing
+
+correctSExpOption : (type: OptionType) -> (val : type.sem) ->
+  fromSExpOption (toSExpOption type val) === Just (type ** val)
+correctSExpOption BOOL val = Refl
+correctSExpOption STRING val = Refl
+correctSExpOption ATOM val = Refl
 
 export
 SExpable REPLOption where
-  toSExp opt@(MkOption {}) = SExpList
-    [ SymbolAtom opt.name
-    , sexpOptionVal opt.val
+  toSExp (MkOption name type val) = SExpList
+    [ SymbolAtom name
+    , toSExpOption type val
     ]
 
-export
-FromSExpable REPLOption where
   fromSExp (SExpList
     [ SymbolAtom name
     , val
-    ]) = do
-    let Nothing = fromSExp val
-      | Just val => Just $ MkOption {name, type = BOOL, val}
-    let Nothing = fromSExp val
-      | Just val => Just $ MkOption {name, type = STRING, val}
-    val <- fromSExp val
-    Just $ MkOption {name, type = ATOM, val}
+    ]) = pure $ MkOption { name, val = snd !(fromSExpOption val), _ }
   fromSExp _ = Nothing
+
+  correctSExp (MkOption name type val)
+    = rewrite correctSExpOption type val in Refl
 
 public export
 record MetaVarLemma where
@@ -66,40 +75,68 @@ SExpable MetaVarLemma where
              , SExpList [ SymbolAtom "definition-type", StringAtom mvl.lemma ]
              ]
 
-export
-FromSExpable MetaVarLemma where
   fromSExp (SExpList [ SymbolAtom "metavariable-lemma"
             , SExpList [ SymbolAtom "replace-metavariable", StringAtom application ]
             , SExpList [ SymbolAtom "definition-type", StringAtom lemma ]
             ]) = Just $ MkMetaVarLemma {application, lemma}
   fromSExp _ = Nothing
 
+  correctSExp (MkMetaVarLemma app lem) = Refl
+
+public export
+data TagType : Type where
+  NoTag : TagType
+  ATag  : (str : String) -> {auto 0 nonEmpty : So (not (str == ""))} -> TagType
+
 public export
 record IdrisVersion where
   constructor MkIdrisVersion
   major, minor, patch : Nat
-  tag : Maybe String
+  tag : TagType
+
+export
+SExpable TagType where
+  toSExp NoTag = StringAtom ""
+  toSExp (ATag str) = StringAtom str
+
+  fromSExp (StringAtom str) = case choose (str == "") of
+    Left _ => pure NoTag
+    Right prf => pure (ATag str)
+  fromSExp _ = Nothing
+
+  correctSExp NoTag with (choose True)
+    _ | Left _ = Refl
+    _ | Right prf = absurd prf
+  correctSExp (ATag str @{prf}) with (str == "")
+    _ | True = void $ absurd prf
+    correctSExp (ATag str @{Oh}) | False with (choose False)
+      _ | Left prf' = absurd prf'
+      _ | Right Oh = Refl
 
 export
 SExpable IdrisVersion where
-  toSExp version = SExpList
-    [ SExpList (map toSExp [version.major, version.minor, version.patch])
-    , SExpList [StringAtom $ fromMaybe "" version.tag]
+  toSExp (MkIdrisVersion major minor patch tag) = SExpList
+    [ SExpList (map toSExp [major, minor, patch])
+    , SExpList [toSExp tag]
     ]
 
-export
-FromSExpable IdrisVersion where
   fromSExp (SExpList
     [ SExpList [majorSExp, minorSExp, patchSExp]
-    , SExpList [StringAtom tagSExp]
+    , SExpList [tagSExp]
     ]) = do pure $ MkIdrisVersion
               { major = !(fromSExp majorSExp)
               , minor = !(fromSExp minorSExp)
               , patch = !(fromSExp patchSExp)
-              , tag = case tagSExp of
-                  "" => Nothing
-                  str => Just str}
+              , tag = !(fromSExp tagSExp)
+              }
   fromSExp _ = Nothing
+
+  correctSExp (MkIdrisVersion major minor patch tag)
+    = rewrite correctSExp tag in
+      rewrite castNatIntegerNatCorrect major in
+      rewrite castNatIntegerNatCorrect minor in
+      rewrite castNatIntegerNatCorrect patch in
+      Refl
 
 public export
 data Result =
@@ -120,17 +157,13 @@ SExpable Result where
   toSExp (AUnit    ) = toSExp (the (List Int) [])
   toSExp (AVersion version) = toSExp version
   toSExp (AMetaVarLemma mvl) = toSExp mvl
-  toSExp (ANameLocList fcs) = toSExp fcs
+  toSExp (ANameLocList fcs) = ?zhg -- toSExp fcs
   toSExp (AHoleList holes) = toSExp holes
   toSExp (ANameList names) = SExpList (map StringAtom names)
   toSExp (ACompletionList names str) = SExpList [SExpList (map StringAtom names), StringAtom str]
   toSExp (AnOptionList opts) = toSExp opts
   toSExp (AnIntroList iss) = toSExp iss
 
--- This code is not efficient. Usually the client knows what kind of
--- result to expect based on the request it issued.
-export
-FromSExpable Result where
   fromSExp (SExpList []) = Just AUnit -- resolve ambiguity somewhat arbitrarily...
   fromSExp sexp = do
   let Nothing = fromSExp sexp
@@ -139,16 +172,18 @@ FromSExpable Result where
     | Just version => pure $ AVersion version
   let Nothing = fromSExp sexp
     | Just mvl => pure $ AMetaVarLemma mvl
-  let Nothing = fromSExp sexp
-    | Just nll => pure $ ANameLocList nll
+--  let Nothing = fromSExp sexp
+ --   | Just nll => pure $ ANameLocList nll
   let Nothing = fromSExp sexp
     | Just hl => pure $ AHoleList hl
   let Nothing = fromSExp sexp
     | Just nl => pure $ ANameList nl
-  let Nothing = fromSExp sexp
-    | Just nlr => pure $ uncurry ACompletionList nlr
+--  let Nothing = fromSExp sexp
+--    | Just nlr => pure $ uncurry ACompletionList nlr
   let Nothing = fromSExp sexp
     | Just optl => pure $ AnOptionList optl
   let Nothing = fromSExp sexp
     | Just optl => pure $ AnIntroList optl
   Nothing
+
+  correctSExp zegk = ?ak

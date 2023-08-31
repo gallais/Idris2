@@ -29,37 +29,42 @@ export
 SExpable Highlight where
   toSExp (MkHighlight fc nam impl k dec doc t ns)
     = SExpList [ toSExp fc
-               , SExpList [ SExpList [ SymbolAtom "name", StringAtom nam ]
-                          , SExpList [ SymbolAtom "namespace", StringAtom ns ]
+               , SExpList [ SExpList [ SymbolAtom "name", toSExp nam ]
+                          , SExpList [ SymbolAtom "namespace", toSExp ns ]
                           , toSExp dec
                           , SExpList [ SymbolAtom "implicit", toSExp impl ]
-                          , SExpList [ SymbolAtom "key", StringAtom k ]
-                          , SExpList [ SymbolAtom "doc-overview", StringAtom doc ]
-                          , SExpList [ SymbolAtom "type", StringAtom t ]
+                          , SExpList [ SymbolAtom "key", toSExp k ]
+                          , SExpList [ SymbolAtom "doc-overview", toSExp doc ]
+                          , SExpList [ SymbolAtom "type", toSExp t ]
                           ]
                ]
 
-export
-FromSExpable Highlight where
   fromSExp (SExpList [ fc
-               , SExpList [ SExpList [ SymbolAtom "name", StringAtom nam ]
-                          , SExpList [ SymbolAtom "namespace", StringAtom ns ]
+               , SExpList [ SExpList [ SymbolAtom "name", nam ]
+                          , SExpList [ SymbolAtom "namespace", ns ]
                           , dec
                           , SExpList [ SymbolAtom "implicit", impl ]
-                          , SExpList [ SymbolAtom "key", StringAtom key ]
-                          , SExpList [ SymbolAtom "doc-overview", StringAtom doc ]
-                          , SExpList [ SymbolAtom "type", StringAtom typ ]
+                          , SExpList [ SymbolAtom "key", key ]
+                          , SExpList [ SymbolAtom "doc-overview", doc ]
+                          , SExpList [ SymbolAtom "type", typ ]
                           ]
                ]) = do
                  pure $ MkHighlight
                    { location = !(fromSExp fc)
-                   , name = nam
-                   , ns
+                   , name = !(fromSExp nam)
+                   , ns = !(fromSExp ns)
                    , isImplicit = !(fromSExp impl)
                    , decor = !(fromSExp dec)
-                   , docOverview = doc
-                   , key, typ}
+                   , docOverview = !(fromSExp doc)
+                   , key = !(fromSExp key)
+                   , typ = !(fromSExp typ)
+                   }
   fromSExp _ = Nothing
+
+  correctSExp (MkHighlight location name isImplicit key decor docOverview typ ns)
+    = ?a_0
+
+{-
 
 export
 SExpable LwHighlight where

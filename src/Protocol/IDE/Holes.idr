@@ -19,14 +19,14 @@ SExpable HolePremise where
              , SExpList [] -- TODO: metadata
              ]
 
-export
-FromSExpable HolePremise where
   fromSExp (SExpList [ StringAtom name
              , StringAtom type
              , SExpList [] -- TODO: metadata
              ]) = do pure $ MkHolePremise
                       {name, type}
   fromSExp _ = Nothing
+
+  correctSExp (MkHolePremise nm ty) = Refl
 
 public export
 record HoleData where
@@ -38,14 +38,12 @@ record HoleData where
 export
 SExpable HoleData where
   toSExp hole = SExpList
-    [ StringAtom (show  hole.name)
+    [ StringAtom hole.name -- TODO: did I break the protocol? It used to be: (show  hole.name)
     , toSExp hole.context
     , SExpList [ toSExp hole.type   -- Conclusion
                , SExpList[]]        -- TODO: Highlighting information
     ]
 
-export
-FromSExpable HoleData where
   fromSExp (SExpList
     [ StringAtom name
     , context
@@ -53,3 +51,6 @@ FromSExpable HoleData where
                , SExpList[]]        -- TODO: Highlighting information
     ]) = do pure $ MkHoleData {name, type = !(fromSExp conclusion), context = !(fromSExp context)}
   fromSExp _ = Nothing
+
+  correctSExp (MkHoleData nm ty ctx)
+    = rewrite correctSExp ctx in Refl

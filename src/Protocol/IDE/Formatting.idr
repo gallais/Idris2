@@ -34,10 +34,8 @@ SExpable Formatting where
     display Underline = "underline"
 
 
-export
-FromSExpable Formatting where
   fromSExp (SExpList [ SymbolAtom "text-formatting"
-                           , SymbolAtom format
+                     , SymbolAtom format
                      ]) =
     case format of
        "bold"      => Just Bold
@@ -45,6 +43,10 @@ FromSExpable Formatting where
        "underline" => Just Underline
        _           => Nothing
   fromSExp _ = Nothing
+
+  correctSExp Bold = Refl
+  correctSExp Italic = Refl
+  correctSExp Underline = Refl
 
 -- At most one decoration & one formatting
 -- (We could use `These` to guarantee non-emptiness but I am not
@@ -71,8 +73,6 @@ SExpable Properties where
     , toSExp <$> dec
     ]
 
-export
-FromSExpable Properties where
   fromSExp (SExpList props) =
     case props of
       []  => Just $ MkProperties {decor = Nothing, format = Nothing}
@@ -88,3 +88,13 @@ FromSExpable Properties where
            pure $ MkProperties {format, decor}
       _ => Nothing
   fromSExp _ = Nothing
+
+  correctSExp (MkProperties Nothing Nothing) = Refl
+  correctSExp (MkProperties Nothing (Just y))
+    = rewrite correctSExp y in Refl
+  correctSExp (MkProperties (Just x) Nothing)
+    = rewrite correctSExp x in Refl
+  correctSExp (MkProperties (Just x) (Just y))
+    = rewrite correctSExp x in
+      rewrite correctSExp y in
+      Refl
