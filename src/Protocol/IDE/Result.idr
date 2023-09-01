@@ -5,6 +5,7 @@ import Protocol.SExp
 import Protocol.IDE.Holes
 import Protocol.IDE.FileContext
 
+import Data.List
 import Data.List1
 import Data.Maybe
 import Data.So
@@ -120,10 +121,10 @@ SExpable IdrisVersion where
     , SExpList [toSExp tag]
     ]
 
-  fromSExp (SExpList
-    [ SExpList [majorSExp, minorSExp, patchSExp]
-    , SExpList [tagSExp]
-    ]) = do pure $ MkIdrisVersion
+  fromSExp (SExpList [ SExpList [majorSExp, minorSExp, patchSExp]
+                     , SExpList [tagSExp]
+                     ])
+    = do pure $ MkIdrisVersion
               { major = !(fromSExp majorSExp)
               , minor = !(fromSExp minorSExp)
               , patch = !(fromSExp patchSExp)
@@ -151,16 +152,51 @@ data Result =
   | AnOptionList (List REPLOption)
   | AnIntroList (List1 String)
 
+toSExpNameLoc : (String, FileContext) -> SExp
+toSExpNameLoc (str, fc) = SExpList [toSExp str, toSExp fc]
+
+fromSExpNameLoc : SExp -> Maybe (String, FileContext)
+fromSExpNameLoc (SExpList [str, fc]) = [| (fromSExp str, fromSExp fc) |]
+fromSExpNameLoc _ = Nothing
+
+correctSExpNameLoc : (nfc : (String, FileContext)) ->
+  fromSExpNameLoc (toSExpNameLoc nfc) === Just nfc
+correctSExpNameLoc (str, fc) = rewrite correctSExp fc in Refl
+
+toSExpNameLocList : List (String, FileContext) -> SExp
+toSExpNameLocList fcs = SExpList $ map toSExpNameLoc fcs
+
+fromSExpNameLocList : SExp -> Maybe (List (String, FileContext))
+fromSExpNameLocList (SExpList fcs) = traverse fromSExpNameLoc fcs
+fromSExpNameLocList _ = Nothing
+
+
+correctSExpNameLocList : (fcs : List (String, FileContext)) ->
+    traverse Result.fromSExpNameLoc (map Result.toSExpNameLoc fcs) = Just fcs
+correctSExpNameLocList [] = Refl
+correctSExpNameLocList (nfc :: fcs)
+    = rewrite correctSExpNameLoc nfc in
+      rewrite correctSExpNameLocList fcs in
+      Refl
+
+
+toSExpCompletionList : List String -> String -> SExp
+toSExpCompletionList names str = SExpList [toSExp names, toSExp str]
+
+fromSExpCompletionList : SExp -> Maybe (List String, String)
+fromSExpCompletionList (SExpList [names, str]) = [| (fromSExp names, fromSExp str) |]
+fromSExpCompletionList _ = Nothing
+
 export
 SExpable Result where
   toSExp (AString s) = toSExp s
-  toSExp (AUnit    ) = toSExp (the (List Int) [])
+  toSExp (AUnit    ) = SExpList []
   toSExp (AVersion version) = toSExp version
   toSExp (AMetaVarLemma mvl) = toSExp mvl
-  toSExp (ANameLocList fcs) = ?zhg -- toSExp fcs
+  toSExp (ANameLocList fcs) = toSExpNameLocList fcs
   toSExp (AHoleList holes) = toSExp holes
-  toSExp (ANameList names) = SExpList (map StringAtom names)
-  toSExp (ACompletionList names str) = SExpList [SExpList (map StringAtom names), StringAtom str]
+  toSExp (ANameList names) = toSExp names
+  toSExp (ACompletionList names str) = toSExpCompletionList names str
   toSExp (AnOptionList opts) = toSExp opts
   toSExp (AnIntroList iss) = toSExp iss
 
@@ -172,18 +208,29 @@ SExpable Result where
     | Just version => pure $ AVersion version
   let Nothing = fromSExp sexp
     | Just mvl => pure $ AMetaVarLemma mvl
---  let Nothing = fromSExp sexp
- --   | Just nll => pure $ ANameLocList nll
+  let Nothing = fromSExpNameLocList sexp
+    | Just nll => pure $ ANameLocList nll
   let Nothing = fromSExp sexp
     | Just hl => pure $ AHoleList hl
   let Nothing = fromSExp sexp
     | Just nl => pure $ ANameList nl
---  let Nothing = fromSExp sexp
---    | Just nlr => pure $ uncurry ACompletionList nlr
+  let Nothing = fromSExpCompletionList sexp
+    | Just nlr => pure $ uncurry ACompletionList nlr
   let Nothing = fromSExp sexp
     | Just optl => pure $ AnOptionList optl
   let Nothing = fromSExp sexp
     | Just optl => pure $ AnIntroList optl
   Nothing
 
-  correctSExp zegk = ?ak
+  correctSExp (AString str) = Refl
+  correctSExp AUnit = Refl
+  correctSExp (AVersion version) with (correctSExp version) | (toSExp version)
+    _ | prf | (SExpList (x :: xs)) = rewrite prf in Refl
+  correctSExp (AMetaVarLemma (MkMetaVarLemma application lemma)) = Refl
+  correctSExp (ANameLocList fcs) with (correctSExpNameLocList fcs) | (map toSExpNameLoc fcs)
+    _ | prf | xs = ?A
+  correctSExp (AHoleList xs) = ?ak_5
+  correctSExp (ACompletionList strs str) = ?ak_6
+  correctSExp (ANameList strs) = ?ak_7
+  correctSExp (AnOptionList xs) = ?ak_8
+  correctSExp (AnIntroList xs) = ?ak_9

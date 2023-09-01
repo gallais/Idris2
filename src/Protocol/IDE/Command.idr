@@ -15,10 +15,9 @@ record Hints where
 export
 SExpable Hints where
   toSExp hs = toSExp hs.list
-
-export
-FromSExpable Hints where
   fromSExp hs = MkHints <$> fromSExp hs
+
+  correctSExp = ?a
 
 public export
 data IDECommand
